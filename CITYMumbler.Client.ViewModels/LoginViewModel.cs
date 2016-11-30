@@ -9,7 +9,7 @@ using ReactiveUI;
 
 namespace CITYMumbler.Client.ViewModels
 {
-    public class LoginViewModel: ReactiveObject, IRoutableViewModel
+    public class LoginViewModel : ReactiveObject, IRoutableViewModel
     {
         public string UrlPathSegment => "login";
         public IScreen HostScreen { get; }

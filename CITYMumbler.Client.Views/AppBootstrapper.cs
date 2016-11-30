@@ -25,12 +25,14 @@ namespace CITYMumbler.Client.Views
         private void RegisterViewModels()
         {
             Locator.CurrentMutable.Register(() => new LoginViewModel(this), typeof(LoginViewModel));
-        }
+			Locator.CurrentMutable.Register(() => new MainViewModel(this), typeof(MainViewModel));
+		}
 
         private void RegisterViews()
         {
             Locator.CurrentMutable.Register(() => new LoginView(), typeof(IViewFor<LoginViewModel>));
-        }
+			Locator.CurrentMutable.Register(() => new MainView(), typeof(IViewFor<MainViewModel>));
+		}
 
     }
 }
