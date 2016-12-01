@@ -36,4 +36,12 @@ namespace CITYMumbler.Networking.Sockets
             this.Payload = payload;
         }
     }
+
+    public class TcpSocketDisconnected : EventArgs
+    {
+        
+        public TcpSocketDisconnected() {
+            
+        }
+    }
 }

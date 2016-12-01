@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Common.Contracts.Services.Logger;
 using ReactiveUI;
 
 namespace CITYMumbler.Client.ViewModels
@@ -43,7 +44,6 @@ namespace CITYMumbler.Client.ViewModels
 
         private ObservableAsPropertyHelper<bool> _canConnect;
         public bool CanConnect => _canConnect.Value;
-
 
         public LoginViewModel(IScreen host)
         {
