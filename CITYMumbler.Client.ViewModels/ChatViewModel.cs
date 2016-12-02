@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ReactiveUI;
@@ -13,6 +14,18 @@ namespace CITYMumbler.Client.ViewModels
 		public IScreen HostScreen { get; }
 
 
-		public ChatViewModel(IScreen hostScreen) { this.HostScreen = hostScreen; }
+		public ChatViewModel(IScreen hostScreen)
+		{
+			this.HostScreen = hostScreen;
+
+		}
+
+		private readonly ObservableAsPropertyHelper<List<TabContentViewModel>> _tabList;
+		public List<TabContentViewModel> TabList
+		{
+			get { return _tabList.Value; }
+		}
+
+
 	}
 }

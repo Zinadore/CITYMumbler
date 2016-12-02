@@ -73,6 +73,7 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TabContentViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

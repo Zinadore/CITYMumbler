@@ -4,20 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CITYMumbler.Client.Views"
+             xmlns:viewModels="clr-namespace:CITYMumbler.Client.ViewModels;assembly=CITYMumbler.Client.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Background="MediumVioletRed" >
-		<Grid.RowDefinitions>
-			<RowDefinition Height="8*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
-		<TextBlock Grid.Row="0" Grid.ColumnSpan="2" x:Name="ChatDisplay"  HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Stretch" />
-		<TextBox Grid.Row="1" Grid.Column="0" x:Name="ChatInput" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
-		<Button Grid.Row="1" Grid.Column="1"  x:Name="sendButton" Content="☼" HorizontalAlignment="Right"  VerticalAlignment="Bottom"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-
+	<Grid>
+		<TabControl x:Name="TabDynamic" SelectionChanged="tabDynamic_SelectionChanged">
+			<TabControl.Resources>
+				<DataTemplate x:Key="TabHeader" DataType="TabItem">
+					<DockPanel>
+						<Button Name="btnDelete" DockPanel.Dock="Right" Margin="5,0,0,0" Padding="0" Click="btnDelete_Click" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Name}">
+							<Label Content="X"></Label>
+						</Button>
+						<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Header}" />
+					</DockPanel>
+				</DataTemplate>
+			</TabControl.Resources>
+			<TabControl.ContentTemplate>
+				<DataTemplate DataType="{x:Type viewModels:TabContentViewModel}">
+					<local:TabContentView />
+				</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
 	</Grid>
 </UserControl>
