@@ -10,12 +10,12 @@ namespace CITYMumbler.Server
 {
     class Client
     {
-        public int ID { get; private set; }
+        public ushort ID { get; private set; }
         public string Name { get; set; }
         public TcpSocket ClientSocket { get; private set; }
         public IPEndPoint RemoteEndpoint { get; private set; }
 
-        public Client(int id, TcpSocket clientSocket, IPEndPoint endPoint)
+        public Client(ushort id, TcpSocket clientSocket, IPEndPoint endPoint)
         {
             this.ID = id;
             this.ClientSocket = clientSocket;

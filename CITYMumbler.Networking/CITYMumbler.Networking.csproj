@@ -59,7 +59,7 @@
     <Compile Include="Serialization\Packet.cs" />
     <Compile Include="Serialization\PacketSerializer.cs" />
     <Compile Include="Serialization\PrivateMessagePacket.cs" />
-    <Compile Include="Serialization\RegisterClientPacket.cs" />
+    <Compile Include="Serialization\ConnectionPacket.cs" />
     <Compile Include="Serialization\SendKeystrokePacket.cs" />
     <Compile Include="Sockets\ScoketsEventArgs.cs" />
     <Compile Include="Sockets\TcpSocket.cs" />

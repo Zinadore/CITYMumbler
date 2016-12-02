@@ -36,16 +36,16 @@ namespace CITYMumbler.UnitTests.Networking
         public void register_client_packet_write()
         {
             // Arrange
-            IPacket packet = new RegisterClientPacket("cr@zy69");
+            IPacket packet = new ConnectionPacket("cr@zy69");
             PacketWritter writter = new PacketWritter();
 
             // Act
-            writter.Write((RegisterClientPacket)packet);
+            writter.Write((ConnectionPacket)packet);
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            string readResult = ((RegisterClientPacket)reader.ReadPacket(PacketTypeHeader.Connection)).Name;
-            Assert.AreEqual(readResult, ((RegisterClientPacket)packet).Name);
+            string readResult = ((ConnectionPacket)reader.ReadPacket(PacketType.Connection)).Name;
+            Assert.AreEqual(readResult, ((ConnectionPacket)packet).Name);
         }
 
         // Private/Group Message packet
@@ -62,7 +62,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            PrivateMessagePacket newPacket = (PrivateMessagePacket)reader.ReadPacket(PacketTypeHeader.PrivateMessage);
+            PrivateMessagePacket newPacket = (PrivateMessagePacket)reader.ReadPacket(PacketType.PrivateMessage);
             Assert.AreEqual(newPacket.SenderId, ((PrivateMessagePacket)packet).SenderId);
             Assert.AreEqual(newPacket.ReceiverId, ((PrivateMessagePacket)packet).ReceiverId);
             Assert.AreEqual(newPacket.Message, ((PrivateMessagePacket)packet).Message);
@@ -80,7 +80,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            SendKeystrokePacket newPacket = (SendKeystrokePacket)reader.ReadPacket(PacketTypeHeader.SendKeystroke);
+            SendKeystrokePacket newPacket = (SendKeystrokePacket)reader.ReadPacket(PacketType.SendKeystroke);
             Assert.AreEqual(newPacket.SenderId, ((SendKeystrokePacket)packet).SenderId);
             Assert.AreEqual(newPacket.ReceiverId, ((SendKeystrokePacket)packet).ReceiverId);
             Assert.AreEqual(newPacket.Message, ((SendKeystrokePacket)packet).Message);
@@ -98,7 +98,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            GroupMessagePacket newPacket = (GroupMessagePacket)reader.ReadPacket(PacketTypeHeader.GroupMessage);
+            GroupMessagePacket newPacket = (GroupMessagePacket)reader.ReadPacket(PacketType.GroupMessage);
             Assert.AreEqual(newPacket.SenderId, ((GroupMessagePacket)packet).SenderId);
             Assert.AreEqual(newPacket.ReceiverId, ((GroupMessagePacket)packet).ReceiverId);
             Assert.AreEqual(newPacket.Message, ((GroupMessagePacket)packet).Message);
@@ -119,7 +119,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            JoinGroupPacket newPacket = (JoinGroupPacket)reader.ReadPacket(PacketTypeHeader.JoinGroup);
+            JoinGroupPacket newPacket = (JoinGroupPacket)reader.ReadPacket(PacketType.JoinGroup);
             Assert.IsTrue(newPacket.IsPasswordProtected());
             Assert.AreEqual(newPacket.CliendId, ((JoinGroupPacket)packet).CliendId);
             Assert.AreEqual(newPacket.GroupId, ((JoinGroupPacket)packet).GroupId);
@@ -139,7 +139,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            JoinGroupPacket newPacket = (JoinGroupPacket)reader.ReadPacket(PacketTypeHeader.JoinGroup);
+            JoinGroupPacket newPacket = (JoinGroupPacket)reader.ReadPacket(PacketType.JoinGroup);
             Assert.IsFalse(newPacket.IsPasswordProtected());
             Assert.AreEqual(newPacket.CliendId, ((JoinGroupPacket)packet).CliendId);
             Assert.AreEqual(newPacket.GroupId, ((JoinGroupPacket)packet).GroupId);
@@ -160,7 +160,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            DeleteGroupPacket newPacket = ((DeleteGroupPacket)reader.ReadPacket(PacketTypeHeader.DeleteGroup));
+            DeleteGroupPacket newPacket = ((DeleteGroupPacket)reader.ReadPacket(PacketType.DeleteGroup));
             Assert.AreEqual(newPacket.ClientId, ((DeleteGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((DeleteGroupPacket)packet).GroupId);
         }
@@ -179,7 +179,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            ChangeGroupOwnerPacket newPacket = (ChangeGroupOwnerPacket)reader.ReadPacket(PacketTypeHeader.ChangeGroupOwner);
+            ChangeGroupOwnerPacket newPacket = (ChangeGroupOwnerPacket)reader.ReadPacket(PacketType.ChangeGroupOwner);
             Assert.AreEqual(newPacket.ClientId, ((ChangeGroupOwnerPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((ChangeGroupOwnerPacket)packet).GroupId);
             Assert.AreEqual(newPacket.NewOwnerId, ((ChangeGroupOwnerPacket)packet).NewOwnerId);
@@ -199,7 +199,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            LeaveGroupPacket newPacket = (LeaveGroupPacket)reader.ReadPacket(PacketTypeHeader.LeaveGroup);
+            LeaveGroupPacket newPacket = (LeaveGroupPacket)reader.ReadPacket(PacketType.LeaveGroup);
             Assert.AreEqual(newPacket.ClientId, ((LeaveGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((LeaveGroupPacket)packet).GroupId);
         }
@@ -218,7 +218,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            LeftGroupPacket newPacket = (LeftGroupPacket)reader.ReadPacket(PacketTypeHeader.LeftGroup);
+            LeftGroupPacket newPacket = (LeftGroupPacket)reader.ReadPacket(PacketType.LeftGroup);
             Assert.AreEqual(newPacket.ClientId, ((LeftGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((LeftGroupPacket)packet).GroupId);
             Assert.AreEqual(newPacket.LeftGroupType, ((LeftGroupPacket)packet).LeftGroupType);
@@ -236,7 +236,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            LeftGroupPacket newPacket = (LeftGroupPacket)reader.ReadPacket(PacketTypeHeader.LeftGroup);
+            LeftGroupPacket newPacket = (LeftGroupPacket)reader.ReadPacket(PacketType.LeftGroup);
             Assert.AreEqual(newPacket.ClientId, ((LeftGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((LeftGroupPacket)packet).GroupId);
             Assert.AreEqual(newPacket.LeftGroupType, ((LeftGroupPacket)packet).LeftGroupType);
@@ -256,7 +256,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            ConnectedPacket newPacket = (ConnectedPacket)reader.ReadPacket(PacketTypeHeader.Connected);
+            ConnectedPacket newPacket = (ConnectedPacket)reader.ReadPacket(PacketType.Connected);
             Assert.AreEqual(newPacket.ClientId, ((ConnectedPacket)packet).ClientId);
         }
 
@@ -274,7 +274,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            JoinedGroupPacket newPacket = (JoinedGroupPacket)reader.ReadPacket(PacketTypeHeader.JoinedGroup);
+            JoinedGroupPacket newPacket = (JoinedGroupPacket)reader.ReadPacket(PacketType.JoinedGroup);
             Assert.AreEqual(newPacket.ClientId, ((JoinedGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((JoinedGroupPacket)packet).GroupId);
         }
@@ -293,7 +293,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            KickPacket newPacket = (KickPacket)reader.ReadPacket(PacketTypeHeader.Kick);
+            KickPacket newPacket = (KickPacket)reader.ReadPacket(PacketType.Kick);
             Assert.AreEqual(newPacket.ClientId, ((KickPacket)packet).ClientId);
             Assert.AreEqual(newPacket.TargetId, ((KickPacket)packet).TargetId);
             Assert.AreEqual(newPacket.GroupId, ((KickPacket)packet).GroupId);
@@ -313,7 +313,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            CreateGroupPacket newPacket = (CreateGroupPacket)reader.ReadPacket(PacketTypeHeader.CreateGroup);
+            CreateGroupPacket newPacket = (CreateGroupPacket)reader.ReadPacket(PacketType.CreateGroup);
             Assert.AreEqual(newPacket.ClientId, ((CreateGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupName, ((CreateGroupPacket)packet).GroupName);
             Assert.AreEqual(newPacket.TimeThreshold, ((CreateGroupPacket)packet).TimeThreshold);
@@ -332,7 +332,7 @@ namespace CITYMumbler.UnitTests.Networking
             PacketReader reader = new PacketReader(writter.GetBytes());
 
             // Assert
-            CreateGroupPacket newPacket = (CreateGroupPacket)reader.ReadPacket(PacketTypeHeader.CreateGroup);
+            CreateGroupPacket newPacket = (CreateGroupPacket)reader.ReadPacket(PacketType.CreateGroup);
             Assert.AreEqual(newPacket.ClientId, ((CreateGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupName, ((CreateGroupPacket)packet).GroupName);
             Assert.AreEqual(newPacket.TimeThreshold, ((CreateGroupPacket)packet).TimeThreshold);

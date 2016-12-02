@@ -97,7 +97,7 @@ namespace CITYMumbler.UnitTests.Networking
 
             // Assert
             var ex = Assert.Throws<ArgumentException>(() => serializer.FromBytes(bytes));
-            Assert.That(ex.Message, Is.EqualTo("The provided PacketTypeHeader is not valid."));
+            Assert.That(ex.Message, Is.EqualTo("The provided PacketType is not valid."));
         }
     }
 }

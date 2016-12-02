@@ -8,7 +8,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public ConnectedPacket(ushort clientId)
 		{
-			this.PacketType = PacketTypeHeader.Connected;
+			this.PacketType = PacketType.Connected;
 			this.ClientId = clientId;
 		}
 	}

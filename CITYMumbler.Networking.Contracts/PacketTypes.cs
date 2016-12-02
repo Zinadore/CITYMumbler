@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CITYMumbler.Networking.Contracts
 {
-    public enum PacketTypeHeader :  byte
+    public enum PacketType :  byte
     {
         Connection,
 		Connected,

@@ -9,7 +9,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public LeaveGroupPacket(ushort clientId, ushort groupId)
 		{
-			this.PacketType = PacketTypeHeader.LeaveGroup;
+			this.PacketType = Contracts.PacketType.LeaveGroup;
 			this.ClientId = clientId;
 			this.GroupId = groupId;
 		}

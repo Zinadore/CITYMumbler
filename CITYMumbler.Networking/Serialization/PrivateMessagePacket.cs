@@ -12,7 +12,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public PrivateMessagePacket(ushort senderId, ushort receiverId, string senderName, string message)
 		{
-			this.PacketType = PacketTypeHeader.PrivateMessage;
+			this.PacketType = Contracts.PacketType.PrivateMessage;
 			this.SenderId = senderId;
 			this.ReceiverId = receiverId;
 			this.SenderName = senderName;

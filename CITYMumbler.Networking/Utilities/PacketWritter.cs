@@ -27,7 +27,7 @@ namespace CITYMumbler.Networking.Utilities
             return data;
         }
 
-        public void Write(RegisterClientPacket packet)
+        public void Write(ConnectionPacket packet)
         {
             Write(packet.Name);
         }

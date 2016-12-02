@@ -30,6 +30,7 @@
         <TextBlock>Username:</TextBlock>
         <TextBox x:Name="Username"></TextBox>
         <Button x:Name="ConnectButton">Connect</Button>
-        <TextBlock x:Name="Error" Foreground="Red"></TextBlock>
+        <TextBlock x:Name="Log"
+                   TextWrapping="Wrap"></TextBlock>
     </StackPanel>
 </UserControl>

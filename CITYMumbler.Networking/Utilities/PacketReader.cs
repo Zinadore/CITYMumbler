@@ -14,46 +14,46 @@ namespace CITYMumbler.Networking.Utilities
             
         }
 
-        public IPacket ReadPacket(PacketTypeHeader type)
+        public IPacket ReadPacket(PacketType type)
         {
             switch (type)
             {
-                case PacketTypeHeader.Connection: return ReadRegisterClientMessage();
+                case PacketType.Connection: return ReadRegisterClientMessage();
 
-                case PacketTypeHeader.Disconnection: return ReadDisconnectionMessage();
+                case PacketType.Disconnection: return ReadDisconnectionMessage();
 
-                case PacketTypeHeader.Connected: return ReadConnectedMessage();
+                case PacketType.Connected: return ReadConnectedMessage();
 
-                case PacketTypeHeader.PrivateMessage: return ReadPrivateMessageMessage();
+                case PacketType.PrivateMessage: return ReadPrivateMessageMessage();
 
-                case PacketTypeHeader.SendKeystroke: return ReadKeyStrokeMessage();
+                case PacketType.SendKeystroke: return ReadKeyStrokeMessage();
 
-                case PacketTypeHeader.GroupMessage: return ReadGroupMessageMessage();
+                case PacketType.GroupMessage: return ReadGroupMessageMessage();
 
-                case PacketTypeHeader.JoinGroup: return ReadJoinGroupMessage();
+                case PacketType.JoinGroup: return ReadJoinGroupMessage();
 
-                case PacketTypeHeader.JoinedGroup: return ReadJoinedGroupMessage();
+                case PacketType.JoinedGroup: return ReadJoinedGroupMessage();
 
-                case PacketTypeHeader.DeleteGroup: return ReadDeleteGroupMessage();
+                case PacketType.DeleteGroup: return ReadDeleteGroupMessage();
 
-                case PacketTypeHeader.ChangeGroupOwner: return ReadChangeGroupOwnerMessage();
+                case PacketType.ChangeGroupOwner: return ReadChangeGroupOwnerMessage();
 
-                case PacketTypeHeader.LeaveGroup: return ReadLeaveGroupMessage();
+                case PacketType.LeaveGroup: return ReadLeaveGroupMessage();
 
-                case PacketTypeHeader.LeftGroup: return ReadLeftGroupMessage();
+                case PacketType.LeftGroup: return ReadLeftGroupMessage();
 
-                case PacketTypeHeader.Kick: return ReadKickMessage();
+                case PacketType.Kick: return ReadKickMessage();
 
-                case PacketTypeHeader.CreateGroup: return ReadCreateGroupMessage();
+                case PacketType.CreateGroup: return ReadCreateGroupMessage();
 
-                default: throw new ArgumentException("The provided PacketTypeHeader is not valid.");
+                default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
 
         private IPacket ReadRegisterClientMessage()
         {
             string name = ReadString();
-            IPacket packet = new RegisterClientPacket(name);
+            IPacket packet = new ConnectionPacket(name);
             return packet;
         }
 

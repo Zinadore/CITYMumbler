@@ -23,10 +23,10 @@ namespace CITYMumbler.Client.ViewModels
 			this.HostScreen = hostScreen;
 			this.SendCommand = ReactiveCommand.Create(SendMessage);
 			_mumblerClient = Locator.Current.GetService<MumblerClient>();
-			//this.WhenAnyValue(x => x.ChatInput)
-			//	.Select(x => x?.Trim())
-			//	.ToProperty(this, x => x.ChatDisplay, out _chatDisplay);
-		}
+            this.WhenAnyValue(x => x.ChatInput)
+                .Select(x => x?.Trim())
+                .ToProperty(this, x => x.ChatDisplay, out _chatDisplay);
+        }
 
 		private void SendMessage()
 		{

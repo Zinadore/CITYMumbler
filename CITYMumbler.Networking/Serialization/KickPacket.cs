@@ -11,7 +11,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public KickPacket(ushort clientId, ushort targetId, ushort groupId)
 		{
-			this.PacketType = PacketTypeHeader.Kick;
+			this.PacketType = Contracts.PacketType.Kick;
 			this.ClientId = clientId;
 			this.TargetId = targetId;
 			this.GroupId = groupId;
