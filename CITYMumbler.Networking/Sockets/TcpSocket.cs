@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace CITYMumbler.Networking.Sockets
 {
-    public class TcpSocket
+    public class TcpSocket: IDisposable
     {
         // The maximum size of the buffer, could be used for multiple cycles
         private const int BUFFER_SIZE = 8192;
@@ -26,9 +26,10 @@ namespace CITYMumbler.Networking.Sockets
         public event EventHandler<TcpSocketConnectionStateEventArgs> OnConnectEnd;
         //public event EventHandler<TcpSocketConnectionStateEventArgs> OnConnectionError;
         public event EventHandler<TcpSocketDataReceivedEventArgs> OnDataReceived;
-
+        public event EventHandler OnDisconnected;
 
         public bool Connected { get; private set; } = false;
+        public bool IsDisposed { get; private set; } = false;
 
         /// <summary>
         /// Should be used on the client side mainly. Where you need a new socket to communicate.
@@ -52,6 +53,7 @@ namespace CITYMumbler.Networking.Sockets
             }
         }
 
+        ~TcpSocket() { Dispose(); }
         private void init()
         {
             this.buffer = new byte[BUFFER_SIZE];
@@ -78,22 +80,27 @@ namespace CITYMumbler.Networking.Sockets
 
         public void ConnectAsync(string host, int port)
         {
+            this.checkDisposed();
             this.socket.BeginConnect(host, port, BeginConnect_Callback, null);
         }
 
         public void ConnectAsync(IPEndPoint endPoint)
         {
+            this.checkDisposed();
             this.socket.BeginConnect(endPoint, BeginConnect_Callback, null);
         }
 
         public void ConnectAsync(IPAddress address, int port)
         {
+            this.checkDisposed();
             this.socket.BeginConnect(address, port, BeginConnect_Callback, null);
         }
         #endregion
 
+        #region Send Methods
         public void Send(byte[] payload)
         {
+            this.checkDisposed();
             byte[] headerBuffer = BitConverter.GetBytes(payload.Length);
 
             byte[] actualBuffer = new byte[headerBuffer.Length + payload.Length];
@@ -106,12 +113,14 @@ namespace CITYMumbler.Networking.Sockets
 
         public void RapidSend(byte[] payload)
         {
+            this.checkDisposed();
             lock (this.sendLock)
             {
                 this.socket.Send(BitConverter.GetBytes(payload.Length));
                 this.socket.Send(payload);
             }
         }
+        #endregion
 
         private void beginRead()
         { 
@@ -140,6 +149,7 @@ namespace CITYMumbler.Networking.Sockets
             {
                 ex = e;
                 this.Connected = false;
+                this.Disconnected();
             }
             finally
             {
@@ -153,6 +163,10 @@ namespace CITYMumbler.Networking.Sockets
             {
                 // How many bytes were read. Usually this should get us the whole header, but just in case.
                 var bytesRead = this.socket.EndReceive(ar);
+                if (bytesRead <= 0)
+                {
+                    throw new SocketException((int)SocketError.ConnectionAborted);
+                }
                 if(bytesRead < BUFFER_HEADER_SIZE)
                 {
                     var bytesLeft = BUFFER_HEADER_SIZE - bytesRead;
@@ -179,7 +193,8 @@ namespace CITYMumbler.Networking.Sockets
             }
             catch(Exception e)
             {
-                Debug.Print(e.StackTrace);
+                Disconnected();
+                //Debug.Print(e.StackTrace);
             }
         }
 
@@ -188,6 +203,11 @@ namespace CITYMumbler.Networking.Sockets
             try
             {
                 var readBytes = this.socket.EndReceive(ar);
+
+                if (readBytes <= 0)
+                {
+                    throw new SocketException((int)SocketError.ConnectionAborted);
+                }
 
                 this.payloadSize -= readBytes;
 
@@ -214,6 +234,7 @@ namespace CITYMumbler.Networking.Sockets
             catch(Exception e)
             {
                 Debug.Print(e.StackTrace);
+                Disconnected();
             }
         }
 
@@ -225,8 +246,46 @@ namespace CITYMumbler.Networking.Sockets
             }
             catch(Exception e)
             {
+                Disconnected();
                 Debug.Print(e.Message);
                 Debug.Print(e.StackTrace);
+            }
+        }
+        #endregion
+
+        #region Disconnection
+        public void Disconnect()
+        {
+            this.checkDisposed();
+            if (this.Connected)
+            {
+                this.socket.Disconnect(true);
+                this.Connected = false;
+            }
+        }
+        private void Disconnected()
+        {
+            this.Connected = false;
+            this.OnDisconnected?.Invoke(this, EventArgs.Empty);
+        }
+        #endregion
+
+        #region IDisposable
+
+        private void checkDisposed()
+        {
+            if (this.IsDisposed)
+                throw new ObjectDisposedException("this");
+        }
+        public void Dispose()
+        {
+            if (!this.IsDisposed)
+            {
+                this.socket.Close();
+                this.socket = null;
+                this.buffer = null;
+                this.payloadSize = 0;
+                this.Connected = false;
             }
         }
         #endregion

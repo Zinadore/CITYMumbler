@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0D1F24BE-658E-450D-A2B4-517ED2810AAE}</ProjectGuid>
+    <ProjectGuid>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CITYMumbler.Server</RootNamespace>
-    <AssemblyName>CITYMumbler.Server</AssemblyName>
+    <RootNamespace>CITYMumbler.Common.Contracts</RootNamespace>
+    <AssemblyName>CITYMumbler.Common.Contracts</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -36,18 +36,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,23 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
-    <Compile Include="MumblerServer.cs" />
+    <Compile Include="Services\Logger\ILogger.cs" />
+    <Compile Include="Services\Logger\ILoggerService.cs" />
+    <Compile Include="Services\Logger\LogEntry.cs" />
+    <Compile Include="Services\Logger\LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
-      <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
-      <Name>CITYMumbler.Common.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
-      <Project>{c4aeb434-6d79-4b6a-9a6b-d795512191f3}</Project>
-      <Name>CITYMumbler.Networking.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CITYMumbler.Networking\CITYMumbler.Networking.csproj">
-      <Project>{b4d2aa0a-34bf-42fd-ae10-9c5e5a397e19}</Project>
-      <Name>CITYMumbler.Networking</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

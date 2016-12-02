@@ -19,18 +19,24 @@ namespace CITYMumbler.Client
             {
                 if (e.Connected)
                 {
+                    socket.OnDisconnected += (ds, de) =>
+                    {
+                        Console.WriteLine("Connection with server lost");
+                    };
                     Console.WriteLine("Connected successfuly");
                 } else
                 {
                     Console.WriteLine(e.Exception.Message);
                 }
             };
+
+
             this.socket.OnDataReceived += Socket_OnDataReceived;
         }
 
         public void Send(string message)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(message);
+            var bytes = System.Text.Encoding.ASCII.GetBytes(message);
             this.socket.Send(bytes);
         }
 

@@ -10,23 +10,24 @@ namespace CITYMumbler.Networking.Sockets
         private Socket listener;
 
         // Tells if the listener is running or not
-        public bool Running { get; private set; }
+        public bool Running { get; private set; } = false;
 
         //The port the listener is currently running on (if running)
         public int Port { get; private set; }
 
         public event EventHandler<OnAcceptedTcpSocketEventArgs> OnAccepted;
 
-
+        public TcpSocketListener() { this.Port = default(int); }
         public TcpSocketListener(int port)
         {
             this.Port = port;
         }
 
-        public void Start()
+        public void Start(int port)
         {
             if (!this.Running)
             {
+                this.Port = port;
                 this.listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 this.listener.Bind(new IPEndPoint(IPAddress.Any, this.Port));
                 this.listener.Listen(70);
@@ -43,9 +44,9 @@ namespace CITYMumbler.Networking.Sockets
         {
             if (this.Running)
             {
+                this.Running = false;
                 this.listener.Close();
                 this.listener = null;
-                this.Running = false;
             }
             else
             {
@@ -59,6 +60,7 @@ namespace CITYMumbler.Networking.Sockets
         {
             try
             {
+                if (!Running) return;
                 // Store the REMOTE socket into a variable. This is the socket representing the CLIENT here.
                 var accepted = this.listener.EndAccept(ar);
                 // Tell the listener to start Accepting connections again. We do it here so it can accept while the delegate is running.
@@ -68,6 +70,10 @@ namespace CITYMumbler.Networking.Sockets
             }
             catch (Exception ex)
             {
+                if (ex is SocketException)
+                {
+                    Console.Write(((SocketException)ex).ErrorCode);
+                }
                 Console.WriteLine(ex.StackTrace);
             }
         }

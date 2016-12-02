@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="CITYMumbler.Server.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CITYMumbler.Server.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="756" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Label Margin="0 0 5 0">Port:</Label>
+            <TextBox Margin="5" Width="200" x:Name="Port"></TextBox>
+            <Button Margin="5" Padding="5,0" x:Name="StartButton">Start</Button>
+            <Button Margin="5" Padding="5,0" x:Name="StopButton">Stop</Button>
+        </StackPanel>
+        <RichTextBox x:Name="LogOutput"
+                 AcceptsReturn="True"
+                 Grid.Row="1"
+                 IsReadOnly="False"
+                 Background="Black" 
+                 Foreground="AliceBlue"
+                 VerticalScrollBarVisibility="Auto">
+        </RichTextBox>
+    </Grid>
+</UserControl>

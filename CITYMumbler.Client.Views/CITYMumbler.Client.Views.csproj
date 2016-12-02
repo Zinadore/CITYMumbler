@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HelperTrinity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc96fa93a217f7a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\HelperTrinity.4.0.0\lib\netstandard1.0\HelperTrinity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ReactiveUI, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\reactiveui-core.7.0.0\lib\Net45\ReactiveUI.dll</HintPath>
       <Private>True</Private>

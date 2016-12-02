@@ -11,7 +11,6 @@ namespace CITYMumbler.Client.Views
 {
     public class AppBootstrapper: ReactiveObject, IScreen
     {
-        public ReactiveObject ActiveModel { get; set; }
         public RoutingState Router { get; }
 
         public AppBootstrapper() {

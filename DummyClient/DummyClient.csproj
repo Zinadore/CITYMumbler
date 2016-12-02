@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0D1F24BE-658E-450D-A2B4-517ED2810AAE}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{C35C972A-9907-448B-901C-B104F88AA301}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CITYMumbler.Server</RootNamespace>
-    <AssemblyName>CITYMumbler.Server</AssemblyName>
+    <RootNamespace>DummyClient</RootNamespace>
+    <AssemblyName>DummyClient</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,24 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HelperTrinity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc96fa93a217f7a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\HelperTrinity.4.0.0\lib\netstandard1.0\HelperTrinity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,26 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
-    <Compile Include="MumblerServer.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
-      <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
-      <Name>CITYMumbler.Common.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
-      <Project>{c4aeb434-6d79-4b6a-9a6b-d795512191f3}</Project>
-      <Name>CITYMumbler.Networking.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CITYMumbler.Networking\CITYMumbler.Networking.csproj">
-      <Project>{b4d2aa0a-34bf-42fd-ae10-9c5e5a397e19}</Project>
-      <Name>CITYMumbler.Networking</Name>
-    </ProjectReference>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\CITYMumbler.Client\CITYMumbler.Client.csproj">
+      <Project>{085557ff-790d-4e3e-8f5e-2a4c5f71800b}</Project>
+      <Name>CITYMumbler.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
