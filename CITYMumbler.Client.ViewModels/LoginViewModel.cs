@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CITYMumbler.Common.Contracts.Services.Logger;
 using ReactiveUI;
 using Splat;
@@ -88,6 +89,7 @@ namespace CITYMumbler.Client.ViewModels
 			this.Port = "21992";
 			this.HostScreen = host;
 			this._mumblerClient = Locator.Current.GetService<MumblerClient>();
+            this._mumblerClient.OnConnected += MumblerClient_OnConnected;
 		    this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
 
 		    this.Logs = Locator.Current.GetService<ILoggerService>().Entries;
@@ -110,23 +112,37 @@ namespace CITYMumbler.Client.ViewModels
 			    .Select(x => !string.IsNullOrEmpty(x))
 			    .ToProperty(this, @this => @this.IsUsernameValid, out _isUsernameValid, false);
 
-			 CanExecuteConnect = this.WhenAnyValue(x => x.IsAddressValid, x => x.IsPortValid, x => x.IsUsernameValid,
-				(address, port, username) => address && port && username);
+		    this.CanExecuteConnect = this.WhenAnyValue(x => x.IsAddressValid, x => x.IsPortValid, x => x.IsUsernameValid,
+		        (address, port, username) => address && port && username);
 
-			CanExecuteConnect.ToProperty(this, @this => @this.IsConnectButtonEnabled, out _isConnectButtonEnabled);
+			this.CanExecuteConnect.ToProperty(this, @this => @this.IsConnectButtonEnabled, out _isConnectButtonEnabled);
 
 			this.ConnnectCommand = ReactiveCommand.Create(Connect, CanExecuteConnect);
 		    this.ConnnectCommand.ThrownExceptions.Subscribe(ex =>
 		    {
 		        this.logger.Log(LogLevel.Error, ex.Message);
 		    });
+
+		    this.HostScreen.Router.Navigate.ThrownExceptions.Subscribe(ex =>
+		    {
+		        this.logger.Log(LogLevel.Error, ex.Message);
+		    });
         }
 
-	    private void Connect()
+        private void MumblerClient_OnConnected(object sender, EventArgs eventArgs)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                this.HostScreen.Router.Navigate.Execute(Locator.Current.GetService<MainViewModel>());
+            }));
+        }
+
+        private void Connect()
 	    {
 			_mumblerClient.Connect(_addressIp, _portNumeric, Username);
 		}
 
+        ~LoginViewModel() { this._mumblerClient.OnConnected -= MumblerClient_OnConnected; }
 
     }
 }

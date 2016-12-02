@@ -77,10 +77,6 @@ namespace CITYMumbler.Server
             string message = System.Text.Encoding.ASCII.GetString(e.Payload);
 
             this.logger.Log(LogLevel.Debug, "Received : {0}", message);
-            foreach (var c in connectedClients)
-            {
-                c.ClientSocket.Send(e.Payload);
-            }
         }
 
         private void ClientSocket_OnDisconnected(object sender, TcpSocketDisconnectedEventArgs e)
