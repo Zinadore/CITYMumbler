@@ -14,7 +14,7 @@ namespace CITYMumbler.Networking.Serialization
 		public CreateGroupPacket(ushort clientId, string groupName, byte timeThreshold,
 			JoinGroupPermissionTypes permissionType, string password = null)
 		{
-			this.PacketType = PacketTypeHeader.CreateGroup;
+			this.PacketType = PacketType.CreateGroup;
 			this.ClientId = clientId;
 			this.GroupName = groupName;
 			this.TimeThreshold = timeThreshold;

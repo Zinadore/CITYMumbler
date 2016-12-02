@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Reactive.Subjects;
 using CITYMumbler.Common.Contracts.Services.Logger;
+using CITYMumbler.Networking.Contracts;
+using CITYMumbler.Networking.Contracts.Serialization;
+using CITYMumbler.Networking.Serialization;
 using CITYMumbler.Networking.Sockets;
 
 namespace CITYMumbler.Server
@@ -16,17 +19,17 @@ namespace CITYMumbler.Server
     /// </summary>
     public class MumblerServer
     {
+        #region Private Members
         // This is us
         private TcpSocketListener listener;
-        
-        // This is them
         private List<Client> connectedClients;
-
         // The idiot's way of doing IDs
-        private int idSeed = 1;
-
+        private ushort idSeed = 1;
         // Log all the things
         private ILogger logger;
+        private IPacketSerializer _serializer;
+        #endregion
+
 
         public int Port { get; private set; } = 21992;
 
@@ -37,6 +40,7 @@ namespace CITYMumbler.Server
             this.connectedClients = new List<Client>();
             this.logger = loggerService.GetLogger(this.GetType());
             this.listener = new TcpSocketListener();
+            this._serializer = new PacketSerializer();
             this.IsRunning = new BehaviorSubject<bool>(false);
         }
 
@@ -74,9 +78,10 @@ namespace CITYMumbler.Server
 
         private void ClientSocket_OnDataReceived(object sender, TcpSocketDataReceivedEventArgs e)
         {
-            string message = System.Text.Encoding.ASCII.GetString(e.Payload);
+            var receivedPacket = this._serializer.FromBytes(e.Payload);
+            var socket = sender as TcpSocket;
 
-            this.logger.Log(LogLevel.Debug, "Received : {0}", message);
+            handlePacket(receivedPacket, socket);
         }
 
         private void ClientSocket_OnDisconnected(object sender, TcpSocketDisconnectedEventArgs e)
@@ -84,6 +89,22 @@ namespace CITYMumbler.Server
             var disconnected = connectedClients.FirstOrDefault(client => client.ID == e.ClientID);
             connectedClients.Remove(disconnected);
             this.logger.Log(LogLevel.Warn, "Connection lost with {0}", disconnected?.RemoteEndpoint);
+        }
+
+        private void handlePacket(IPacket packet, TcpSocket clientSocket)
+        {
+            switch (packet.PacketType)
+            {
+                case PacketType.Connection:
+                    var p = packet as ConnectionPacket;
+                    var client = connectedClients.FirstOrDefault(c => c.ID == clientSocket.ClientID);
+                    client.Name = string.Format("{0}#{1}", p.Name, client.ID);
+                    var response = new ConnectedPacket(client.ID);
+                    var responseBytes = this._serializer.ToBytes(response);
+                    client.ClientSocket.Send(responseBytes);
+                    this.logger.Log(LogLevel.Info, "New client with name: {0}", client.Name);
+                    break;
+            }
         }
     }
 }

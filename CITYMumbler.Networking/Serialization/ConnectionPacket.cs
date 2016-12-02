@@ -2,14 +2,14 @@
 
 namespace CITYMumbler.Networking.Serialization
 {
-	public class RegisterClientPacket : Packet
+	public class ConnectionPacket : Packet
 	{
 		public string Name { get; private set; }
 
 
-		public RegisterClientPacket(string name)
+		public ConnectionPacket(string name)
 		{
-			this.PacketType = PacketTypeHeader.Connection;
+			this.PacketType = Contracts.PacketType.Connection;
 			this.Name = name;
 		}
 	}

@@ -131,10 +131,10 @@ namespace CITYMumbler.Client.ViewModels
 
         private void MumblerClient_OnConnected(object sender, EventArgs eventArgs)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                this.HostScreen.Router.Navigate.Execute(Locator.Current.GetService<MainViewModel>());
-            }));
+            //Application.Current.Dispatcher.Invoke(new Action(() =>
+            //{
+            //    this.HostScreen.Router.Navigate.Execute(Locator.Current.GetService<MainViewModel>());
+            //}));
         }
 
         private void Connect()

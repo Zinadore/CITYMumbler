@@ -8,6 +8,6 @@ namespace CITYMumbler.Networking.Contracts.Serialization
 {
 	public interface IPacket
 	{
-		PacketTypeHeader PacketType { get; }
+		PacketType PacketType { get; }
 	}
 }

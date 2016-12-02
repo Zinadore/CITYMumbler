@@ -11,7 +11,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public JoinGroupPacket(ushort cliendId, ushort groupId, string password = null)
 		{
-			this.PacketType = PacketTypeHeader.JoinGroup;
+			this.PacketType = Contracts.PacketType.JoinGroup;
 			this.CliendId = cliendId;
 			this.GroupId = groupId;
 			this.Password = password;
