@@ -12,12 +12,21 @@ namespace CITYMumbler.Client
 {
     public class MumblerClient
     {
+        #region Private Members
         private TcpSocket socket;
         private ILogger logger;
         private string username;
         private PacketSerializer pSerializer;
+        #endregion
+
+        #region Events
+        public EventHandler OnConnected;
+        public EventHandler OnDisconnected;
+        #endregion
+
+        #region Properties
         public BehaviorSubject<bool> Connected { get; set; }
-        
+        #endregion
 
         public MumblerClient()
         {
@@ -61,7 +70,7 @@ namespace CITYMumbler.Client
         {
             this.socket.OnConnectEnd += Socket_OnConnectEnd;
             this.socket.OnDataReceived += Socket_OnDataReceived;
-            this.socket.OnDisconnected += Socket_OnDisconnected;
+            //this.socket.OnDisconnected += Socket_OnDisconnected;
         }
         #endregion
 
@@ -71,7 +80,8 @@ namespace CITYMumbler.Client
         #region Socket Events
         private void Socket_OnDataReceived(object sender, TcpSocketDataReceivedEventArgs e)
         {
-            throw new NotImplementedException();
+            this.logger.Log(LogLevel.Info, "Received: {0}", e.Payload);
+            //Console.WriteLine("Tarara");
         }
         private void Socket_OnConnectEnd(object sender, TcpSocketConnectionStateEventArgs e)
         {
@@ -79,8 +89,10 @@ namespace CITYMumbler.Client
             {
                 this.Connected.OnNext(true);
                 this.logger.Log(LogLevel.Info, "Connected successfully");
+                this.socket.OnDisconnected += Socket_OnDisconnected;
                 var p = new RegisterClientPacket(this.username);
                 this.socket.Send(this.pSerializer.ToBytes(p));
+                this.OnConnected?.Invoke(this, EventArgs.Empty);
             }
             else
             {
@@ -93,6 +105,7 @@ namespace CITYMumbler.Client
         {
             this.Connected.OnNext(false);
             this.logger.Log(LogLevel.Warn, "Server disconnected");
+            this.OnDisconnected?.Invoke(this, EventArgs.Empty);
         }
         #endregion
        

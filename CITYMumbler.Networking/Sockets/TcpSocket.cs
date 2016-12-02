@@ -196,7 +196,7 @@ namespace CITYMumbler.Networking.Sockets
             catch(Exception e)
             {
                 Disconnected();
-                //Debug.Print(e.StackTrace);
+                Debug.Print(e.StackTrace);
             }
         }
 
