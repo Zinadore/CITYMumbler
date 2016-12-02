@@ -38,7 +38,17 @@ namespace CITYMumbler.Client
             this.socket.ConnectAsync(host, port);
         }
 
+        public void Connect(IPAddress address, int port, string username)
+        {
+            this.username = username;
+            this.socket.ConnectAsync(address, port);
+        }
 
+        public void Connect(IPEndPoint endpoint, string username)
+        {
+            this.username = username;
+            this.socket.ConnectAsync(endpoint);
+        }
         public void SendUserName(string message)
         {
             //    if (socket.Connected)
