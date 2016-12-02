@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Networking.Contracts;
 using ReactiveUI;
 using Splat;
 
@@ -23,6 +24,8 @@ namespace CITYMumbler.Client.ViewModels
 			this.HostScreen = hostScreen;
 			this.SendCommand = ReactiveCommand.Create(SendMessage);
 			_mumblerClient = Locator.Current.GetService<MumblerClient>();
+			Group group = new Group("supergroup", (ushort) 3, (ushort) 5, JoinGroupPermissionTypes.Free, 10 );
+			group.UserList.Add(new Client(5, "Giorgaras"));
             //this.WhenAnyValue(x => x.ChatInput)
             //    .Select(x => x?.Trim())
             //    .ToProperty(this, x => x.ChatDisplay, out _chatDisplay);
