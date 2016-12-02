@@ -32,10 +32,26 @@ namespace CITYMumbler.Client
 
 		public void RemoveGroup(ushort id)
 		{
-			foreach (var @group in GroupList)
+			foreach (var g in GroupList)
 			{
-				if (@group.Id == id)
-					GroupList.Remove(@group);
+				if (g.Id == id)
+				{
+					GroupList.Remove(g);
+					return;
+				}
+			}
+			throw new InstanceNotFoundException();
+		}
+
+		public void RemoveGroup(Group group)
+		{
+			foreach (var g in GroupList)
+			{
+				if (g.Id == group.Id)
+				{
+					GroupList.Remove(group);
+					return;
+				}
 			}
 			throw new InstanceNotFoundException();
 		}
