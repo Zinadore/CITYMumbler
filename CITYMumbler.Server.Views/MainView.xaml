@@ -20,7 +20,7 @@
         <RichTextBox x:Name="LogOutput"
                  AcceptsReturn="True"
                  Grid.Row="1"
-                 IsReadOnly="False"
+                 IsReadOnly="True"
                  Background="Black" 
                  Foreground="AliceBlue"
                  VerticalScrollBarVisibility="Auto">

@@ -28,6 +28,7 @@ namespace CITYMumbler.Client
         {
             this.socket = new TcpSocket();
             setSocketEvents();
+            this.pSerializer = new PacketSerializer();
             this.Connected = new BehaviorSubject<bool>(false);
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
         }
