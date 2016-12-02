@@ -10,7 +10,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public LeftGroupPacket(ushort clientId, ushort groupId, LeftGroupTypes leftGroupType)
 		{
-			this.PacketType = PacketTypeHeader.LeftGroup;
+			this.PacketType = Contracts.PacketType.LeftGroup;
 			this.ClientId = clientId;
 			this.GroupId = groupId;
 			this.LeftGroupType = leftGroupType;

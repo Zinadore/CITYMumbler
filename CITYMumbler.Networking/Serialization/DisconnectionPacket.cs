@@ -13,7 +13,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public DisconnectionPacket(ushort ClientId)
 		{
-			this.PacketType = PacketTypeHeader.Disconnection;
+			this.PacketType = PacketType.Disconnection;
 			this.ClientId = ClientId;
 		}
 	}

@@ -11,7 +11,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public GroupMessagePacket(ushort senderId, ushort receiverId, string message)
 		{
-			this.PacketType = PacketTypeHeader.GroupMessage;
+			this.PacketType = PacketType.GroupMessage;
 			this.SenderId = senderId;
 			this.ReceiverId = receiverId;
 			this.Message = message;

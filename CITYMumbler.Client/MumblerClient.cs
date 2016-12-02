@@ -2,6 +2,8 @@
 using System.Net;
 using System.Reactive.Subjects;
 using CITYMumbler.Common.Contracts.Services.Logger;
+using CITYMumbler.Networking.Contracts;
+using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
 using CITYMumbler.Networking.Sockets;
 using Splat;
@@ -16,7 +18,7 @@ namespace CITYMumbler.Client
         private TcpSocket socket;
         private ILogger logger;
         private string username;
-        private PacketSerializer pSerializer;
+        private PacketSerializer serializer;
         #endregion
 
         #region Events
@@ -32,10 +34,10 @@ namespace CITYMumbler.Client
         {
             this.socket = new TcpSocket();
             setSocketEvents();
-            this.pSerializer = new PacketSerializer();
+            this.serializer = new PacketSerializer();
             this.Connected = new BehaviorSubject<bool>(false);
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
-			this.pSerializer = new PacketSerializer();
+			this.serializer = new PacketSerializer();
         }
 
         public void Connect(string host, int port, string username)
@@ -80,9 +82,12 @@ namespace CITYMumbler.Client
         #region Socket Events
         private void Socket_OnDataReceived(object sender, TcpSocketDataReceivedEventArgs e)
         {
-            this.logger.Log(LogLevel.Info, "Received: {0}", e.Payload);
-            //Console.WriteLine("Tarara");
+            IPacket receivedPacket = this.serializer.FromBytes(e.Payload);
+            this.handlePacket(receivedPacket);
         }
+
+
+
         private void Socket_OnConnectEnd(object sender, TcpSocketConnectionStateEventArgs e)
         {
             if (e.Connected)
@@ -90,8 +95,8 @@ namespace CITYMumbler.Client
                 this.Connected.OnNext(true);
                 this.logger.Log(LogLevel.Info, "Connected successfully");
                 this.socket.OnDisconnected += Socket_OnDisconnected;
-                var p = new RegisterClientPacket(this.username);
-                this.socket.Send(this.pSerializer.ToBytes(p));
+                var p = new ConnectionPacket(this.username);
+                this.socket.Send(this.serializer.ToBytes(p));
                 this.OnConnected?.Invoke(this, EventArgs.Empty);
             }
             else
@@ -108,8 +113,18 @@ namespace CITYMumbler.Client
             this.OnDisconnected?.Invoke(this, EventArgs.Empty);
         }
         #endregion
-       
 
-       
+
+        private void handlePacket(IPacket receivedPacket)
+        {
+            switch (receivedPacket.PacketType)
+            {
+                case PacketType.Connected:
+                    var p = receivedPacket as ConnectedPacket;
+                    this.logger.Log(LogLevel.Info, "I received my new id and it is: {0}", p.ClientId);
+                    break;
+            }
+        }
+
     }
 }

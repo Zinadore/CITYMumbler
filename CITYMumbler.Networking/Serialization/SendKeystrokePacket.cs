@@ -6,7 +6,7 @@ namespace CITYMumbler.Networking.Serialization
 	{
 		public SendKeystrokePacket(ushort senderId, ushort receiverId, string message) : base(senderId, receiverId, message)
 		{
-			this.PacketType = PacketTypeHeader.SendKeystroke;
+			this.PacketType = Contracts.PacketType.SendKeystroke;
 		}
 	}
 }

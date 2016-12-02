@@ -10,7 +10,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public ChangeGroupOwnerPacket(ushort clientId, ushort groupId, ushort newOwnerId)
 		{
-			this.PacketType = PacketTypeHeader.ChangeGroupOwner;
+			this.PacketType = Contracts.PacketType.ChangeGroupOwner;
 			this.ClientId = clientId;
 			this.GroupId = groupId;
 			this.NewOwnerId = newOwnerId;

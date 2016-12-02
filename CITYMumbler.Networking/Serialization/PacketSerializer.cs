@@ -28,7 +28,7 @@ namespace CITYMumbler.Networking.Serialization
 			if (major != VERSION_MAJOR || minor != VERSION_MINOR)
 				throw new ArgumentException("This packet comes from a different version of the Serializer");
 
-			PacketTypeHeader type = (PacketTypeHeader)reader.ReadByte();
+			PacketType type = (PacketType)reader.ReadByte();
 			IPacket packet = reader.ReadPacket(type);
 
 			return packet;
@@ -53,46 +53,46 @@ namespace CITYMumbler.Networking.Serialization
 			// Write Payload
 			switch (packet.PacketType)
 			{
-				case PacketTypeHeader.SendKeystroke:
+				case PacketType.SendKeystroke:
 					writter.Write((SendKeystrokePacket) packet);
 					break;
-				case PacketTypeHeader.GroupMessage:
+				case PacketType.GroupMessage:
 					writter.Write((GroupMessagePacket)packet);
 					break;
-				case PacketTypeHeader.PrivateMessage:
+				case PacketType.PrivateMessage:
 					writter.Write((PrivateMessagePacket)packet);
 					break;
-				case PacketTypeHeader.Connection:
-					writter.Write((RegisterClientPacket)packet);
+				case PacketType.Connection:
+					writter.Write((ConnectionPacket)packet);
 					break;
-				case PacketTypeHeader.Disconnection:
+				case PacketType.Disconnection:
 					writter.Write((DisconnectionPacket) packet);
 					break;
-				case PacketTypeHeader.Connected:
+				case PacketType.Connected:
 					writter.Write((ConnectedPacket)packet);
 					break;
-				case PacketTypeHeader.CreateGroup:
+				case PacketType.CreateGroup:
 					writter.Write((CreateGroupPacket)packet);
 					break;
-				case PacketTypeHeader.DeleteGroup:
+				case PacketType.DeleteGroup:
 					writter.Write((DeleteGroupPacket)packet);
 					break;
-				case PacketTypeHeader.ChangeGroupOwner:
+				case PacketType.ChangeGroupOwner:
 					writter.Write((ChangeGroupOwnerPacket)packet);
 					break;
-				case PacketTypeHeader.JoinGroup:
+				case PacketType.JoinGroup:
 					writter.Write((JoinGroupPacket)packet);
 					break;
-				case PacketTypeHeader.JoinedGroup:
+				case PacketType.JoinedGroup:
 					writter.Write((JoinedGroupPacket)packet);
 					break;
-				case PacketTypeHeader.Kick:
+				case PacketType.Kick:
 					writter.Write((KickPacket)packet);
 					break;
-				case PacketTypeHeader.LeaveGroup:
+				case PacketType.LeaveGroup:
 					writter.Write((LeaveGroupPacket)packet);
 					break;
-				case PacketTypeHeader.LeftGroup:
+				case PacketType.LeftGroup:
 					writter.Write((LeftGroupPacket)packet);
 					break;
 				default:

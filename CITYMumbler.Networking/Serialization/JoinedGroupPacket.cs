@@ -9,7 +9,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public JoinedGroupPacket(ushort ClientId, ushort GroupId)
 		{
-			this.PacketType = PacketTypeHeader.JoinedGroup;
+			this.PacketType = PacketType.JoinedGroup;
 			this.ClientId = ClientId;
 			this.GroupId = GroupId;
 		}

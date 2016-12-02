@@ -9,7 +9,7 @@ namespace CITYMumbler.Networking.Serialization
 
 		public DeleteGroupPacket(ushort clientId, ushort groupId)
 		{
-			this.PacketType = PacketTypeHeader.DeleteGroup;
+			this.PacketType = PacketType.DeleteGroup;
 			this.ClientId = clientId;
 			this.GroupId = groupId;
 		}
