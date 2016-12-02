@@ -32,7 +32,7 @@ namespace CITYMumbler.Client.Views
 			//{
 				InitializeComponent();
 				ViewModel = Locator.Current.GetService<ChatViewModel>();
-				this.OneWayBind(this.ViewModel, vm => vm.ChatDisplay, @this => @this.ChatDisplay.Text);
+				this.Bind(this.ViewModel, vm => vm.ChatDisplay, @this => @this.ChatDisplay.Text);
 				this.Bind(this.ViewModel, vm => vm.ChatInput, @this => @this.ChatInput.Text);
 
 			this.BindCommand(ViewModel, vm => vm.SendCommand, @this => @this.SendButton);

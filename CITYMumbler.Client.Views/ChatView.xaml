@@ -35,7 +35,7 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
-		<TextBlock Text="{Binding}" Grid.Row="0" Grid.ColumnSpan="2" x:Name="ChatDisplay"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Stretch" />
+		<TextBlock Grid.Row="0" Grid.ColumnSpan="2" x:Name="ChatDisplay"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Stretch" />
 		<TextBox Grid.Row="1" Grid.Column="0" x:Name="ChatInput" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
 		<Button Grid.Row="1" Grid.Column="1"  x:Name="SendButton" Content="☼" HorizontalAlignment="Right"  VerticalAlignment="Bottom"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 	</Grid>

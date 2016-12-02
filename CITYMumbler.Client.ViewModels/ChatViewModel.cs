@@ -30,7 +30,8 @@ namespace CITYMumbler.Client.ViewModels
 
 		private void SendMessage()
 		{
-			//TODO call send message on _mumblerClient
+			this.ChatDisplay += ("\n ME: " + ChatInput);
+			this.ChatInput = "";
 			//_mumblerClient.SendPrivateMessage((ushort) 5, ChatInput);
 		}
 
@@ -40,10 +41,11 @@ namespace CITYMumbler.Client.ViewModels
 			get { return _tabList.Value; }
 		}
 
-		private readonly ObservableAsPropertyHelper<string> _chatDisplay;
+		private string _chatDisplay;
 		public string ChatDisplay
 		{
-			get { return _chatDisplay.Value; }
+			get { return _chatDisplay; }
+			set { this.RaiseAndSetIfChanged(ref _chatDisplay, value); }
 		}
 
 		private string _chatInput;
