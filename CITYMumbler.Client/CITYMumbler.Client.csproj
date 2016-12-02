@@ -58,9 +58,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chat.cs" />
+    <Compile Include="ChatService.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Group.cs" />
+    <Compile Include="GroupChat.cs" />
+    <Compile Include="GroupService.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MumblerClient.cs" />
+    <Compile Include="PrivateChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

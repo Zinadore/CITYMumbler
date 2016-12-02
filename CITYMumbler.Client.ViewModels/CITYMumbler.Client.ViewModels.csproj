@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatViewModel.cs" />
+    <Compile Include="LogWindowViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
