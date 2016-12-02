@@ -25,6 +25,7 @@ namespace CITYMumbler.Client
             setSocketEvents();
             this.Connected = new BehaviorSubject<bool>(false);
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
+			this.pSerializer = new PacketSerializer();
         }
 
         public void Connect(string host, int port, string username)
@@ -89,12 +90,8 @@ namespace CITYMumbler.Client
 
         private void Socket_OnDisconnected(object sender, TcpSocketDisconnectedEventArgs e)
         {
-<<<<<<< HEAD
-			this.socket.ConnectAsync(IPAddress.Loopback, 21992);
-=======
             this.Connected.OnNext(false);
             this.logger.Log(LogLevel.Warn, "Server disconnected");
->>>>>>> master
         }
         #endregion
        

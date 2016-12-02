@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CITYMumbler.Client.ViewModels;
+using CITYMumbler.Common.Contracts.Services.Logger;
+using CITYMumbler.Common.Services.Logger;
 using ReactiveUI;
 using Splat;
 
@@ -17,6 +19,7 @@ namespace CITYMumbler.Client.Views
 		public AppBootstrapper() {
             this.Router = new RoutingState();
             Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
+			Locator.CurrentMutable.RegisterConstant(new LoggerService(), typeof(ILoggerService));
 
 			MumblerClient = new MumblerClient();
 			Locator.CurrentMutable.RegisterConstant(MumblerClient, typeof(MumblerClient));

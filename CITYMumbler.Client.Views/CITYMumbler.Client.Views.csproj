@@ -165,6 +165,14 @@
       <Project>{085557FF-790D-4E3E-8F5E-2A4C5F71800B}</Project>
       <Name>CITYMumbler.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
+      <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
+      <Name>CITYMumbler.Common.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common\CITYMumbler.Common.csproj">
+      <Project>{369986AC-2D9D-4677-BE7F-5D032150B041}</Project>
+      <Name>CITYMumbler.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

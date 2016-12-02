@@ -32,6 +32,8 @@ namespace CITYMumbler.Client.Views
             this.OneWayBind(this.ViewModel, vm => vm.IsConnectButtonEnabled, @this => @this.ConnectButton.IsEnabled);
 
 	        this.BindCommand(this.ViewModel, vm => vm.ConnnectCommand, @this => @this.ConnectButton);
+
+	        this.Username.Focus();
         }
 
         object IViewFor.ViewModel

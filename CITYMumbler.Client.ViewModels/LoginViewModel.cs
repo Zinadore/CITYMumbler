@@ -24,11 +24,11 @@ namespace CITYMumbler.Client.ViewModels
 		private IPAddress _addressIp;
 
 		private string _address;
-        public string Address
-        {
-            get { return _address; }
-            set { this.RaiseAndSetIfChanged(ref _address, value); }
-        }
+	    public string Address
+	    {
+		    get { return _address; }
+		    set { this.RaiseAndSetIfChanged(ref _address, value); }
+	    } 
 
         private string _port;
         public string Port
@@ -47,7 +47,7 @@ namespace CITYMumbler.Client.ViewModels
         private readonly ObservableAsPropertyHelper<string> _error;
         public string Error
         {
-            get { return _error.Value; }
+            get { return "error default"; }
         }
 
 	    private ObservableAsPropertyHelper<bool> _isConnectButtonEnabled;
@@ -73,7 +73,9 @@ namespace CITYMumbler.Client.ViewModels
 
 		public LoginViewModel(IScreen host)
         {
-            HostScreen = host;
+			this.Address  = "127.0.0.1";
+			this.Port = "21992";
+			HostScreen = host;
 			_mumblerClient = Locator.Current.GetService<MumblerClient>();
 
 			this.WhenAnyValue(x => x.Address)
@@ -91,7 +93,7 @@ namespace CITYMumbler.Client.ViewModels
 			this.WhenAnyValue(x => x.Username)
 			    .Select(x => x?.Trim())
 				.DistinctUntilChanged()
-			    .Select(x => x.Length > 0)
+			    .Select(x => !string.IsNullOrEmpty(x))
 			    .ToProperty(this, @this => @this.IsUsernameValid, out _isUsernameValid, false);
 
 			var CanExecuteConnect = this.WhenAnyValue(x => x.IsAddressValid, x => x.IsPortValid, x => x.IsUsernameValid,
