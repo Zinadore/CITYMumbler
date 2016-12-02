@@ -28,7 +28,7 @@ namespace CITYMumbler.Client.Views
             ViewModel = bootstrapper;
             this.WhenAnyValue(x => x.ViewModel).BindTo(this, x => x.DataContext);
             this.Bind(ViewModel, vm => vm.Router, @this => @this.ContentHost.Router);
-            this.ViewModel.Router.Navigate.Execute(Locator.Current.GetService<MainViewModel>());
+            this.ViewModel.Router.Navigate.Execute(Locator.Current.GetService<LoginViewModel>());
         }
 
         object IViewFor.ViewModel

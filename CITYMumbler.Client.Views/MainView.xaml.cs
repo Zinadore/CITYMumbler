@@ -33,5 +33,6 @@ namespace CITYMumbler.Client.Views
 			set { ViewModel = (MainViewModel) value; }
 		}
 		public MainViewModel ViewModel { get; set; }
-	}
+
+    }
 }
