@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using CITYMumbler.Client.ViewModels;
 using CITYMumbler.Common.Contracts.Services.Logger;
 using ReactiveUI;
@@ -29,9 +30,9 @@ namespace CITYMumbler.Client.Views
         public LoginView()
         {
             InitializeComponent();
-            this.Username.Focusable = true;
-            this.Username.Focus();
-            Keyboard.Focus(this.Username);
+            //this.Username.Focusable = true;
+            //this.Username.Focus();
+            //Keyboard.Focus(this.Username);
             this._subscriptions = new CompositeDisposable();
             this.Bind(this.ViewModel, vm => vm.Address, @this => @this.Address.Text);
             this.Bind(this.ViewModel, vm => vm.Port, @this => @this.Port.Text);
@@ -93,6 +94,15 @@ namespace CITYMumbler.Client.Views
                 default:
                     return Brushes.AliceBlue;
             }
+        }
+
+        private void LoginView_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(() =>
+            {
+                this.Username.Focus();
+                Keyboard.Focus(this.Username);
+            }));
         }
     }
 }
