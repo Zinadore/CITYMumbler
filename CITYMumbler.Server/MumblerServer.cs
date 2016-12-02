@@ -104,6 +104,11 @@ namespace CITYMumbler.Server
                     client.ClientSocket.Send(responseBytes);
                     this.logger.Log(LogLevel.Info, "New client with name: {0}", client.Name);
                     break;
+				case PacketType.GroupMessage:
+		            var groupMessagePacket = packet as GroupMessagePacket;
+					this.logger.Log(LogLevel.Info, "{0} said to group with id {1}: {2}", 
+						groupMessagePacket.SenderName, groupMessagePacket.ReceiverId, groupMessagePacket.Message);
+		            break;
             }
         }
     }

@@ -8,7 +8,7 @@ using ReactiveUI;
 
 namespace CITYMumbler.Client
 {
-	class UserService
+	public class UserService
 	{
 		public ReactiveList<Client> UserList { get; private set; }
 		public Client Me { get; private set; }

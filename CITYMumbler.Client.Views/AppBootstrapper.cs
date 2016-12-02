@@ -14,15 +14,14 @@ namespace CITYMumbler.Client.Views
     public class AppBootstrapper: ReactiveObject, IScreen
     {
         public RoutingState Router { get; }
-		public MumblerClient MumblerClient { get; private set; }
 
 		public AppBootstrapper() {
             this.Router = new RoutingState();
             Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
 			Locator.CurrentMutable.RegisterConstant(new LoggerService(), typeof(ILoggerService));
 
-			MumblerClient = new MumblerClient();
-			Locator.CurrentMutable.RegisterConstant(MumblerClient, typeof(MumblerClient));
+			Locator.CurrentMutable.RegisterConstant(new UserService(), typeof(UserService));
+			Locator.CurrentMutable.RegisterConstant(new MumblerClient(), typeof(MumblerClient));
 
             RegisterViewModels();
             RegisterViews();
