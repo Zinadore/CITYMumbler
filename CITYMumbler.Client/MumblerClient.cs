@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Reactive.Subjects;
 using CITYMumbler.Common.Contracts.Services.Logger;
 using CITYMumbler.Networking.Serialization;
 using CITYMumbler.Networking.Sockets;
-using ReactiveUI;
 using Splat;
 using ILogger = CITYMumbler.Common.Contracts.Services.Logger.ILogger;
 using LogLevel = CITYMumbler.Common.Contracts.Services.Logger.LogLevel;
@@ -31,6 +26,7 @@ namespace CITYMumbler.Client
             this.pSerializer = new PacketSerializer();
             this.Connected = new BehaviorSubject<bool>(false);
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
+			this.pSerializer = new PacketSerializer();
         }
 
         public void Connect(string host, int port, string username)

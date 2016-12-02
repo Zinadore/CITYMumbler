@@ -92,17 +92,38 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="ChatView.xaml.cs">
+      <DependentUpon>ChatView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TabContentView.xaml.cs">
+      <DependentUpon>TabContentView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ChatView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TabContentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -139,6 +160,18 @@
     <ProjectReference Include="..\CITYMumbler.Client.ViewModels\CITYMumbler.Client.ViewModels.csproj">
       <Project>{a4872f68-caa2-4823-babb-62e40921af46}</Project>
       <Name>CITYMumbler.Client.ViewModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Client\CITYMumbler.Client.csproj">
+      <Project>{085557FF-790D-4E3E-8F5E-2A4C5F71800B}</Project>
+      <Name>CITYMumbler.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
+      <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
+      <Name>CITYMumbler.Common.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common\CITYMumbler.Common.csproj">
+      <Project>{369986AC-2D9D-4677-BE7F-5D032150B041}</Project>
+      <Name>CITYMumbler.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

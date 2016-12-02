@@ -29,8 +29,11 @@ namespace CITYMumbler.Client.Views
             this.Bind(this.ViewModel, vm => vm.Port, @this => @this.Port.Text);
             this.Bind(this.ViewModel, vm => vm.Username, @this => @this.Username.Text);
             this.OneWayBind(this.ViewModel, vm => vm.Error, @this => @this.Error.Text);
-            this.OneWayBind(this.ViewModel, vm => vm.CanConnect, @this => @this.ConnectButton.IsEnabled);
+            this.OneWayBind(this.ViewModel, vm => vm.IsConnectButtonEnabled, @this => @this.ConnectButton.IsEnabled);
 
+	        this.BindCommand(this.ViewModel, vm => vm.ConnnectCommand, @this => @this.ConnectButton);
+
+	        this.Username.Focus();
         }
 
         object IViewFor.ViewModel
