@@ -6,14 +6,16 @@ namespace CITYMumbler.Networking.Serialization
 	{
 		public ushort SenderId { get; private set; }
 		public ushort ReceiverId { get; private set; }
+		public string SenderName { get; private set; }
 		public string Message { get; private set; }
 
 
-		public PrivateMessagePacket(ushort senderId, ushort receiverId, string message)
+		public PrivateMessagePacket(ushort senderId, ushort receiverId, string senderName, string message)
 		{
 			this.PacketType = PacketTypeHeader.PrivateMessage;
 			this.SenderId = senderId;
 			this.ReceiverId = receiverId;
+			this.SenderName = senderName;
 			this.Message = message;
 		}
 	}

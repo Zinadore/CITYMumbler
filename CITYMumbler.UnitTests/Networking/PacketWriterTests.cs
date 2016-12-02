@@ -55,7 +55,7 @@ namespace CITYMumbler.UnitTests.Networking
         {
             // Arrange
             PacketWritter writter = new PacketWritter();
-            IPacket packet = new PrivateMessagePacket((ushort)2, (ushort)4, "hello world!");
+            IPacket packet = new PrivateMessagePacket((ushort)2, (ushort)4, "dkdkdk", "hello world!");
 
             // Act
             writter.Write((PrivateMessagePacket)packet);
@@ -73,7 +73,7 @@ namespace CITYMumbler.UnitTests.Networking
         {
             // Arrange
             PacketWritter writter = new PacketWritter();
-            IPacket packet = new SendKeystrokePacket((ushort)2, (ushort)4, "h");
+            IPacket packet = new SendKeystrokePacket((ushort)2, (ushort)4, "dd","h");
 
             // Act
             writter.Write((SendKeystrokePacket)packet);
@@ -91,7 +91,7 @@ namespace CITYMumbler.UnitTests.Networking
         {
             // Arrange
             PacketWritter writter = new PacketWritter();
-            IPacket packet = new GroupMessagePacket((ushort)2, (ushort)4, "hello world!");
+            IPacket packet = new GroupMessagePacket((ushort)2, (ushort)4, "dsds", "hello world!");
 
             // Act
             writter.Write((GroupMessagePacket)packet);

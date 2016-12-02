@@ -17,7 +17,7 @@ namespace CITYMumbler.UnitTests.Networking
         public void serialize_packet_to_bytes()
         {
             // Arrange
-            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "hello");
+            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "ddd", "hello");
             PacketSerializer serializer = new PacketSerializer();
 
             // Act
@@ -35,7 +35,7 @@ namespace CITYMumbler.UnitTests.Networking
         public void deserialize_packet_from_bytes()
         {
             // Arrange
-            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "hello");
+            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "Ddd","hello");
             PacketSerializer serializer = new PacketSerializer();
 
             // Act
@@ -55,7 +55,7 @@ namespace CITYMumbler.UnitTests.Networking
         public void deserialize_throws_exception_if_app_identifier_wrong()
         {
             // Arrange 
-            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "hello");
+            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "elel","hello");
             PacketSerializer serializer = new PacketSerializer();
 
             // Act
@@ -71,7 +71,7 @@ namespace CITYMumbler.UnitTests.Networking
         public void deserialize_throws_exception_if_version_is_wrong()
         {
             // Arrange 
-            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "hello");
+            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "edd", "hello");
             PacketSerializer serializer = new PacketSerializer();
 
             // Act
@@ -88,7 +88,7 @@ namespace CITYMumbler.UnitTests.Networking
         public void deserialize_throws_exception_if_packetType_does_not_exist()
         {
             // Arrange 
-            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "hello");
+            IPacket packet = new PrivateMessagePacket((ushort)3, (ushort)6, "ddks", "hello");
             PacketSerializer serializer = new PacketSerializer();
 
             // Act

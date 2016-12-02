@@ -41,6 +41,7 @@ namespace CITYMumbler.Networking.Utilities
         {
             Write(packet.SenderId);
             Write(packet.ReceiverId);
+			Write(packet.SenderName);
             Write(packet.Message);
         }
 
@@ -53,6 +54,7 @@ namespace CITYMumbler.Networking.Utilities
         {
             Write(packet.SenderId);
             Write(packet.ReceiverId);
+			Write(packet.SenderName);
             Write(packet.Message);
         }
 

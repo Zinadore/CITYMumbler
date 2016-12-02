@@ -76,8 +76,9 @@ namespace CITYMumbler.Networking.Utilities
         {
             ushort senderId = ReadUInt16();
             ushort receiverId = ReadUInt16();
+	        string senderName = ReadString();
             string message = ReadString();
-            IPacket packet = new PrivateMessagePacket(senderId, receiverId, message);
+            IPacket packet = new PrivateMessagePacket(senderId, receiverId, senderName, message);
             return packet;
         }
 
@@ -85,8 +86,9 @@ namespace CITYMumbler.Networking.Utilities
         {
             ushort senderId = ReadUInt16();
             ushort receiverId = ReadUInt16();
+	        string senderName = ReadString();
             string message = ReadString();
-            IPacket packet = new SendKeystrokePacket(senderId, receiverId, message);
+            IPacket packet = new SendKeystrokePacket(senderId, receiverId, senderName, message);
             return packet;
         }
 
@@ -94,8 +96,9 @@ namespace CITYMumbler.Networking.Utilities
         {
             ushort senderId = ReadUInt16();
             ushort receiverId = ReadUInt16();
+	        string senderName = ReadString();
             string message = ReadString();
-            IPacket packet = new GroupMessagePacket(senderId, receiverId, message);
+            IPacket packet = new GroupMessagePacket(senderId, receiverId, senderName, message);
             return packet;
         }
 
