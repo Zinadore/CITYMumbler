@@ -37,11 +37,9 @@ namespace CITYMumbler.Networking.Sockets
         }
     }
 
-    public class TcpSocketDisconnected : EventArgs
+    public class TcpSocketDisconnectedEventArgs : EventArgs
     {
-        
-        public TcpSocketDisconnected() {
-            
-        }
+        public int ClientID { get; private set; }
+        public TcpSocketDisconnectedEventArgs(int clientID) { this.ClientID = clientID; }
     }
 }

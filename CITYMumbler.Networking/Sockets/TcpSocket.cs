@@ -26,10 +26,12 @@ namespace CITYMumbler.Networking.Sockets
         public event EventHandler<TcpSocketConnectionStateEventArgs> OnConnectEnd;
         //public event EventHandler<TcpSocketConnectionStateEventArgs> OnConnectionError;
         public event EventHandler<TcpSocketDataReceivedEventArgs> OnDataReceived;
-        public event EventHandler OnDisconnected;
+        public event EventHandler<TcpSocketDisconnectedEventArgs> OnDisconnected;
 
         public bool Connected { get; private set; } = false;
         public bool IsDisposed { get; private set; } = false;
+
+        public int ClientID { get; set; } = default(int);
 
         /// <summary>
         /// Should be used on the client side mainly. Where you need a new socket to communicate.
@@ -259,14 +261,14 @@ namespace CITYMumbler.Networking.Sockets
             this.checkDisposed();
             if (this.Connected)
             {
-                this.socket.Disconnect(true);
+                this.socket.Shutdown(SocketShutdown.Both);
                 this.Connected = false;
             }
         }
         private void Disconnected()
         {
             this.Connected = false;
-            this.OnDisconnected?.Invoke(this, EventArgs.Empty);
+            this.OnDisconnected?.Invoke(this, new TcpSocketDisconnectedEventArgs(this.ClientID));
         }
         #endregion
 

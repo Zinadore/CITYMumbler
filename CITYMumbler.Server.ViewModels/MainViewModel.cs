@@ -26,6 +26,7 @@ namespace CITYMumbler.Server.ViewModels
             get { return _started; }
             set { this.RaiseAndSetIfChanged(ref _started, value); }
         }
+        
         private CompositeDisposable _subscriptions;
         public static MumblerServer MumblerServer { get; private set; }
         public string UrlPathSegment => "main";
