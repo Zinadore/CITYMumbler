@@ -161,6 +161,10 @@
       <Project>{a4872f68-caa2-4823-babb-62e40921af46}</Project>
       <Name>CITYMumbler.Client.ViewModels</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Client\CITYMumbler.Client.csproj">
+      <Project>{085557FF-790D-4E3E-8F5E-2A4C5F71800B}</Project>
+      <Name>CITYMumbler.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

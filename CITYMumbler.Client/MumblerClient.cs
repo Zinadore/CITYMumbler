@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using CITYMumbler.Networking.Contracts.Serialization;
+using CITYMumbler.Networking.Serialization;
 using CITYMumbler.Networking.Sockets;
 
 namespace CITYMumbler.Client
@@ -20,9 +22,10 @@ namespace CITYMumbler.Client
                 if (e.Connected)
                 {
                     socket.OnDisconnected += (ds, de) =>
-                    {
+					{ 
                         Console.WriteLine("Connection with server lost");
                     };
+					//TODO Send here the client login credentials
                     Console.WriteLine("Connected successfuly");
                 } else
                 {
@@ -48,7 +51,7 @@ namespace CITYMumbler.Client
 
         public void Connect()
         {
-            this.socket.ConnectAsync(IPAddress.Loopback, 21992);
+			this.socket.ConnectAsync(IPAddress.Loopback, 21992);
         }
     }
 }
