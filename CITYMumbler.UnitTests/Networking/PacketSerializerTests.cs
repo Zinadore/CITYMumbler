@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Common.Data;
+using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
 using NUnit.Framework;
@@ -99,5 +101,27 @@ namespace CITYMumbler.UnitTests.Networking
             var ex = Assert.Throws<ArgumentException>(() => serializer.FromBytes(bytes));
             Assert.That(ex.Message, Is.EqualTo("The provided PacketType is not valid."));
         }
+
+	    [Test]
+	    public void deserialize_send_goups()
+	    {
+			// Arrange
+			Group[] groups = new Group[]
+			{
+				new Group("group1", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
+				new Group("group2", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
+				new Group("group3", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6)
+			};
+			IPacket packet = new SendGroupsPacket(groups);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+		    byte[] bytes = serializer.ToBytes(packet);
+		    SendGroupsPacket result = (SendGroupsPacket) serializer.FromBytes(bytes);
+
+		    // Assert
+			Assert.AreEqual(result.GetNoOfGroups(), groups.Length);
+			Assert.AreEqual(result.GroupList[0].Id, groups[0].Id);
+	    }
     }
 }
