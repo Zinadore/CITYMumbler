@@ -58,22 +58,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatEntry.cs" />
-    <Compile Include="Services\Chat.cs" />
-    <Compile Include="Services\ChatService.cs" />
-    <Compile Include="Services\Client.cs" />
-    <Compile Include="Services\Group.cs" />
-    <Compile Include="Services\GroupChat.cs" />
-    <Compile Include="Services\GroupService.cs" />
-    <Compile Include="Services\Message.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="Group.cs" />
     <Compile Include="MumblerClient.cs" />
-    <Compile Include="Services\PrivateChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
       <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
       <Name>CITYMumbler.Common.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common\CITYMumbler.Common.csproj">
+      <Project>{369986AC-2D9D-4677-BE7F-5D032150B041}</Project>
+      <Name>CITYMumbler.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
       <Project>{c4aeb434-6d79-4b6a-9a6b-d795512191f3}</Project>

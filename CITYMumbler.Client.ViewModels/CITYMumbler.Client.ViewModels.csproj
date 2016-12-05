@@ -80,6 +80,7 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SummaryViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -92,6 +93,10 @@
     <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
       <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
       <Name>CITYMumbler.Common.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common\CITYMumbler.Common.csproj">
+      <Project>{369986AC-2D9D-4677-BE7F-5D032150B041}</Project>
+      <Name>CITYMumbler.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
       <Project>{C4AEB434-6D79-4B6A-9A6B-D795512191F3}</Project>

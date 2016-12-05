@@ -369,9 +369,9 @@ namespace CITYMumbler.UnitTests.Networking
 		{
 			// Arrange
 			PacketWritter writter = new PacketWritter();
-			Common.Data.Client[] clients = new Common.Data.Client[]
+			Common.Data.Client.Client[] clients = new Common.Data.Client.Client[]
 			{
-				new Common.Data.Client((ushort) 4, "client1")
+				new Common.Data.Client.Client((ushort) 4, "client1")
 			};
 			IPacket packet = new SendUsersPacket(clients);
 

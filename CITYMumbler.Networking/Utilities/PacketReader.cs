@@ -225,13 +225,13 @@ namespace CITYMumbler.Networking.Utilities
 	    private IPacket SendUsersMessage()
 	    {
 		    byte NoOfUsers = ReadByte();
-		    Client[] UserList = new Client[NoOfUsers];
+		    CommonClientRepresentation[] UserList = new CommonClientRepresentation[NoOfUsers];
 
 		    for (int i = 0; i < NoOfUsers; i++)
 		    {
 			    ushort id = ReadUInt16();
 			    string name = ReadString();
-			    UserList[i] = new Client(id, name);
+			    UserList[i] = new CommonClientRepresentation() { ID = id, Name = name };
 		    }
 		    return (IPacket) new SendUsersPacket(UserList);
 	    }

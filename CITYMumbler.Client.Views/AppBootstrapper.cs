@@ -19,8 +19,7 @@ namespace CITYMumbler.Client.Views
             this.Router = new RoutingState();
             Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
 			Locator.CurrentMutable.RegisterConstant(new LoggerService(), typeof(ILoggerService));
-
-			Locator.CurrentMutable.RegisterConstant(new UserService(), typeof(UserService));
+            
 			Locator.CurrentMutable.RegisterConstant(new MumblerClient(), typeof(MumblerClient));
 
             RegisterViewModels();

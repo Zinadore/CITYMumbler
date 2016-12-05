@@ -10,14 +10,14 @@ namespace CITYMumbler.Networking.Serialization
 {
 	public class SendGroupsPacket : Packet
 	{
-		public SendGroupsPacket(Group[] groups)
+		public SendGroupsPacket(CommonGroupRepresentation[] groups)
 		{
 			PacketType = PacketType.SendGroups;
 			GroupList = new GroupPacket[groups.Length];
 
 			for (int i = 0; i < groups.Length; i++)
 			{
-				GroupPacket packetTemp = new GroupPacket(groups[i].Name, groups[i].Name.ID, groups[i].OwnerID, groups[i].PermissionType, groups[i].Threshold, groups[i].Clients.ToArray());
+				GroupPacket packetTemp = new GroupPacket(groups[i].Name, groups[i].ID, groups[i].OwnerID, groups[i].PermissionType, groups[i].TimeoutThreshold, groups[i].UserIdList);
 				GroupList[i] = packetTemp;
 			}
 		}

@@ -21,7 +21,7 @@ namespace CITYMumbler.Client.ViewModels
 	        this.ChatList = new ReactiveList<ChatViewModel>();
 	        this._client = Locator.Current.GetService<MumblerClient>();
             this._client.JoinGroup(1);
-	        this._client.JoinedGroups.ItemsAdded.Subscribe(group => this.ChatList.Add(new ChatViewModel(this.HostScreen, ChatViewModelType.GroupChat, group.Id)));
+	        this._client.JoinedGroups.ItemsAdded.Subscribe(group => this.ChatList.Add(new ChatViewModel(this.HostScreen, ChatViewModelType.GroupChat, group.ID)));
 	    }
 	}
 }

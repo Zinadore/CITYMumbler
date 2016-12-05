@@ -129,7 +129,7 @@ namespace CITYMumbler.Networking.Utilities
 		    {
 			    Write(group.Id);
 			    Write(group.Name);
-			    Write(group.ownerId);
+			    Write(group.OwnerId);
 				Write((byte) group.PermissionType);
 				Write(group.TimeThreshold);
 		    }
@@ -150,7 +150,7 @@ namespace CITYMumbler.Networking.Utilities
 		    Write(packet.Id);
 			Write(packet.Name);
 			Write(packet.OwnerId);
-			Write((byte) packet.permissionType);
+			Write((byte) packet.PermissionType);
 			Write(packet.TimeThreshold);
 		    byte NoOfUsers = packet.GetNoOfUsers();
 			Write(NoOfUsers);
