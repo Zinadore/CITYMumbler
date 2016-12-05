@@ -41,8 +41,8 @@ namespace CITYMumbler.Client.ViewModels
 		private void SendMessage()
 		{
 			this.ChatDisplay += ("\n ME: " + ChatInput);
-			this.ChatInput = "";
 			_mumblerClient.SendGroupMessage((ushort) 5, ChatInput);
+			this.ChatInput = "";
 		}
 
 		private readonly ObservableAsPropertyHelper<List<TabContentViewModel>> _tabList;
