@@ -83,6 +83,10 @@
       <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
       <Name>CITYMumbler.Common.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Common\CITYMumbler.Common.csproj">
+      <Project>{369986ac-2d9d-4677-be7f-5d032150b041}</Project>
+      <Name>CITYMumbler.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
       <Project>{c4aeb434-6d79-4b6a-9a6b-d795512191f3}</Project>
       <Name>CITYMumbler.Networking.Contracts</Name>

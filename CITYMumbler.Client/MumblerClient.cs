@@ -150,14 +150,34 @@ namespace CITYMumbler.Client
                     this.OnConnected?.Invoke(this, EventArgs.Empty);
                     break;
                 case PacketType.JoinedGroup:
-                    var p1 = receivedPacket as JoinGroupPacket;
+                    var p1 = receivedPacket as JoinedGroupPacket;
                     var joinedGroup = this.Groups.FirstOrDefault(group => group.ID == p1.GroupId);
-
                     this.JoinedGroups.Add(joinedGroup);
                     break;
                 case PacketType.SendGroups:
                     var p2 = receivedPacket as SendGroupsPacket;
-                    
+                    this.Groups.Clear();
+                    foreach (var group in p2.GroupList)
+                    {
+                        var newGroup = new Group()
+                        {
+                            ID = group.Id,
+                            OwnerID = group.OwnerId,
+                            Name = group.Name,
+                            PermissionType = group.PermissionType,
+                            TimeoutThreshold = group.TimeThreshold,
+                            GroupUsers = new ReactiveList<Client>()
+                        };
+                        foreach (var user in ConnectedUsers)
+                        {
+                            if (group.UserList.Contains(user.ID))
+                            {
+                                newGroup.GroupUsers.Add(user);
+                            }
+                        }
+                        Groups.Add(newGroup);
+                    }
+                    this.OnGroupsReceived?.Invoke(this, EventArgs.Empty);
                     break;
             }
         }

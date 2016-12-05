@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CITYMumbler.Client.ViewModels;
 using ReactiveUI;
+using Splat;
 
 namespace CITYMumbler.Client.Views
 {
@@ -25,6 +26,8 @@ namespace CITYMumbler.Client.Views
         public SummaryView()
         {
             InitializeComponent();
+            this.ViewModel = Locator.Current.GetService<SummaryViewModel>();
+            this.OneWayBind(ViewModel, vm => vm.Groups, @this => @this.GroupsList.ItemsSource);
         }
 
         object IViewFor.ViewModel

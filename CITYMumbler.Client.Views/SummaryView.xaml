@@ -9,7 +9,13 @@
     <Grid>
         <TabControl>
             <TabItem Header="Groups">
-                <ListBox x:Name="GroupsList"></ListBox>
+                <ListBox x:Name="GroupsList">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
             <TabItem Header="Users">
                 <ListBox x:Name="UsersList"></ListBox>
