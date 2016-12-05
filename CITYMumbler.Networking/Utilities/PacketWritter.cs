@@ -153,11 +153,15 @@ namespace CITYMumbler.Networking.Utilities
 			Write((byte) packet.permissionType);
 			Write(packet.TimeThreshold);
 		    byte NoOfUsers = packet.GetNoOfUsers();
-		    Write(NoOfUsers);
-		    foreach (ushort userId in packet.UserList)
+			Write(NoOfUsers);
+
+			if (NoOfUsers > 0)
 		    {
-			    Write(userId);
-		    }
+				foreach (ushort userId in packet.UserList)
+				{
+					Write(userId);
+				}
+			}
 	    }
 	}
 }

@@ -208,7 +208,7 @@ namespace CITYMumbler.Networking.Utilities
 	    private IPacket SendGroupsMessage()
 	    {
 		    byte NoOfGroups = ReadByte();
-		    Group[] GroupList = new Group[NoOfGroups];
+		    GroupPacket[] GroupList = new GroupPacket[NoOfGroups];
 
 		    for (int i = 0; i < NoOfGroups; i++)
 		    {
@@ -217,7 +217,7 @@ namespace CITYMumbler.Networking.Utilities
 			    ushort ownerId = ReadUInt16();
 			    JoinGroupPermissionTypes permissionType = (JoinGroupPermissionTypes)ReadByte();
 			    byte timeThreshold = ReadByte();
-			    GroupList[i] = new Group(name, id, ownerId, permissionType, timeThreshold);
+			    GroupList[i] = new GroupPacket(name, id, ownerId, permissionType, timeThreshold);
 			}
 			return (IPacket) new SendGroupsPacket(GroupList);
 	    }

@@ -32,7 +32,7 @@ namespace CITYMumbler.Networking.Serialization
 			}
 		}
 
-		public GroupPacket(string name, ushort id, ushort ownerId, JoinGroupPermissionTypes permissionType, byte timeThreshold, ushort[] userList)
+		public GroupPacket(string name, ushort id, ushort ownerId, JoinGroupPermissionTypes permissionType, byte timeThreshold, ushort[] userList = null)
 		{
 			PacketType = PacketType.GroupPacket;
 			Id = id;
