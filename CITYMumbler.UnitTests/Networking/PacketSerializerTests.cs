@@ -175,5 +175,26 @@ namespace CITYMumbler.UnitTests.Networking
 			RequestSendUsersPacket newPacket = (RequestSendUsersPacket)serializer.FromBytes(bytes);
 			Assert.AreEqual(packet.PacketType, newPacket.PacketType);
 		}
+
+	    [Test]
+	    public void deserializer_group_packet()
+	    {
+			// Arrange 
+			Group group = new Group("group1", (byte)4, (byte)3, JoinGroupPermissionTypes.Password, (byte)6);
+			ushort[] UserList = new ushort[2];
+			UserList[0] = (ushort)5;
+			UserList[1] = (ushort)8;
+			IPacket packet = new GroupPacket(group.Name, group.Id, group.ownerId, group.PermissionType, group.TimeThreshold, UserList);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+		    GroupPacket newPacket = (GroupPacket) serializer.FromBytes(bytes);
+			Assert.AreEqual(((GroupPacket)packet).Name, newPacket.Name);
+			Assert.AreEqual(UserList.Length, newPacket.GetNoOfUsers());
+			Assert.AreEqual(UserList[0], newPacket.UserList[0]);
+	    }
 	}
 }

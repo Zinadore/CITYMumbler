@@ -64,6 +64,7 @@
     <Compile Include="Serialization\RequestSendUsersPacket.cs" />
     <Compile Include="Serialization\SendGroupsPacket.cs" />
     <Compile Include="Serialization\SendKeystrokePacket.cs" />
+    <Compile Include="Serialization\GroupPacket.cs" />
     <Compile Include="Serialization\SendUsersPacket.cs" />
     <Compile Include="Sockets\ScoketsEventArgs.cs" />
     <Compile Include="Sockets\TcpSocket.cs" />
