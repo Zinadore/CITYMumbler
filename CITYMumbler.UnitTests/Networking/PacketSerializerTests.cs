@@ -160,5 +160,20 @@ namespace CITYMumbler.UnitTests.Networking
 			Assert.AreEqual(result.GetNoOfUsers(), users.Length);
 			Assert.AreEqual(result.UserList[0].Name, users[0].Name);
 		}
+
+		[Test]
+		public void deserialize_request_users_list()
+		{
+			// Arrange 
+			IPacket packet = new RequestSendUsersPacket();
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			RequestSendUsersPacket newPacket = (RequestSendUsersPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.PacketType, newPacket.PacketType);
+		}
 	}
 }

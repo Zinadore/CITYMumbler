@@ -54,6 +54,8 @@ namespace CITYMumbler.Networking.Utilities
 
 				case PacketType.SendUsers: return SendUsersMessage();
 
+				case PacketType.RequestSendUsers: return (IPacket) new RequestSendUsersPacket();
+
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
