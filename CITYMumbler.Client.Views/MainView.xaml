@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CITYMumbler.Client.Views"
+             xmlns:rui="clr-namespace:ReactiveUI;assembly=ReactiveUI"
              mc:Ignorable="d" 
 			 
              d:DesignHeight="576" d:DesignWidth="1024">
@@ -30,7 +31,21 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<local:ChatView Grid.Column="1" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" />
+        <TabControl x:Name="ChatTabControl"
+                    Grid.Row="0"
+                    VerticalContentAlignment="Stretch"
+                    Grid.Column="1">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <HeaderedContentControl Header="{Binding Header}"></HeaderedContentControl>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <rui:ViewModelViewHost ViewModel="{Binding}" VerticalContentAlignment="Stretch"></rui:ViewModelViewHost>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
         <local:LogWindow Grid.Row="1" Grid.Column="1" x:Name="LogWindow" />
 	</Grid>
 </UserControl>

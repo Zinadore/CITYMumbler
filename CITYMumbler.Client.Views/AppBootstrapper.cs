@@ -31,7 +31,7 @@ namespace CITYMumbler.Client.Views
         {
             Locator.CurrentMutable.Register(() => new LoginViewModel(this), typeof(LoginViewModel));
 			Locator.CurrentMutable.Register(() => new MainViewModel(this), typeof(MainViewModel));
-			Locator.CurrentMutable.Register(() => new ChatViewModel(this), typeof(ChatViewModel));
+			//Locator.CurrentMutable.Register(() => new ChatViewModel(this), typeof(ChatViewModel));
             Locator.CurrentMutable.Register(() => new LogWindowViewModel(), typeof(LogWindowViewModel));
 		}
 

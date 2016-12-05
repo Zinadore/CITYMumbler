@@ -57,17 +57,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chat.cs" />
-    <Compile Include="ChatService.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="Group.cs" />
-    <Compile Include="GroupChat.cs" />
-    <Compile Include="GroupService.cs" />
-    <Compile Include="Message.cs" />
+    <Compile Include="ChatEntry.cs" />
+    <Compile Include="Services\Chat.cs" />
+    <Compile Include="Services\ChatService.cs" />
+    <Compile Include="Services\Client.cs" />
+    <Compile Include="Services\Group.cs" />
+    <Compile Include="Services\GroupChat.cs" />
+    <Compile Include="Services\GroupService.cs" />
+    <Compile Include="Services\Message.cs" />
     <Compile Include="MumblerClient.cs" />
-    <Compile Include="PrivateChat.cs" />
+    <Compile Include="Services\PrivateChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserService.cs" />
+    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">

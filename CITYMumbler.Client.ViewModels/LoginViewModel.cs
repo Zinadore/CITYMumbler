@@ -133,7 +133,8 @@ namespace CITYMumbler.Client.ViewModels
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                this.HostScreen.Router.Navigate.Execute(Locator.Current.GetService<MainViewModel>());
+                var vm = Locator.Current.GetService<MainViewModel>();
+                this.HostScreen.Router.Navigate.Execute(vm);
             }));
         }
 

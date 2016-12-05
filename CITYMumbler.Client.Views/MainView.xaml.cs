@@ -25,6 +25,7 @@ namespace CITYMumbler.Client.Views
 		public MainView()
 		{
 			InitializeComponent();
+		    this.OneWayBind(ViewModel, vm => vm.ChatList, @this => @this.ChatTabControl.ItemsSource);
 		}
 
 		object IViewFor.ViewModel

@@ -8,19 +8,19 @@ using CITYMumbler.Networking.Sockets;
 
 namespace CITYMumbler.Server
 {
-    class Client
+    internal class Client
     {
-        public ushort ID { get; private set; }
+        public ushort ID { get; set; }
         public string Name { get; set; }
-        public TcpSocket ClientSocket { get; private set; }
-        public IPEndPoint RemoteEndpoint { get; private set; }
+        public TcpSocket ClientSocket { get; set; }
+        public IPEndPoint RemoteEndpoint { get; set; }
 
-        public Client(ushort id, TcpSocket clientSocket, IPEndPoint endPoint)
+        public Client(ushort id, TcpSocket socket, IPEndPoint endpoint)
         {
             this.ID = id;
-            this.ClientSocket = clientSocket;
-            this.RemoteEndpoint = endPoint;
-            this.ClientSocket.ClientID = this.ID;
+            this.ClientSocket = socket;
+            this.ClientSocket.ClientID = id;
+            this.RemoteEndpoint = endpoint;
         }
     }
 }

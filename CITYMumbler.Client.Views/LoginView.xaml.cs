@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -26,14 +27,9 @@ namespace CITYMumbler.Client.Views
     /// </summary>
     public partial class LoginView : UserControl, IViewFor<LoginViewModel>
     {
-        private CompositeDisposable _subscriptions;
         public LoginView()
         {
             InitializeComponent();
-            //this.Username.Focusable = true;
-            //this.Username.Focus();
-            //Keyboard.Focus(this.Username);
-            this._subscriptions = new CompositeDisposable();
             this.Bind(this.ViewModel, vm => vm.Address, @this => @this.Address.Text);
             this.Bind(this.ViewModel, vm => vm.Port, @this => @this.Port.Text);
             this.Bind(this.ViewModel, vm => vm.Username, @this => @this.Username.Text);
@@ -41,30 +37,16 @@ namespace CITYMumbler.Client.Views
 
 	        this.BindCommand(this.ViewModel, vm => vm.ConnnectCommand, @this => @this.ConnectButton);
 
-            IDisposable sub;
             this.WhenActivated(d =>
             {
-                d(sub = this.ViewModel.Logs
+                d(this.ViewModel.Logs
                             .ObserveOn(RxApp.MainThreadScheduler)
                             .Subscribe(entry =>
                             {
                                 this.Log.Foreground = getColorForLevel(entry.Level);
                                 this.Log.Text = entry.Message;
                             }));
-                this._subscriptions.Add(sub);
             });
-                          
-                //this.WhenAnyObservable(x => x.ViewModel.Logs)
-                //          .SubscribeOn(RxApp.MainThreadScheduler)
-                //          .Subscribe(entry =>
-                //          {
-                //              this.Log.Dispatcher.BeginInvoke(new Action(() =>
-                //              {
-                //                  this.Log.Foreground = getColorForLevel(entry.Level);
-                //                  this.Log.Text = entry.Message;
-                //              }));
-                //          });
-
         }
 
         object IViewFor.ViewModel
@@ -76,7 +58,6 @@ namespace CITYMumbler.Client.Views
 
         ~LoginView()
         {
-            this._subscriptions.Dispose();
         }
 
         private Brush getColorForLevel(LogLevel level)

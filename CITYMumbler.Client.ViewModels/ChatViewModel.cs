@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CITYMumbler.Networking.Contracts;
@@ -13,56 +15,80 @@ namespace CITYMumbler.Client.ViewModels
 {
 	public class ChatViewModel : ReactiveObject, IRoutableViewModel
 	{
-		public string UrlPathSegment => "chatView";
+        #region Private Members
+        private MumblerClient _mumblerClient;
+	    private ChatViewModelType _type;
+	    private ushort _filterId;
+        #endregion
+
+        #region Reactive Properties
+        private string _chatDisplay;
+        public string ChatDisplay
+        {
+            get { return _chatDisplay; }
+            set { this.RaiseAndSetIfChanged(ref _chatDisplay, value); }
+        }
+
+        private string _chatInput;
+        public string ChatInput
+        {
+            get { return _chatInput; }
+            set { this.RaiseAndSetIfChanged(ref _chatInput, value); }
+        }
+	    private string _header;
+	    public string Header
+	    {
+	        get { return _header; }
+	        set { this.RaiseAndSetIfChanged(ref _header, value); }
+	    }
+
+
+        #endregion
+
+        public string UrlPathSegment => "chatView";
 		public IScreen HostScreen { get; }
-		private MumblerClient _mumblerClient;
-		private UserService _userService;
-		private Client Me;
+
+	    public IObservable<ChatEntry> Entries { get; private set; }
 
 		public ReactiveCommand<Unit, Unit> SendCommand;
 
-		public ChatViewModel(IScreen hostScreen)
+		public ChatViewModel(IScreen hostScreen, ChatViewModelType type, ushort id)
 		{
 			this.HostScreen = hostScreen;
-			this.SendCommand = ReactiveCommand.Create(SendMessage);
-			_mumblerClient = Locator.Current.GetService<MumblerClient>();
-			_userService = Locator.Current.GetService<UserService>();
+		    this._type = type;
+		    this._filterId = id;
+            this._mumblerClient = Locator.Current.GetService<MumblerClient>();
 
-			//Me = Locator.Current.GetService<UserService>().Me;
-			_userService.SetMe(new Client(5, "Giorgaras"));
-			Me = _userService.Me;
-			Group group = new Group("supergroup", (ushort) 3, (ushort) 5, JoinGroupPermissionTypes.Free, 10 );
-			group.UserList.Add(Me);
-            //this.WhenAnyValue(x => x.ChatInput)
-            //    .Select(x => x?.Trim())
-            //    .ToProperty(this, x => x.ChatDisplay, out _chatDisplay);
+            if (this._type == ChatViewModelType.GroupChat)
+            {
+                this.Header = string.Format("Group chat #{0}", _filterId);
+		        this.Entries = this._mumblerClient.GroupMessages.Where(entry => entry.GroupId == this._filterId);
+            }
+            else
+		    {
+                this.Header = string.Format("Private chat #{0}", _filterId);
+                this.Entries = this._mumblerClient.PrivateMessages.Where(entry => entry.SenderId == this._filterId);
+		    }
+			this.SendCommand = ReactiveCommand.Create(SendMessage);
+            
         }
 
 		private void SendMessage()
 		{
-			this.ChatDisplay += ("\n ME: " + ChatInput);
-			_mumblerClient.SendGroupMessage((ushort) 5, ChatInput);
-			this.ChatInput = "";
-		}
-
-		private readonly ObservableAsPropertyHelper<List<TabContentViewModel>> _tabList;
-		public List<TabContentViewModel> TabList
-		{
-			get { return _tabList.Value; }
-		}
-
-		private string _chatDisplay;
-		public string ChatDisplay
-		{
-			get { return _chatDisplay; }
-			set { this.RaiseAndSetIfChanged(ref _chatDisplay, value); }
-		}
-
-		private string _chatInput;
-		public string ChatInput
-		{
-			get { return _chatInput; }
-			set { this.RaiseAndSetIfChanged(ref _chatInput, value); }
+		    if (this._type == ChatViewModelType.GroupChat)
+		    {
+		        this._mumblerClient.SendGroupMessage(this._filterId, ChatInput);
+		    }
+		    else
+		    {
+		        this._mumblerClient.SendPrivateMessage(this._filterId, ChatInput);
+		    }
 		}
 	}
+
+    public enum ChatViewModelType
+    {
+        PrivateChat,
+        GroupChat
+    }
 }

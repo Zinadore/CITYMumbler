@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Reactive.Subjects;
 using CITYMumbler.Common.Contracts.Services.Logger;
@@ -6,6 +7,7 @@ using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
 using CITYMumbler.Networking.Sockets;
+using ReactiveUI;
 using Splat;
 using ILogger = CITYMumbler.Common.Contracts.Services.Logger.ILogger;
 using LogLevel = CITYMumbler.Common.Contracts.Services.Logger.LogLevel;
@@ -29,6 +31,10 @@ namespace CITYMumbler.Client
 
         #region Properties
         public BehaviorSubject<bool> Connected { get; set; }
+        public ReplaySubject<ChatEntry> GroupMessages{ get; private set; }
+        public ReplaySubject<ChatEntry> PrivateMessages { get; private set; }
+        public ReactiveList<Group> Groups { get; private set; }
+        public ReactiveList<Group> JoinedGroups { get; private set; }
         #endregion
 
         public MumblerClient()
@@ -40,6 +46,10 @@ namespace CITYMumbler.Client
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
 			this.serializer = new PacketSerializer();
 	        this._userService = Locator.Current.GetService<UserService>();
+            this.GroupMessages = new ReplaySubject<ChatEntry>();
+            this.PrivateMessages = new ReplaySubject<ChatEntry>();
+            this.Groups = new ReactiveList<Group>();
+            this.JoinedGroups = new ReactiveList<Group>();
         }
 
         public void Connect(string host, int port, string username)
@@ -63,8 +73,20 @@ namespace CITYMumbler.Client
 	    public void SendGroupMessage(ushort groupId, string message)
 	    {
 			GroupMessagePacket packet = new GroupMessagePacket(_userService.Me.ID, groupId, _userService.Me.Name, message);
-			socket.Send(serializer.ToBytes(packet));
+			this.socket.Send(this.serializer.ToBytes(packet));
 		}
+
+        public void SendPrivateMessage(ushort recipientId, string message)
+        {
+            PrivateMessagePacket packet = new PrivateMessagePacket(this._userService.Me.ID, recipientId, this._userService.Me.Name, message);
+            this.socket.Send(this.serializer.ToBytes(packet));
+        }
+
+        public void JoinGroup(ushort groupId)
+        {
+            JoinGroupPacket packet = new JoinGroupPacket(this._userService.Me.ID, groupId);
+            this.socket.Send(this.serializer.ToBytes(packet));
+        }
 
         #region Helpers
 
@@ -72,7 +94,6 @@ namespace CITYMumbler.Client
         {
             this.socket.OnConnectEnd += Socket_OnConnectEnd;
             this.socket.OnDataReceived += Socket_OnDataReceived;
-            //this.socket.OnDisconnected += Socket_OnDisconnected;
         }
         #endregion
 
@@ -97,7 +118,6 @@ namespace CITYMumbler.Client
                 this.socket.OnDisconnected += Socket_OnDisconnected;
                 var p = new ConnectionPacket(this.username);
                 this.socket.Send(this.serializer.ToBytes(p));
-                this.OnConnected?.Invoke(this, EventArgs.Empty);
             }
             else
             {
@@ -121,10 +141,15 @@ namespace CITYMumbler.Client
             {
                 case PacketType.Connected:
                     var p = receivedPacket as ConnectedPacket;
-                    //TODO: update me on userservice
-                    this.logger.Log(LogLevel.Info, "I received my new id and it is: {0}", p.ClientId);
 					this._userService.SetMe(new Client(p.ClientId, username));
+                    this.OnConnected?.Invoke(this, EventArgs.Empty);
                     break;
+                case PacketType.JoinedGroup:
+                    var p1 = receivedPacket as JoinGroupPacket;
+                    var joinedGroup = this.Groups.FirstOrDefault(group => group.Id == p1.GroupId);
+
+                    this.JoinedGroups.Add(joinedGroup);
+                break;
             }
         }
 
