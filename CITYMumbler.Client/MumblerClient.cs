@@ -59,14 +59,6 @@ namespace CITYMumbler.Client
             this.username = username;
             this.socket.ConnectAsync(endpoint);
         }
-        public void SendUserName(string message)
-        {
-            //    if (socket.Connected)
-            //    {
-            //        var bytes = System.Text.Encoding.ASCII.GetBytes(message);
-            //        this.socket.Send(bytes);
-            //    }
-        }
 
 	    public void SendGroupMessage(ushort groupId, string message)
 	    {
@@ -129,6 +121,7 @@ namespace CITYMumbler.Client
             {
                 case PacketType.Connected:
                     var p = receivedPacket as ConnectedPacket;
+                    //TODO: update me on userservice
                     this.logger.Log(LogLevel.Info, "I received my new id and it is: {0}", p.ClientId);
 					this._userService.SetMe(new Client(p.ClientId, username));
                     break;
