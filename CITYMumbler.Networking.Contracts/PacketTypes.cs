@@ -26,7 +26,8 @@ namespace CITYMumbler.Networking.Contracts
 	    SendGroups,
 	    RequestSendGroups,
 	    SendUsers,
-	    RequestSendUsers
+	    RequestSendUsers,
+	    GroupPacket
     }
 
     public enum LeftGroupTypes : byte

@@ -56,6 +56,8 @@ namespace CITYMumbler.Networking.Utilities
 
 				case PacketType.RequestSendUsers: return (IPacket) new RequestSendUsersPacket();
 
+				case PacketType.GroupPacket: return GroupPacketMessage();
+
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
@@ -206,7 +208,7 @@ namespace CITYMumbler.Networking.Utilities
 	    private IPacket SendGroupsMessage()
 	    {
 		    byte NoOfGroups = ReadByte();
-		    Group[] GroupList = new Group[NoOfGroups];
+		    GroupPacket[] GroupList = new GroupPacket[NoOfGroups];
 
 		    for (int i = 0; i < NoOfGroups; i++)
 		    {
@@ -215,7 +217,7 @@ namespace CITYMumbler.Networking.Utilities
 			    ushort ownerId = ReadUInt16();
 			    JoinGroupPermissionTypes permissionType = (JoinGroupPermissionTypes)ReadByte();
 			    byte timeThreshold = ReadByte();
-			    GroupList[i] = new Group(name, id, ownerId, permissionType, timeThreshold);
+			    GroupList[i] = new GroupPacket(name, id, ownerId, permissionType, timeThreshold);
 			}
 			return (IPacket) new SendGroupsPacket(GroupList);
 	    }
@@ -233,5 +235,22 @@ namespace CITYMumbler.Networking.Utilities
 		    }
 		    return (IPacket) new SendUsersPacket(UserList);
 	    }
-	}
+
+	    private IPacket GroupPacketMessage()
+	    {
+		    ushort id = ReadUInt16();
+		    string name = ReadString();
+		    ushort ownerId = ReadUInt16();
+		    JoinGroupPermissionTypes permissionType = (JoinGroupPermissionTypes) ReadByte();
+		    byte timeThreshold = ReadByte();
+		    byte noOfUsers = ReadByte();
+			ushort[] IdList = new ushort[noOfUsers];
+		    for (int i = 0; i < noOfUsers; i++)
+		    {
+			    ushort userId = ReadUInt16();
+			    IdList[i] = userId;
+		    }
+		    return (IPacket) new GroupPacket(name, id, ownerId, permissionType, timeThreshold, IdList);
+	    }
+    }
 }
