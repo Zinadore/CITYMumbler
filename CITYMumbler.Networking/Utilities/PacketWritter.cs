@@ -121,5 +121,18 @@ namespace CITYMumbler.Networking.Utilities
             if (packet.PermissionType == JoinGroupPermissionTypes.Password)
                 Write(packet.Password);
         }
+
+	    public void Write(SendGroupsPacket packet)
+	    {
+		    Write(packet.GetNoOfGroups());
+		    foreach (var group in packet.GroupList)
+		    {
+			    Write(group.Id);
+			    Write(group.Name);
+			    Write(group.ownerId);
+				Write((byte) group.PermissionType);
+				Write(group.TimeThreshold);
+		    }
+	    }
     }
 }

@@ -60,6 +60,7 @@
     <Compile Include="Serialization\PacketSerializer.cs" />
     <Compile Include="Serialization\PrivateMessagePacket.cs" />
     <Compile Include="Serialization\ConnectionPacket.cs" />
+    <Compile Include="Serialization\SendGroupsPacket.cs" />
     <Compile Include="Serialization\SendKeystrokePacket.cs" />
     <Compile Include="Sockets\ScoketsEventArgs.cs" />
     <Compile Include="Sockets\TcpSocket.cs" />
@@ -68,6 +69,10 @@
     <Compile Include="Utilities\PacketWritter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CITYMumbler.Common\CITYMumbler.Common.csproj">
+      <Project>{369986AC-2D9D-4677-BE7F-5D032150B041}</Project>
+      <Name>CITYMumbler.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
       <Project>{c4aeb434-6d79-4b6a-9a6b-d795512191f3}</Project>
       <Name>CITYMumbler.Networking.Contracts</Name>

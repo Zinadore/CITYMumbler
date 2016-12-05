@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Common.Data;
 using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
@@ -339,5 +340,28 @@ namespace CITYMumbler.UnitTests.Networking
             Assert.AreEqual(newPacket.PermissionType, ((CreateGroupPacket)packet).PermissionType);
             Assert.AreEqual(newPacket.Password, ((CreateGroupPacket)packet).Password);
         }
-    }
+
+	    [Test]
+	    public void serializes_send_groups_packet()
+	    {
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+		    Group[] groups = new Group[]
+		    {
+				new Group("group1", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
+				new Group("group2", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
+				new Group("group3", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6)
+			};
+			IPacket packet = new SendGroupsPacket(groups);
+
+			// Act
+			writter.Write((SendGroupsPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+		    SendGroupsPacket newPacket = (SendGroupsPacket) reader.ReadPacket(PacketType.SendGroups);
+		    Assert.AreEqual(newPacket.GetNoOfGroups(), groups.Length);
+			Assert.AreEqual(newPacket.GroupList[0].Id, groups[0].Id);
+	    }
+	}
 }

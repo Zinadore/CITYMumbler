@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using CITYMumbler.Common;
+using CITYMumbler.Common.Data;
 using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
@@ -45,6 +47,8 @@ namespace CITYMumbler.Networking.Utilities
                 case PacketType.Kick: return ReadKickMessage();
 
                 case PacketType.CreateGroup: return ReadCreateGroupMessage();
+
+				case PacketType.SendGroups: return SendGroupsMessage();
 
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
@@ -192,5 +196,23 @@ namespace CITYMumbler.Networking.Utilities
 
             return packet;
         }
-    }
+
+	    private IPacket SendGroupsMessage()
+	    {
+		    byte NoOfGroups = ReadByte();
+		    Group[] GroupList = new Group[NoOfGroups];
+
+		    for (int i = 0; i < NoOfGroups; i++)
+		    {
+			    ushort id = ReadUInt16();
+			    string name = ReadString();
+			    ushort ownerId = ReadUInt16();
+			    JoinGroupPermissionTypes permissionType = (JoinGroupPermissionTypes)ReadByte();
+			    byte timeThreshold = ReadByte();
+			    GroupList[i] = new Group(name, id, ownerId, permissionType, timeThreshold);
+			}
+			return (IPacket) new SendGroupsPacket(GroupList);
+	    }
+
+	}
 }
