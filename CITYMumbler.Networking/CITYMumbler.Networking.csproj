@@ -60,6 +60,7 @@
     <Compile Include="Serialization\PacketSerializer.cs" />
     <Compile Include="Serialization\PrivateMessagePacket.cs" />
     <Compile Include="Serialization\ConnectionPacket.cs" />
+    <Compile Include="Serialization\RequestGroupPacket.cs" />
     <Compile Include="Serialization\RequestSendGroupsPacket.cs" />
     <Compile Include="Serialization\RequestSendUsersPacket.cs" />
     <Compile Include="Serialization\SendGroupsPacket.cs" />

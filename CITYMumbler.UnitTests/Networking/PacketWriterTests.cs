@@ -346,11 +346,11 @@ namespace CITYMumbler.UnitTests.Networking
 	    {
 			// Arrange
 			PacketWritter writter = new PacketWritter();
-		    Group[] groups = new Group[]
+		    CommonGroupRepresentation[] groups = new CommonGroupRepresentation[]
 		    {
-				new Group("group1", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
-				new Group("group2", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
-				new Group("group3", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6)
+				new CommonGroupRepresentation { Name = "group1", ID = 4,OwnerID = (byte)3, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte)6},
+				new CommonGroupRepresentation { Name = "group2", ID = 5,OwnerID = (byte)6, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte)6},
+				new CommonGroupRepresentation { Name = "group3", ID = 6,OwnerID = (byte)7, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte)6},
 			};
 			IPacket packet = new SendGroupsPacket(groups);
 
@@ -361,7 +361,7 @@ namespace CITYMumbler.UnitTests.Networking
 			// Assert
 		    SendGroupsPacket newPacket = (SendGroupsPacket) reader.ReadPacket(PacketType.SendGroups);
 		    Assert.AreEqual(newPacket.GetNoOfGroups(), groups.Length);
-			Assert.AreEqual(newPacket.GroupList[0].Id, groups[0].Id);
+			Assert.AreEqual(newPacket.GroupList[0].Id, groups[0].ID);
 	    }
 
 		[Test]
@@ -369,9 +369,10 @@ namespace CITYMumbler.UnitTests.Networking
 		{
 			// Arrange
 			PacketWritter writter = new PacketWritter();
-			Common.Data.Client.Client[] clients = new Common.Data.Client.Client[]
+			CommonClientRepresentation[] clients = new CommonClientRepresentation[]
 			{
-				new Common.Data.Client.Client((ushort) 4, "client1")
+				new CommonClientRepresentation { ID = (ushort) 4, Name = "client1"},
+				new CommonClientRepresentation { ID = (ushort) 5, Name = "client2"}
 			};
 			IPacket packet = new SendUsersPacket(clients);
 
@@ -390,11 +391,11 @@ namespace CITYMumbler.UnitTests.Networking
 		{
 			// Arrange
 			PacketWritter writter = new PacketWritter();
-			Group group = new Group("group1", (byte) 4, (byte) 3, JoinGroupPermissionTypes.Password, (byte) 6);
+			CommonGroupRepresentation group = new CommonGroupRepresentation {Name =  "group1", ID = (byte) 4, OwnerID = 3, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte) 6};
 			ushort[] UserList = new ushort[2];
 			UserList[0] = (ushort) 5;
 			UserList[1] = (ushort) 8;
-			IPacket packet = new GroupPacket(group.Name, group.Id, group.ownerId, group.PermissionType, group.TimeThreshold, UserList);
+			IPacket packet = new GroupPacket(group.Name, group.ID, group.OwnerID, group.PermissionType, group.TimeoutThreshold, UserList);
 
 			// Act
 			writter.Write((GroupPacket)packet);
@@ -405,5 +406,21 @@ namespace CITYMumbler.UnitTests.Networking
 			Assert.AreEqual(newPacket.GetNoOfUsers(), UserList.Length);
 			Assert.AreEqual(newPacket.UserList[0], UserList[0]);
 		}
+
+	    [Test]
+	    public void serializes_request_group_packet()
+	    {
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+		    IPacket packet = new RequestGroupPacket(4);
+
+		    // Act
+			writter.Write((RequestGroupPacket) packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+		    // Assert
+		    RequestGroupPacket newPacket = (RequestGroupPacket) reader.ReadPacket(PacketType.RequestGroup);
+			Assert.AreEqual(newPacket.GroupId, ((RequestGroupPacket) packet).GroupId);
+	    }
 	}
 }

@@ -108,6 +108,9 @@ namespace CITYMumbler.Networking.Serialization
 				case PacketType.GroupPacket:
 					writter.Write((GroupPacket) packet);
 					break;
+				case PacketType.RequestGroup:
+					writter.Write((RequestGroupPacket) packet);
+					break;
 				default:
 					throw new ArgumentException("Packet is of an unsupported packetType");
 			}

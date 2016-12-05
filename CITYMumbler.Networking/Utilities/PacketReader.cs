@@ -58,6 +58,8 @@ namespace CITYMumbler.Networking.Utilities
 
 				case PacketType.GroupPacket: return GroupPacketMessage();
 
+				case PacketType.RequestGroup: return RequestGroupMessage();
+
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
@@ -252,5 +254,12 @@ namespace CITYMumbler.Networking.Utilities
 		    }
 		    return (IPacket) new GroupPacket(name, id, ownerId, permissionType, timeThreshold, IdList);
 	    }
-    }
+
+	    private IPacket RequestGroupMessage()
+	    {
+		    ushort groupId = ReadUInt16();
+		    return (IPacket) new RequestGroupPacket(groupId);
+	    }
+
+	}
 }

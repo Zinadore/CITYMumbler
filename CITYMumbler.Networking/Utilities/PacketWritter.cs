@@ -163,5 +163,10 @@ namespace CITYMumbler.Networking.Utilities
 				}
 			}
 	    }
+
+	    public void Write(RequestGroupPacket packet)
+	    {
+		    Write(packet.GroupId);
+	    }
 	}
 }
