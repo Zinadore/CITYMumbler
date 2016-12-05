@@ -94,6 +94,10 @@
       <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
       <Name>CITYMumbler.Common.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CITYMumbler.Networking.Contracts\CITYMumbler.Networking.Contracts.csproj">
+      <Project>{C4AEB434-6D79-4B6A-9A6B-D795512191F3}</Project>
+      <Name>CITYMumbler.Networking.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -67,6 +67,7 @@
     <Compile Include="MumblerClient.cs" />
     <Compile Include="PrivateChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">

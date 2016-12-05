@@ -19,6 +19,7 @@ namespace CITYMumbler.Client
         private ILogger logger;
         private string username;
         private PacketSerializer serializer;
+	    private UserService _userService;
         #endregion
 
         #region Events
@@ -38,6 +39,7 @@ namespace CITYMumbler.Client
             this.Connected = new BehaviorSubject<bool>(false);
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
 			this.serializer = new PacketSerializer();
+	        this._userService = Locator.Current.GetService<UserService>();
         }
 
         public void Connect(string host, int port, string username)
@@ -65,6 +67,12 @@ namespace CITYMumbler.Client
             //        this.socket.Send(bytes);
             //    }
         }
+
+	    public void SendGroupMessage(ushort groupId, string message)
+	    {
+			GroupMessagePacket packet = new GroupMessagePacket(_userService.Me.ID, groupId, _userService.Me.Name, message);
+			socket.Send(serializer.ToBytes(packet));
+		}
 
         #region Helpers
 
@@ -122,6 +130,7 @@ namespace CITYMumbler.Client
                 case PacketType.Connected:
                     var p = receivedPacket as ConnectedPacket;
                     this.logger.Log(LogLevel.Info, "I received my new id and it is: {0}", p.ClientId);
+					this._userService.SetMe(new Client(p.ClientId, username));
                     break;
             }
         }

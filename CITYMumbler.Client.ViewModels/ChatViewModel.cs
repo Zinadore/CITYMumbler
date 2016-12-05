@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Networking.Contracts;
 using ReactiveUI;
 using Splat;
 
@@ -15,6 +16,8 @@ namespace CITYMumbler.Client.ViewModels
 		public string UrlPathSegment => "chatView";
 		public IScreen HostScreen { get; }
 		private MumblerClient _mumblerClient;
+		private UserService _userService;
+		private Client Me;
 
 		public ReactiveCommand<Unit, Unit> SendCommand;
 
@@ -23,6 +26,13 @@ namespace CITYMumbler.Client.ViewModels
 			this.HostScreen = hostScreen;
 			this.SendCommand = ReactiveCommand.Create(SendMessage);
 			_mumblerClient = Locator.Current.GetService<MumblerClient>();
+			_userService = Locator.Current.GetService<UserService>();
+
+			//Me = Locator.Current.GetService<UserService>().Me;
+			_userService.SetMe(new Client(5, "Giorgaras"));
+			Me = _userService.Me;
+			Group group = new Group("supergroup", (ushort) 3, (ushort) 5, JoinGroupPermissionTypes.Free, 10 );
+			group.UserList.Add(Me);
             //this.WhenAnyValue(x => x.ChatInput)
             //    .Select(x => x?.Trim())
             //    .ToProperty(this, x => x.ChatDisplay, out _chatDisplay);
@@ -32,7 +42,7 @@ namespace CITYMumbler.Client.ViewModels
 		{
 			this.ChatDisplay += ("\n ME: " + ChatInput);
 			this.ChatInput = "";
-			//_mumblerClient.SendPrivateMessage((ushort) 5, ChatInput);
+			_mumblerClient.SendGroupMessage((ushort) 5, ChatInput);
 		}
 
 		private readonly ObservableAsPropertyHelper<List<TabContentViewModel>> _tabList;

@@ -10,10 +10,10 @@ namespace CITYMumbler.Client
 {
 	public class Client
 	{
-		public int ID { get; private set; }
+		public ushort ID { get; private set; }
 		public string Name { get; private set; }
 
-		public Client(int id, string name)
+		public Client(ushort id, string name)
 		{
 			this.ID = id;
 			this.Name = name;

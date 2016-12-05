@@ -10,7 +10,17 @@ namespace CITYMumbler.Client
 {
 	public class Group
 	{
-		public ReactiveList<Client> userList { get; private set; }
+		public Group(string name, ushort id, ushort ownerId, JoinGroupPermissionTypes permissionType, byte timeThreshold)
+		{
+			this.UserList = new ReactiveList<Client>();
+			Name = name;
+			Id = id;
+			this.ownerId = ownerId;
+			PermissionType = permissionType;
+			TimeThreshold = timeThreshold;
+		}
+
+		public ReactiveList<Client> UserList { get; private set; }
 		public string Name { get; private set; }
 		public ushort Id { get; private set; }
 		public ushort ownerId { get; private set; }
