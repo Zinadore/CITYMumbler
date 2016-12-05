@@ -7,7 +7,7 @@ using CITYMumbler.Networking.Contracts;
 
 namespace CITYMumbler.Networking.Serialization
 {
-	class RequestSendGroupsPacket : Packet
+	public class RequestSendGroupsPacket : Packet
 	{
 		public RequestSendGroupsPacket()
 		{

@@ -50,6 +50,8 @@ namespace CITYMumbler.Networking.Utilities
 
 				case PacketType.SendGroups: return SendGroupsMessage();
 
+				case PacketType.RequestSendGroups: return (IPacket) new RequestSendGroupsPacket();
+
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
@@ -213,6 +215,5 @@ namespace CITYMumbler.Networking.Utilities
 			}
 			return (IPacket) new SendGroupsPacket(GroupList);
 	    }
-
 	}
 }

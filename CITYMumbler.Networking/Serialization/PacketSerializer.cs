@@ -98,6 +98,8 @@ namespace CITYMumbler.Networking.Serialization
 				case PacketType.SendGroups:
 					writter.Write((SendGroupsPacket) packet);
 					break;
+				case PacketType.RequestSendGroups:
+					break;
 				default:
 					throw new ArgumentException("Packet is of an unsupported packetType");
 			}

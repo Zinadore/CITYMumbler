@@ -123,5 +123,20 @@ namespace CITYMumbler.UnitTests.Networking
 			Assert.AreEqual(result.GetNoOfGroups(), groups.Length);
 			Assert.AreEqual(result.GroupList[0].Id, groups[0].Id);
 	    }
-    }
+
+		[Test]
+		public void deserializerequest_groups_list()
+		{
+			// Arrange 
+			IPacket packet = new RequestSendGroupsPacket();
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			RequestSendGroupsPacket newPacket = (RequestSendGroupsPacket) serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.PacketType, newPacket.PacketType);
+		}
+	}
 }

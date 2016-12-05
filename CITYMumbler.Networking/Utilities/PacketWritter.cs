@@ -134,5 +134,5 @@ namespace CITYMumbler.Networking.Utilities
 				Write(group.TimeThreshold);
 		    }
 	    }
-    }
+	}
 }
