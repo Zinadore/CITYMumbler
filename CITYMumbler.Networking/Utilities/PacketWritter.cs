@@ -134,5 +134,15 @@ namespace CITYMumbler.Networking.Utilities
 				Write(group.TimeThreshold);
 		    }
 	    }
+
+		public void Write(SendUsersPacket packet)
+		{
+			Write(packet.GetNoOfUsers());
+			foreach (var client in packet.UserList)
+			{
+				Write(client.ID);
+				Write(client.Name);
+			}
+		}
 	}
 }

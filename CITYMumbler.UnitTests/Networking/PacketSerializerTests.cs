@@ -108,9 +108,9 @@ namespace CITYMumbler.UnitTests.Networking
 			// Arrange
 			Group[] groups = new Group[]
 			{
-				new Group("group1", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
-				new Group("group2", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6),
-				new Group("group3", (byte) 4,(byte)3, JoinGroupPermissionTypes.Password, (byte)6)
+				new Group("group1", (byte) 1,(byte)1, JoinGroupPermissionTypes.Password, (byte)6),
+				new Group("group2", (byte) 2,(byte)2, JoinGroupPermissionTypes.Password, (byte)6),
+				new Group("group3", (byte) 3,(byte)3, JoinGroupPermissionTypes.Password, (byte)6)
 			};
 			IPacket packet = new SendGroupsPacket(groups);
 			PacketSerializer serializer = new PacketSerializer();
@@ -137,6 +137,28 @@ namespace CITYMumbler.UnitTests.Networking
 			// Assert
 			RequestSendGroupsPacket newPacket = (RequestSendGroupsPacket) serializer.FromBytes(bytes);
 			Assert.AreEqual(packet.PacketType, newPacket.PacketType);
+		}
+
+		[Test]
+		public void deserialize_send_users()
+		{
+			// Arrange
+			Common.Data.Client[] users = new Common.Data.Client[]
+			{
+				new Common.Data.Client((ushort) 4, "name1"),
+				new Common.Data.Client((ushort) 6, "name2"),
+				new Common.Data.Client((ushort) 7, "name3")
+			};
+			IPacket packet = new SendUsersPacket(users);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+			SendUsersPacket result = (SendUsersPacket)serializer.FromBytes(bytes);
+
+			// Assert
+			Assert.AreEqual(result.GetNoOfUsers(), users.Length);
+			Assert.AreEqual(result.UserList[0].Name, users[0].Name);
 		}
 	}
 }

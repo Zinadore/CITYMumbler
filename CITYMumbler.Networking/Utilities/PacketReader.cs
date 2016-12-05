@@ -52,6 +52,8 @@ namespace CITYMumbler.Networking.Utilities
 
 				case PacketType.RequestSendGroups: return (IPacket) new RequestSendGroupsPacket();
 
+				case PacketType.SendUsers: return SendUsersMessage();
+
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
@@ -214,6 +216,20 @@ namespace CITYMumbler.Networking.Utilities
 			    GroupList[i] = new Group(name, id, ownerId, permissionType, timeThreshold);
 			}
 			return (IPacket) new SendGroupsPacket(GroupList);
+	    }
+
+	    private IPacket SendUsersMessage()
+	    {
+		    byte NoOfUsers = ReadByte();
+		    Client[] UserList = new Client[NoOfUsers];
+
+		    for (int i = 0; i < NoOfUsers; i++)
+		    {
+			    ushort id = ReadUInt16();
+			    string name = ReadString();
+			    UserList[i] = new Client(id, name);
+		    }
+		    return (IPacket) new SendUsersPacket(UserList);
 	    }
 	}
 }

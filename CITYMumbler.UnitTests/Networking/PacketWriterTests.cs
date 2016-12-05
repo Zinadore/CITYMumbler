@@ -363,5 +363,26 @@ namespace CITYMumbler.UnitTests.Networking
 		    Assert.AreEqual(newPacket.GetNoOfGroups(), groups.Length);
 			Assert.AreEqual(newPacket.GroupList[0].Id, groups[0].Id);
 	    }
+
+		[Test]
+		public void serializes_send_users_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			Common.Data.Client[] clients = new Common.Data.Client[]
+			{
+				new Common.Data.Client((ushort) 4, "client1")
+			};
+			IPacket packet = new SendUsersPacket(clients);
+
+			// Act
+			writter.Write((SendUsersPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			SendUsersPacket newPacket = (SendUsersPacket)reader.ReadPacket(PacketType.SendUsers);
+			Assert.AreEqual(newPacket.GetNoOfUsers(), clients.Length);
+			Assert.AreEqual(newPacket.UserList[0].ID, clients[0].ID);
+		}
 	}
 }

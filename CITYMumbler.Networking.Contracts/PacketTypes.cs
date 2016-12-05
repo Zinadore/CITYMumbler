@@ -24,7 +24,8 @@ namespace CITYMumbler.Networking.Contracts
 	    CreateGroup,
 	    SendKeystroke,
 	    SendGroups,
-	    RequestSendGroups
+	    RequestSendGroups,
+	    SendUsers
     }
 
     public enum LeftGroupTypes : byte

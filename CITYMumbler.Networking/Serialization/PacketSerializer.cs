@@ -100,6 +100,9 @@ namespace CITYMumbler.Networking.Serialization
 					break;
 				case PacketType.RequestSendGroups:
 					break;
+				case PacketType.SendUsers:
+					writter.Write((SendUsersPacket) packet);
+					break;
 				default:
 					throw new ArgumentException("Packet is of an unsupported packetType");
 			}
