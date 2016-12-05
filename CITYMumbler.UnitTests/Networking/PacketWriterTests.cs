@@ -101,7 +101,7 @@ namespace CITYMumbler.UnitTests.Networking
             // Assert
             GroupMessagePacket newPacket = (GroupMessagePacket)reader.ReadPacket(PacketType.GroupMessage);
             Assert.AreEqual(newPacket.SenderId, ((GroupMessagePacket)packet).SenderId);
-            Assert.AreEqual(newPacket.ReceiverId, ((GroupMessagePacket)packet).ReceiverId);
+            Assert.AreEqual(newPacket.GroupID, ((GroupMessagePacket)packet).GroupID);
             Assert.AreEqual(newPacket.Message, ((GroupMessagePacket)packet).Message);
         }
 

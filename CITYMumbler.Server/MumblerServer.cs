@@ -10,6 +10,7 @@ using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
 using CITYMumbler.Networking.Sockets;
+using ReactiveUI;
 
 namespace CITYMumbler.Server
 {
@@ -22,7 +23,8 @@ namespace CITYMumbler.Server
         #region Private Members
         // This is us
         private TcpSocketListener listener;
-        private List<Client> connectedClients;
+        private List<Client> _connectedClients;
+        private ReactiveList<Group> _groupList;
         // The idiot's way of doing IDs
         private ushort idSeed = 1;
         // Log all the things
@@ -37,11 +39,21 @@ namespace CITYMumbler.Server
 
         public MumblerServer(ILoggerService loggerService)
         {
-            this.connectedClients = new List<Client>();
+            this._connectedClients = new List<Client>();
+            this._groupList= new ReactiveList<Group>();
             this.logger = loggerService.GetLogger(this.GetType());
             this.listener = new TcpSocketListener();
             this._serializer = new PacketSerializer();
             this.IsRunning = new BehaviorSubject<bool>(false);
+
+            this._groupList.Add(new Group()
+            {
+                Name = "MyGroup",
+                ID = 1,
+                PermissionType = JoinGroupPermissionTypes.Free,
+                OwnerID = 2,
+                Clients = new ReactiveList<Client>()
+            });
         }
 
         public void Start(int port = 21992)
@@ -55,7 +67,7 @@ namespace CITYMumbler.Server
 
         public void Stop()
         {
-            foreach (var client in connectedClients)
+            foreach (var client in _connectedClients)
             {
                 client.ClientSocket.Disconnect();
             }
@@ -69,7 +81,7 @@ namespace CITYMumbler.Server
         {
             this.logger.Log(LogLevel.Info, "Accepted new connection from: {0}", args.RemoteEndpoint);
             Client newClient = new Client(this.idSeed++, new TcpSocket(args.AcceptedSocket), args.RemoteEndpoint);
-            this.connectedClients.Add(newClient);
+            this._connectedClients.Add(newClient);
             newClient.ClientSocket.OnDataReceived += ClientSocket_OnDataReceived;
             newClient.ClientSocket.OnDisconnected += ClientSocket_OnDisconnected;
 
@@ -86,29 +98,63 @@ namespace CITYMumbler.Server
 
         private void ClientSocket_OnDisconnected(object sender, TcpSocketDisconnectedEventArgs e)
         {
-            var disconnected = connectedClients.FirstOrDefault(client => client.ID == e.ClientID);
-            connectedClients.Remove(disconnected);
+            var disconnected = _connectedClients.FirstOrDefault(client => client.ID == e.ClientID);
+            _connectedClients.Remove(disconnected);
             this.logger.Log(LogLevel.Warn, "Connection lost with {0}", disconnected?.RemoteEndpoint);
         }
 
         private void handlePacket(IPacket packet, TcpSocket clientSocket)
         {
+            
             switch (packet.PacketType)
             {
                 case PacketType.Connection:
                     var p = packet as ConnectionPacket;
-                    var client = connectedClients.FirstOrDefault(c => c.ID == clientSocket.ClientID);
+                    var client = _connectedClients.FirstOrDefault(c => c.ID == clientSocket.ClientID);
                     client.Name = string.Format("{0}#{1}", p.Name, client.ID);
                     var response = new ConnectedPacket(client.ID);
                     var responseBytes = this._serializer.ToBytes(response);
                     client.ClientSocket.Send(responseBytes);
                     this.logger.Log(LogLevel.Info, "New client with name: {0}", client.Name);
                     break;
+
+                case PacketType.JoinGroup:
+                    var p1 = packet as JoinGroupPacket;
+                    var groupToJoin = this._groupList.FirstOrDefault(group => group.ID == p1.GroupId);
+                    var requestingClient = this._connectedClients.FirstOrDefault(c => c.ID == p1.CliendId);
+                    // Client provided wrong password
+                    if (groupToJoin.PermissionType == JoinGroupPermissionTypes.Password && !groupToJoin.Password.Equals(p1.Password))
+                    {
+                        this.logger.Log(LogLevel.Warn, "User {0} tried to join group {1}, but provided wrong password.", requestingClient.Name, groupToJoin.Name);
+                        //TODO: Should inform client about wrong password
+                        break;
+                    }
+
+                    // Client is already part of the group
+                    if (groupToJoin.Clients.Contains(requestingClient))
+                    {
+                        this.logger.Log(LogLevel.Warn, "User {0} tried to join group {1} while already being a member.", requestingClient.Name, groupToJoin.Name);
+                        break;
+                    }
+
+                    //Everything went well. We should add the client to the group
+                    groupToJoin.Clients.Add(requestingClient);
+                    var joinedGroupPacket = new JoinedGroupPacket(requestingClient.ID, groupToJoin.ID);
+                    this.logger.Log(LogLevel.Info, "Added user {0} to group {1}", requestingClient.Name, groupToJoin.Name);
+                    requestingClient.ClientSocket.Send(this._serializer.ToBytes(joinedGroupPacket));
+                    break;
 				case PacketType.GroupMessage:
 		            var groupMessagePacket = packet as GroupMessagePacket;
-					this.logger.Log(LogLevel.Info, "{0} said to group with id {1}: {2}", 
-						groupMessagePacket.SenderName, groupMessagePacket.ReceiverId, groupMessagePacket.Message);
+                    var groupToMessage = this._groupList.FirstOrDefault(group => group.ID == groupMessagePacket.GroupID);
+                    foreach (var c in groupToMessage.Clients)
+                    {
+                        c.ClientSocket.Send(this._serializer.ToBytes(groupMessagePacket));
+                    }
 		            break;
+                case PacketType.PrivateMessage:
+                    var p2 = packet as PrivateMessagePacket;
+                    this.logger.Log(LogLevel.Info, "{0} said to {1} {2}", p2.SenderName, p2.ReceiverId, p2.Message);
+                    break;
             }
         }
     }

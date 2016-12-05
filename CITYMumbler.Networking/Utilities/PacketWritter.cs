@@ -53,7 +53,7 @@ namespace CITYMumbler.Networking.Utilities
         public void Write(GroupMessagePacket packet)
         {
             Write(packet.SenderId);
-            Write(packet.ReceiverId);
+            Write(packet.GroupID);
 			Write(packet.SenderName);
             Write(packet.Message);
         }

@@ -17,23 +17,21 @@ using ReactiveUI;
 
 namespace CITYMumbler.Client.Views
 {
-	/// <summary>
-	/// Interaction logic for UserControl1.xaml
-	/// </summary>
-	public partial class MainView : UserControl, IViewFor<MainViewModel>
-	{
-		public MainView()
-		{
-			InitializeComponent();
-		    this.OneWayBind(ViewModel, vm => vm.ChatList, @this => @this.ChatTabControl.ItemsSource);
-		}
+    /// <summary>
+    /// Interaction logic for SummaryView.xaml
+    /// </summary>
+    public partial class SummaryView : UserControl, IViewFor<SummaryViewModel>
+    {
+        public SummaryView()
+        {
+            InitializeComponent();
+        }
 
-		object IViewFor.ViewModel
-		{
-			get { return ViewModel; }
-			set { ViewModel = (MainViewModel) value; }
-		}
-		public MainViewModel ViewModel { get; set; }
-
+        object IViewFor.ViewModel
+        {
+            get { return ViewModel; }
+            set { ViewModel = (SummaryViewModel)value; }
+        }
+        public SummaryViewModel ViewModel { get; set; }
     }
 }

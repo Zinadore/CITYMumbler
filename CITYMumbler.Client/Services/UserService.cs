@@ -27,12 +27,7 @@ namespace CITYMumbler.Client
 
 		public void RemoveUser(Client newClient)
 		{
-			foreach (var client in UserList)
-			{
-				if (client.ID == newClient.ID)
-					UserList.Remove(newClient);
-			}
-			throw new InstanceNotFoundException();
+		    UserList.Remove(newClient);
 		}
 	}
 }
