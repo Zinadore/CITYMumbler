@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\IMonitorConfig.cs" />
     <Compile Include="Services\Logger\ILogger.cs" />
     <Compile Include="Services\Logger\ILoggerService.cs" />
     <Compile Include="Services\Logger\LogEntry.cs" />

@@ -44,6 +44,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -67,6 +68,7 @@
     <Compile Include="Data\CommonClientRepresentation.cs" />
     <Compile Include="Data\CommonGroupRepresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ConfigMonitor\ConfigMonitorService.cs" />
     <Compile Include="Services\Logger\LoggerService.cs" />
     <Compile Include="Utilities\AccentColorSet.cs" />
   </ItemGroup>

@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Common.Contracts.Services;
 using CITYMumbler.Common.Contracts.Services.Logger;
+using CITYMumbler.Common.Services.ConfigMonitor;
 using HelperTrinity;
 
 namespace CITYMumbler.Common.Services.Logger
@@ -17,6 +21,7 @@ namespace CITYMumbler.Common.Services.Logger
         private IDictionary<string, ILogger> loggers;
         private readonly object sync;
         private readonly ReplaySubject<LogEntry> entries;
+        private readonly IMonitorConfig _configMonitor;
 
         public IObservable<LogEntry> Entries => this.entries.Where(entry => entry.Level >= this.Threshold);
         //public IObservable<LogEntry> Entries => this.entries;
@@ -34,7 +39,15 @@ namespace CITYMumbler.Common.Services.Logger
             this.entries = new ReplaySubject<LogEntry>();
             this.loggers = new Dictionary<string, ILogger>();
             this.sync = new object();
-            this._threshold = LogLevel.Debug;
+            this._configMonitor = new ConfigMonitorService();
+            var logSetting = ConfigurationManager.AppSettings["logLevel"];
+            this._threshold = settingToLogLevel(logSetting);
+
+            this._configMonitor.OnConfigChanged += (s, e) =>
+            {
+                var setting = ConfigurationManager.AppSettings["logLevel"];
+                this._threshold = settingToLogLevel(logSetting);
+            };
         }
 
         public ILogger GetLogger(Type forType)
@@ -64,6 +77,15 @@ namespace CITYMumbler.Common.Services.Logger
             }
         }
 
+        private LogLevel settingToLogLevel(string setting)
+        {
+            setting.AssertNotNull("setting");
+            var num = (LogLevel)Enum.Parse(typeof(LogLevel), setting);
+            if (num == LogLevel.Debug || num == LogLevel.Info || num == LogLevel.Warn || num == LogLevel.Error)
+                return num;
+            return LogLevel.Debug;
+        }
+
         private sealed class Logger : ILogger
         {
             private readonly LoggerService owner;
@@ -91,6 +113,8 @@ namespace CITYMumbler.Common.Services.Logger
                 var formatted = string.Format(message, args);
                 Log(level, formatted);
             }
+
+            
         }
     }
 }
