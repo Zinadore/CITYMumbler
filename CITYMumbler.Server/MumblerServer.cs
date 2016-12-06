@@ -119,6 +119,7 @@ namespace CITYMumbler.Server
                     break;
 
                 case PacketType.JoinGroup:
+                    this.logger.Log(LogLevel.Debug, "Received request to join group");
                     var p1 = packet as JoinGroupPacket;
                     var groupToJoin = this._groupList.FirstOrDefault(group => group.ID == p1.GroupId);
                     var requestingClient = this._connectedClients.FirstOrDefault(c => c.ID == p1.CliendId);
@@ -156,6 +157,7 @@ namespace CITYMumbler.Server
                     this.logger.Log(LogLevel.Info, "{0} said to {1} {2}", p2.SenderName, p2.ReceiverId, p2.Message);
                     break;
                 case PacketType.RequestSendGroups:
+                    this.logger.Log(LogLevel.Debug, "Preparing groups to send");
                     List<GroupPacket> groupPackets = new List<GroupPacket>();
                     foreach (var group in this._groupList)
                     {

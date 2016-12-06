@@ -31,6 +31,8 @@ namespace CITYMumbler.Client
         #endregion
 
         #region Properties
+        public string Name => this._me.Name;
+        public ushort ID => this._me.ID;
         public BehaviorSubject<bool> Connected { get; set; }
         public ReplaySubject<ChatEntry> GroupMessages{ get; private set; }
         public ReplaySubject<ChatEntry> PrivateMessages { get; private set; }
@@ -177,7 +179,13 @@ namespace CITYMumbler.Client
                         }
                         Groups.Add(newGroup);
                     }
+                    this.JoinGroup(1);
                     this.OnGroupsReceived?.Invoke(this, EventArgs.Empty);
+                    break;
+                case PacketType.GroupMessage:
+                    var groupMessage = receivedPacket as GroupMessagePacket;
+                    var groupChatEntry = new ChatEntry(groupMessage.SenderId, groupMessage.SenderName, groupMessage.Message, groupMessage.GroupID);
+                    this.GroupMessages.OnNext(groupChatEntry);
                     break;
             }
         }
