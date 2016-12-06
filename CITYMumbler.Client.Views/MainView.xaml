@@ -47,5 +47,6 @@
             </TabControl.ContentTemplate>
         </TabControl>
         <local:LogWindow Grid.Row="1" Grid.Column="1" x:Name="LogWindow" />
+        <local:SummaryView Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"></local:SummaryView>
 	</Grid>
 </UserControl>

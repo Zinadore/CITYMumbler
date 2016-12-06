@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using CITYMumbler.Common.Data;
+using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
 using NUnit.Framework;
@@ -99,5 +100,114 @@ namespace CITYMumbler.UnitTests.Networking
             var ex = Assert.Throws<ArgumentException>(() => serializer.FromBytes(bytes));
             Assert.That(ex.Message, Is.EqualTo("The provided PacketType is not valid."));
         }
-    }
+
+	    [Test]
+	    public void deserialize_send_goups()
+	    {
+			//// Arrange
+			//Group[] groups = new Group[]
+			//{
+			//	new Group("group1", (byte) 1,(byte)1, JoinGroupPermissionTypes.Password, (byte)6),
+			//	new Group("group2", (byte) 2,(byte)2, JoinGroupPermissionTypes.Password, (byte)6),
+			//	new Group("group3", (byte) 3,(byte)3, JoinGroupPermissionTypes.Password, (byte)6)
+			//};
+			//IPacket packet = new SendGroupsPacket(groups);
+			//PacketSerializer serializer = new PacketSerializer();
+
+			//// Act
+		 //   byte[] bytes = serializer.ToBytes(packet);
+		 //   SendGroupsPacket result = (SendGroupsPacket) serializer.FromBytes(bytes);
+
+		 //   // Assert
+			//Assert.AreEqual(result.GetNoOfGroups(), groups.Length);
+			//Assert.AreEqual(result.GroupList[0].Id, groups[0].Id);
+	    }
+
+		[Test]
+		public void deserializerequest_groups_list()
+		{
+			// Arrange 
+			IPacket packet = new RequestSendGroupsPacket();
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			RequestSendGroupsPacket newPacket = (RequestSendGroupsPacket) serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.PacketType, newPacket.PacketType);
+		}
+
+		[Test]
+		public void deserialize_send_users()
+		{
+			// Arrange
+			CommonClientRepresentation[] users = new CommonClientRepresentation[]
+			{
+				new CommonClientRepresentation { ID = (ushort) 4, Name = "client1"},
+				new CommonClientRepresentation { ID = (ushort) 5, Name = "client2"}
+			};
+			IPacket packet = new SendUsersPacket(users);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+			SendUsersPacket result = (SendUsersPacket)serializer.FromBytes(bytes);
+
+			// Assert
+			Assert.AreEqual(result.GetNoOfUsers(), users.Length);
+			Assert.AreEqual(result.UserList[0].Name, users[0].Name);
+		}
+
+		[Test]
+		public void deserialize_request_users_list()
+		{
+			// Arrange 
+			IPacket packet = new RequestSendUsersPacket();
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			RequestSendUsersPacket newPacket = (RequestSendUsersPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.PacketType, newPacket.PacketType);
+		}
+
+	    [Test]
+	    public void deserializer_group_packet()
+	    {
+			// Arrange 
+			CommonGroupRepresentation group = new CommonGroupRepresentation { ID = (ushort) 5, Name = "group", OwnerID = 3, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6};
+			ushort[] UserList = new ushort[2];
+			UserList[0] = (ushort)5;
+			UserList[1] = (ushort)8;
+			IPacket packet = new GroupPacket(group.Name, group.ID, group.OwnerID, group.PermissionType, group.TimeoutThreshold, UserList);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+		    GroupPacket newPacket = (GroupPacket) serializer.FromBytes(bytes);
+			Assert.AreEqual(((GroupPacket)packet).Name, newPacket.Name);
+			Assert.AreEqual(UserList.Length, newPacket.GetNoOfUsers());
+			Assert.AreEqual(UserList[0], newPacket.UserList[0]);
+	    }
+
+	    [Test]
+	    public void deserialize_request_group_packet()
+	    {
+			// Arrange
+			RequestGroupPacket packet = new RequestGroupPacket(4);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			RequestGroupPacket newPacket = (RequestGroupPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+		}
+	}
 }

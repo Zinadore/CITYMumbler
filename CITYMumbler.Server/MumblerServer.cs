@@ -119,6 +119,7 @@ namespace CITYMumbler.Server
                     break;
 
                 case PacketType.JoinGroup:
+                    this.logger.Log(LogLevel.Debug, "Received request to join group");
                     var p1 = packet as JoinGroupPacket;
                     var groupToJoin = this._groupList.FirstOrDefault(group => group.ID == p1.GroupId);
                     var requestingClient = this._connectedClients.FirstOrDefault(c => c.ID == p1.CliendId);
@@ -154,6 +155,21 @@ namespace CITYMumbler.Server
                 case PacketType.PrivateMessage:
                     var p2 = packet as PrivateMessagePacket;
                     this.logger.Log(LogLevel.Info, "{0} said to {1} {2}", p2.SenderName, p2.ReceiverId, p2.Message);
+                    break;
+                case PacketType.RequestSendGroups:
+                    this.logger.Log(LogLevel.Debug, "Preparing groups to send");
+                    List<GroupPacket> groupPackets = new List<GroupPacket>();
+                    foreach (var group in this._groupList)
+                    {
+                        List<ushort> clientIds = new List<ushort>();
+                        foreach (var gclient in group.Clients)
+                        {
+                            clientIds.Add(gclient.ID);
+                        }
+                        groupPackets.Add(new GroupPacket(group.Name, group.ID, group.OwnerID, group.PermissionType, group.Threshold, clientIds.ToArray()));
+                    }
+                    var requestGroupsResponse = new SendGroupsPacket(groupPackets.ToArray());
+                    clientSocket.Send(this._serializer.ToBytes(requestGroupsResponse));
                     break;
             }
         }

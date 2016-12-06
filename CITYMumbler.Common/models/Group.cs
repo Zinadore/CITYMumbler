@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CITYMumbler.Networking.Contracts;
+﻿using CITYMumbler.Networking.Contracts;
 using ReactiveUI;
 
-namespace CITYMumbler.Client
+namespace CITYMumbler.Common
 {
 	public class Group
 	{

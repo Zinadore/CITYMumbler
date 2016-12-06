@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CITYMumbler.Client.Views"
              xmlns:viewModels="clr-namespace:CITYMumbler.Client.ViewModels;assembly=CITYMumbler.Client.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" Loaded="View_Loaded">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
@@ -19,6 +19,7 @@
 		<RichTextBox Grid.Row="0" 
                     Grid.ColumnSpan="2" 
                      x:Name="ChatDisplay"
+                     IsReadOnly="True"
                      AcceptsReturn="False"
                      VerticalScrollBarVisibility="Visible"/>
 		<TextBox Grid.Row="1" Grid.Column="0" x:Name="ChatInput" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom"/>

@@ -19,8 +19,7 @@ namespace CITYMumbler.Client.Views
             this.Router = new RoutingState();
             Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
 			Locator.CurrentMutable.RegisterConstant(new LoggerService(), typeof(ILoggerService));
-
-			Locator.CurrentMutable.RegisterConstant(new UserService(), typeof(UserService));
+            
 			Locator.CurrentMutable.RegisterConstant(new MumblerClient(), typeof(MumblerClient));
 
             RegisterViewModels();
@@ -33,6 +32,7 @@ namespace CITYMumbler.Client.Views
 			Locator.CurrentMutable.Register(() => new MainViewModel(this), typeof(MainViewModel));
 			//Locator.CurrentMutable.Register(() => new ChatViewModel(this), typeof(ChatViewModel));
             Locator.CurrentMutable.Register(() => new LogWindowViewModel(), typeof(LogWindowViewModel));
+            Locator.CurrentMutable.Register(() => new SummaryViewModel(), typeof(SummaryViewModel));
 		}
 
         private void RegisterViews()

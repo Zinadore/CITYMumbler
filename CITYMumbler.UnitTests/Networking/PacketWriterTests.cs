@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CITYMumbler.Common.Data;
 using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
@@ -339,5 +340,87 @@ namespace CITYMumbler.UnitTests.Networking
             Assert.AreEqual(newPacket.PermissionType, ((CreateGroupPacket)packet).PermissionType);
             Assert.AreEqual(newPacket.Password, ((CreateGroupPacket)packet).Password);
         }
-    }
+
+	    [Test]
+	    public void serializes_send_groups_packet()
+	    {
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+		    CommonGroupRepresentation[] groups = new CommonGroupRepresentation[]
+		    {
+				new CommonGroupRepresentation { Name = "group1", ID = 4,OwnerID = (byte)3, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte)6},
+				new CommonGroupRepresentation { Name = "group2", ID = 5,OwnerID = (byte)6, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte)6},
+				new CommonGroupRepresentation { Name = "group3", ID = 6,OwnerID = (byte)7, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte)6},
+			};
+			IPacket packet = new SendGroupsPacket(groups);
+
+			// Act
+			writter.Write((SendGroupsPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+		    SendGroupsPacket newPacket = (SendGroupsPacket) reader.ReadPacket(PacketType.SendGroups);
+		    Assert.AreEqual(newPacket.GetNoOfGroups(), groups.Length);
+			Assert.AreEqual(newPacket.GroupList[0].Id, groups[0].ID);
+	    }
+
+		[Test]
+		public void serializes_send_users_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonClientRepresentation[] clients = new CommonClientRepresentation[]
+			{
+				new CommonClientRepresentation { ID = (ushort) 4, Name = "client1"},
+				new CommonClientRepresentation { ID = (ushort) 5, Name = "client2"}
+			};
+			IPacket packet = new SendUsersPacket(clients);
+
+			// Act
+			writter.Write((SendUsersPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			SendUsersPacket newPacket = (SendUsersPacket)reader.ReadPacket(PacketType.SendUsers);
+			Assert.AreEqual(newPacket.GetNoOfUsers(), clients.Length);
+			Assert.AreEqual(newPacket.UserList[0].ID, clients[0].ID);
+		}
+
+		[Test]
+		public void serializes_group_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonGroupRepresentation group = new CommonGroupRepresentation {Name =  "group1", ID = (byte) 4, OwnerID = 3, PermissionType = JoinGroupPermissionTypes.Password, TimeoutThreshold = (byte) 6};
+			ushort[] UserList = new ushort[2];
+			UserList[0] = (ushort) 5;
+			UserList[1] = (ushort) 8;
+			IPacket packet = new GroupPacket(group.Name, group.ID, group.OwnerID, group.PermissionType, group.TimeoutThreshold, UserList);
+
+			// Act
+			writter.Write((GroupPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			GroupPacket newPacket = (GroupPacket)reader.ReadPacket(PacketType.GroupPacket);
+			Assert.AreEqual(newPacket.GetNoOfUsers(), UserList.Length);
+			Assert.AreEqual(newPacket.UserList[0], UserList[0]);
+		}
+
+	    [Test]
+	    public void serializes_request_group_packet()
+	    {
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+		    IPacket packet = new RequestGroupPacket(4);
+
+		    // Act
+			writter.Write((RequestGroupPacket) packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+		    // Assert
+		    RequestGroupPacket newPacket = (RequestGroupPacket) reader.ReadPacket(PacketType.RequestGroup);
+			Assert.AreEqual(newPacket.GroupId, ((RequestGroupPacket) packet).GroupId);
+	    }
+	}
 }

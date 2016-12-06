@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using CITYMumbler.Common;
+using CITYMumbler.Common.Data;
 using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
 using CITYMumbler.Networking.Serialization;
@@ -45,6 +47,18 @@ namespace CITYMumbler.Networking.Utilities
                 case PacketType.Kick: return ReadKickMessage();
 
                 case PacketType.CreateGroup: return ReadCreateGroupMessage();
+
+				case PacketType.SendGroups: return SendGroupsMessage();
+
+				case PacketType.RequestSendGroups: return (IPacket) new RequestSendGroupsPacket();
+
+				case PacketType.SendUsers: return SendUsersMessage();
+
+				case PacketType.RequestSendUsers: return (IPacket) new RequestSendUsersPacket();
+
+				case PacketType.GroupPacket: return GroupPacketMessage();
+
+				case PacketType.RequestGroup: return RequestGroupMessage();
 
                 default: throw new ArgumentException("The provided PacketType is not valid.");
             }
@@ -192,5 +206,60 @@ namespace CITYMumbler.Networking.Utilities
 
             return packet;
         }
-    }
+
+	    private IPacket SendGroupsMessage()
+	    {
+		    byte NoOfGroups = ReadByte();
+		    GroupPacket[] GroupList = new GroupPacket[NoOfGroups];
+
+		    for (int i = 0; i < NoOfGroups; i++)
+		    {
+			    ushort id = ReadUInt16();
+			    string name = ReadString();
+			    ushort ownerId = ReadUInt16();
+			    JoinGroupPermissionTypes permissionType = (JoinGroupPermissionTypes)ReadByte();
+			    byte timeThreshold = ReadByte();
+			    GroupList[i] = new GroupPacket(name, id, ownerId, permissionType, timeThreshold);
+			}
+			return (IPacket) new SendGroupsPacket(GroupList);
+	    }
+
+	    private IPacket SendUsersMessage()
+	    {
+		    byte NoOfUsers = ReadByte();
+		    CommonClientRepresentation[] UserList = new CommonClientRepresentation[NoOfUsers];
+
+		    for (int i = 0; i < NoOfUsers; i++)
+		    {
+			    ushort id = ReadUInt16();
+			    string name = ReadString();
+			    UserList[i] = new CommonClientRepresentation() { ID = id, Name = name };
+		    }
+		    return (IPacket) new SendUsersPacket(UserList);
+	    }
+
+	    private IPacket GroupPacketMessage()
+	    {
+		    ushort id = ReadUInt16();
+		    string name = ReadString();
+		    ushort ownerId = ReadUInt16();
+		    JoinGroupPermissionTypes permissionType = (JoinGroupPermissionTypes) ReadByte();
+		    byte timeThreshold = ReadByte();
+		    byte noOfUsers = ReadByte();
+			ushort[] IdList = new ushort[noOfUsers];
+		    for (int i = 0; i < noOfUsers; i++)
+		    {
+			    ushort userId = ReadUInt16();
+			    IdList[i] = userId;
+		    }
+		    return (IPacket) new GroupPacket(name, id, ownerId, permissionType, timeThreshold, IdList);
+	    }
+
+	    private IPacket RequestGroupMessage()
+	    {
+		    ushort groupId = ReadUInt16();
+		    return (IPacket) new RequestGroupPacket(groupId);
+	    }
+
+	}
 }

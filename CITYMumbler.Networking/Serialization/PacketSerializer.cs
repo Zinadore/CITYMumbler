@@ -95,6 +95,22 @@ namespace CITYMumbler.Networking.Serialization
 				case PacketType.LeftGroup:
 					writter.Write((LeftGroupPacket)packet);
 					break;
+				case PacketType.SendGroups:
+					writter.Write((SendGroupsPacket) packet);
+					break;
+				case PacketType.RequestSendGroups:
+					break;
+				case PacketType.SendUsers:
+					writter.Write((SendUsersPacket) packet);
+					break;
+				case PacketType.RequestSendUsers:
+					break;
+				case PacketType.GroupPacket:
+					writter.Write((GroupPacket) packet);
+					break;
+				case PacketType.RequestGroup:
+					writter.Write((RequestGroupPacket) packet);
+					break;
 				default:
 					throw new ArgumentException("Packet is of an unsupported packetType");
 			}
