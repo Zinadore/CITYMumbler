@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +27,7 @@ namespace CITYMumbler.Client.Views
 		{
 			InitializeComponent();
 		    this.OneWayBind(ViewModel, vm => vm.ChatList, @this => @this.ChatTabControl.ItemsSource);
+		    this.Bind(ViewModel, vm => vm.SelectedTab, @this => @this.ChatTabControl.SelectedItem);
 		}
 
 		object IViewFor.ViewModel

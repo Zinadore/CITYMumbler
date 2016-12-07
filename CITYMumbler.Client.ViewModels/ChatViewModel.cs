@@ -54,7 +54,17 @@ namespace CITYMumbler.Client.ViewModels
 
 		public ReactiveCommand<Unit, Unit> SendCommand;
 
-		public ChatViewModel(IScreen hostScreen, ChatViewModelType type, ushort filterId)
+	    public ChatViewModel(IScreen hostScreen, ChatViewModelType type, PrivateChat chat):this(hostScreen, type, chat.RemoteUser.ID)
+	    {
+	        this.Header = chat.RemoteUser.Name;
+	    }
+
+        public ChatViewModel(IScreen hostScreen, ChatViewModelType type, Group group):this(hostScreen, type, group.ID)
+	    {
+	        this.Header = group.Name;
+	    }
+
+        private ChatViewModel(IScreen hostScreen, ChatViewModelType type, ushort filterId)
 		{
 			this.HostScreen = hostScreen;
 		    this._type = type;
@@ -63,12 +73,10 @@ namespace CITYMumbler.Client.ViewModels
 		    this.ID = _mumblerClient.ID;
             if (this._type == ChatViewModelType.GroupChat)
             {
-                this.Header = string.Format("Group chat #{0}", _filterId);
 		        this.Entries = this._mumblerClient.GroupMessages.Where(entry => entry.GroupId == this._filterId);
             }
             else
 		    {
-                this.Header = string.Format("Private chat #{0}", _filterId);
                 this.Entries = this._mumblerClient.PrivateMessages.Where(entry => entry.SenderId == this._filterId);
 		    }
 			this.SendCommand = ReactiveCommand.Create(SendMessage);

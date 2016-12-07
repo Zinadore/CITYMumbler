@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,34 +14,29 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CITYMumbler.Client.ViewModels;
 using ReactiveUI;
-using Splat;
 
 namespace CITYMumbler.Client.Views
 {
     /// <summary>
-    /// Interaction logic for SummaryView.xaml
+    /// Interaction logic for UsersSummaryListItemView.xaml
     /// </summary>
-    public partial class SummaryView : UserControl, IViewFor<SummaryViewModel>
+    public partial class UsersSummaryListItemView : UserControl, IViewFor<UsersSummaryListItemViewModel>
     {
-        public SummaryView()
+        public UsersSummaryListItemView()
         {
             InitializeComponent();
-            this.ViewModel = Locator.Current.GetService<SummaryViewModel>();
+            this.Bind(ViewModel, vm => vm.Username, @this => @this.Username.Text);
             this.WhenActivated(d =>
             {
-                d(this.OneWayBind(ViewModel, vm => vm.Groups, @this => @this.GroupsList.ItemsSource));
-                d(this.OneWayBind(ViewModel, vm => vm.Users, @this => @this.UsersList.ItemsSource));
-                
+                d(this.BindCommand(ViewModel, vm => vm.WhisperCommand, @this => @this.MenuItemWhisper));
             });
-
-
         }
 
         object IViewFor.ViewModel
         {
             get { return ViewModel; }
-            set { ViewModel = (SummaryViewModel)value; }
+            set { ViewModel = (UsersSummaryListItemViewModel)value; }
         }
-        public SummaryViewModel ViewModel { get; set; }
+        public UsersSummaryListItemViewModel ViewModel { get; set; }
     }
 }
