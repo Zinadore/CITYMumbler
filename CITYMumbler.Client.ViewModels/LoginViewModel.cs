@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reactive;
@@ -126,6 +127,7 @@ namespace CITYMumbler.Client.ViewModels
 		    this.HostScreen.Router.Navigate.ThrownExceptions.Subscribe(ex =>
 		    {
 		        this.logger.Log(LogLevel.Error, ex.Message);
+		        Debug.WriteLine(ex.StackTrace);
 		    });
         }
 

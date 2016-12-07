@@ -19,7 +19,7 @@ namespace CITYMumbler.Networking.Serialization
 			OwnerId = ownerId;
 			this.PermissionType = permissionType;
 			TimeThreshold = timeThreshold;
-			UserList = userList;
+			UserList = userList ?? new ushort[1];
 		}
 
 		public byte GetNoOfUsers() { return (byte) UserList.Length; }

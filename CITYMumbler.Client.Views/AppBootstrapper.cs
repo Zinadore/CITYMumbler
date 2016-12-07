@@ -32,7 +32,7 @@ namespace CITYMumbler.Client.Views
 			Locator.CurrentMutable.Register(() => new MainViewModel(this), typeof(MainViewModel));
 			//Locator.CurrentMutable.Register(() => new ChatViewModel(this), typeof(ChatViewModel));
             Locator.CurrentMutable.Register(() => new LogWindowViewModel(), typeof(LogWindowViewModel));
-            Locator.CurrentMutable.Register(() => new SummaryViewModel(), typeof(SummaryViewModel));
+            Locator.CurrentMutable.RegisterConstant(new SummaryViewModel(), typeof(SummaryViewModel));
 		}
 
         private void RegisterViews()
@@ -40,6 +40,8 @@ namespace CITYMumbler.Client.Views
             Locator.CurrentMutable.Register(() => new LoginView(), typeof(IViewFor<LoginViewModel>));
 			Locator.CurrentMutable.Register(() => new MainView(), typeof(IViewFor<MainViewModel>));
 			Locator.CurrentMutable.Register(() => new ChatView(), typeof(IViewFor<ChatViewModel>));
+            Locator.CurrentMutable.Register(() => new GroupsSummaryListItemView(), typeof(IViewFor<GroupsSummaryListItemViewModel>));
+            Locator.CurrentMutable.Register(() => new UsersSummaryListItemView(), typeof(IViewFor<UsersSummaryListItemViewModel>));
 		}
 
     }

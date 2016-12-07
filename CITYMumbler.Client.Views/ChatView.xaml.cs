@@ -31,10 +31,10 @@ namespace CITYMumbler.Client.Views
 			InitializeComponent();
             chatParagraph = new Paragraph();
             this.ChatDisplay.Document = new FlowDocument(chatParagraph);
-			this.Bind(this.ViewModel, vm => vm.ChatInput, @this => @this.ChatInput.Text);
+            this.Bind(this.ViewModel, vm => vm.ChatInput, @this => @this.ChatInput.Text);
 
-			this.BindCommand(ViewModel, vm => vm.SendCommand, @this => @this.SendButton);
-		    this.WhenActivated(d =>
+            this.BindCommand(ViewModel, vm => vm.SendCommand, @this => @this.SendButton);
+            this.WhenActivated(d =>
 		    {
 		        d(this.WhenAnyObservable(x => x.ViewModel.Entries)
                     .SubscribeOn(RxApp.TaskpoolScheduler)

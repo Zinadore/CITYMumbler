@@ -76,11 +76,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatViewModel.cs" />
+    <Compile Include="GroupsSummaryListItemViewModel.cs" />
     <Compile Include="LogWindowViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SummaryViewModel.cs" />
+    <Compile Include="UsersSummaryListItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

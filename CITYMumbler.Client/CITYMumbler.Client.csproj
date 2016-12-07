@@ -61,6 +61,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="MumblerClient.cs" />
+    <Compile Include="PrivateChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

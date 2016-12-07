@@ -39,6 +39,7 @@ namespace CITYMumbler.Client
         public ReactiveList<Group> Groups { get; private set; }
         public ReactiveList<Group> JoinedGroups { get; private set; }
         public ReactiveList<Client> ConnectedUsers { get; private set; }
+        public ReactiveList<PrivateChat> PrivateChats { get; private set; }
         #endregion
 
         public MumblerClient()
@@ -55,6 +56,7 @@ namespace CITYMumbler.Client
             this.Groups = new ReactiveList<Group>();
             this.JoinedGroups = new ReactiveList<Group>();
             this.ConnectedUsers = new ReactiveList<Client>();
+            this.PrivateChats = new ReactiveList<PrivateChat>();
         }
 
         public void Connect(string host, int port, string username)
@@ -91,6 +93,49 @@ namespace CITYMumbler.Client
         {
             JoinGroupPacket packet = new JoinGroupPacket(this._me.ID, groupId);
             this._socket.Send(this._serializer.ToBytes(packet));
+        }
+
+        public void LeaveGroup(ushort groupId)
+        {
+            lock (this.JoinedGroups)
+            {
+                this.JoinedGroups.Remove(this.JoinedGroups.FirstOrDefault(g => g.ID == groupId));
+            }
+            LeaveGroupPacket packet = new LeaveGroupPacket(this._me.ID, groupId);
+            this._socket.Send(this._serializer.ToBytes(packet));
+        }
+
+        public void Whisper(ushort whisperId)
+        {
+            PrivateChat chat;
+            lock (this.PrivateChats)
+            {
+                chat = this.PrivateChats.FirstOrDefault(pc => pc.RemoteUser.ID == whisperId);
+            }
+
+            if (chat != null) return;
+            Client receiver;
+            lock (this.ConnectedUsers)
+            {
+                receiver = ConnectedUsers.FirstOrDefault(c => c.ID == whisperId);
+            }
+            if (receiver == null)
+            {
+                this._logger.Log(LogLevel.Error, "Tried to whisper a non existing user");
+                return;
+            }
+            lock (this.PrivateChats)
+            {
+                this.PrivateChats.Add(new PrivateChat(this._me, receiver));
+            }
+        }
+
+        public void CloseWhisper(ushort whisperId)
+        {
+            lock (this.PrivateChats)
+            {
+                this.PrivateChats.Remove(this.PrivateChats.First(pc => pc.RemoteUser.ID == whisperId));
+            }
         }
 
         #region Helpers
@@ -149,6 +194,8 @@ namespace CITYMumbler.Client
                     this._me.ID = p.ClientId;
                     var requestGroupsPacket = new RequestSendGroupsPacket();
                     this._socket.Send(this._serializer.ToBytes(requestGroupsPacket));
+                    var requestUsersPacket = new RequestSendUsersPacket();
+                    this._socket.Send(this._serializer.ToBytes(requestUsersPacket));
                     this.OnConnected?.Invoke(this, EventArgs.Empty);
                     break;
                 case PacketType.JoinedGroup:
@@ -170,16 +217,8 @@ namespace CITYMumbler.Client
                             TimeoutThreshold = group.TimeThreshold,
                             GroupUsers = new ReactiveList<Client>()
                         };
-                        foreach (var user in ConnectedUsers)
-                        {
-                            if (group.UserList.Contains(user.ID))
-                            {
-                                newGroup.GroupUsers.Add(user);
-                            }
-                        }
                         Groups.Add(newGroup);
                     }
-                    this.JoinGroup(1);
                     this.OnGroupsReceived?.Invoke(this, EventArgs.Empty);
                     break;
                 case PacketType.GroupMessage:
@@ -187,8 +226,30 @@ namespace CITYMumbler.Client
                     var groupChatEntry = new ChatEntry(groupMessage.SenderId, groupMessage.SenderName, groupMessage.Message, groupMessage.GroupID);
                     this.GroupMessages.OnNext(groupChatEntry);
                     break;
+
+                case PacketType.SendUsers:
+                    var sendUsersPacket = receivedPacket as SendUsersPacket;
+                    this.ConnectedUsers.Clear();
+
+                    foreach (var sentClient in sendUsersPacket.UserList)
+                    {
+                        this.ConnectedUsers.Add(new Client() { ID = sentClient.ID, Name = sentClient.Name });
+                    }
+                    break;
+                case PacketType.PrivateMessage:
+                    handlePrivateMessagePacket(receivedPacket);
+                    break;
             }
         }
+        #region Packet Handlers
 
+        private void handlePrivateMessagePacket(IPacket packet)
+        {
+            var pm = packet as PrivateMessagePacket;
+            Whisper(pm.SenderId);
+            var entry = new ChatEntry(pm.SenderId, pm.SenderName, pm.Message);
+            this.PrivateMessages.OnNext(entry);
+        }
+        #endregion
     }
 }

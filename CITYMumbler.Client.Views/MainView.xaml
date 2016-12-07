@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CITYMumbler.Client.Views"
-             xmlns:rui="clr-namespace:ReactiveUI;assembly=ReactiveUI"
+             xmlns:reactiveUi="http://reactiveui.net"
              mc:Ignorable="d" 
-			 
              d:DesignHeight="576" d:DesignWidth="1024">
 
 	<UserControl.Resources>
@@ -27,14 +26,22 @@
             <RowDefinition Height="130" />
         </Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MinWidth="100"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" MinWidth="300"/>
+			<ColumnDefinition Width="100" />
 		</Grid.ColumnDefinitions>
+        <GridSplitter   Grid.Column="1"
+                        Grid.RowSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Stretch"
+                        Width="5" />
         <TabControl x:Name="ChatTabControl"
+                    MinWidth="300"
                     Grid.Row="0"
+                    IsSynchronizedWithCurrentItem="True"
                     VerticalContentAlignment="Stretch"
-                    Grid.Column="1">
+                    Grid.Column="2">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <HeaderedContentControl Header="{Binding Header}"></HeaderedContentControl>
@@ -42,11 +49,15 @@
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <rui:ViewModelViewHost ViewModel="{Binding}" VerticalContentAlignment="Stretch"></rui:ViewModelViewHost>
+                    <reactiveUi:ViewModelViewHost ViewModel="{Binding}" VerticalContentAlignment="Stretch"></reactiveUi:ViewModelViewHost>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-        <local:LogWindow Grid.Row="1" Grid.Column="1" x:Name="LogWindow" />
-        <local:SummaryView Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"></local:SummaryView>
+        <local:LogWindow Grid.Row="1" Grid.Column="2" x:Name="LogWindow" />
+        <local:SummaryView HorizontalAlignment="Stretch" 
+                           HorizontalContentAlignment="Stretch"
+                          Grid.Row="0" 
+                          Grid.Column="0" 
+                          Grid.RowSpan="2"></local:SummaryView>
 	</Grid>
 </UserControl>

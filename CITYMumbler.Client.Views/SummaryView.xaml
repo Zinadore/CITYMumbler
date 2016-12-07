@@ -4,21 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CITYMumbler.Client.Views"
+             xmlns:rui="clr-namespace:ReactiveUI;assembly=ReactiveUI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <TabControl>
+             d:DesignHeight="300" d:DesignWidth="300"
+             HorizontalAlignment="Stretch"
+             HorizontalContentAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch">
+        <TabControl HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch">
             <TabItem Header="Groups">
-                <ListBox x:Name="GroupsList">
+                <ListBox x:Name="GroupsList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}"></TextBlock>
+                            <rui:ViewModelViewHost ViewModel="{Binding}"></rui:ViewModelViewHost>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </TabItem>
             <TabItem Header="Users">
-                <ListBox x:Name="UsersList"></ListBox>
+                <ListBox x:Name="UsersList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <rui:ViewModelViewHost ViewModel="{Binding}"></rui:ViewModelViewHost>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
         </TabControl>
     </Grid>
