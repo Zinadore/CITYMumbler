@@ -422,5 +422,111 @@ namespace CITYMumbler.UnitTests.Networking
 		    RequestGroupPacket newPacket = (RequestGroupPacket) reader.ReadPacket(PacketType.RequestGroup);
 			Assert.AreEqual(newPacket.GroupId, ((RequestGroupPacket) packet).GroupId);
 	    }
+
+		[Test]
+		public void serializes_update_group_created_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			IPacket packet = new UpdatedGroupPacket(UpdatedGroupType.Created, group);
+
+			// Act
+			writter.Write((UpdatedGroupPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.Created);
+			Assert.AreEqual(newPacket.Group.Name, ((UpdatedGroupPacket)packet).Group.Name);
+		}
+
+		[Test]
+		public void serializes_update_group_deleted_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			IPacket packet = new UpdatedGroupPacket(UpdatedGroupType.Deleted, group.ID);
+
+			// Act
+			writter.Write((UpdatedGroupPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.Deleted);
+			Assert.AreEqual(newPacket.GroupId, ((UpdatedGroupPacket)packet).GroupId);
+		}
+
+		[Test]
+		public void serializes_update_group_user_joined_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			CommonClientRepresentation user = new CommonClientRepresentation { ID = 7, Name = "user" };
+			IPacket packet = new UpdatedGroupPacket(UpdatedGroupType.UserJoined, user.ID, group.ID);
+
+			// Act
+			writter.Write((UpdatedGroupPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.UserJoined);
+			Assert.AreEqual(packet.UserId, newPacket.UserId);
+			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+		}
+
+		[Test]
+		public void serializes_update_group_user_left_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			CommonClientRepresentation user = new CommonClientRepresentation { ID = 7, Name = "user" };
+			IPacket packet = new UpdatedGroupPacket(UpdatedGroupType.UserLeft, user.ID, group.ID);
+
+			// Act
+			writter.Write((UpdatedGroupPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.UserLeft);
+			Assert.AreEqual(packet.UserId, newPacket.UserId);
+			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+		}
+
+		[Test]
+		public void serializes_update_user_created_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonClientRepresentation user = new CommonClientRepresentation { ID = 7, Name = "user" };
+			IPacket packet = new UpdatedUserPacket(UpdatedUserType.Created, user);
+
+			// Act
+			writter.Write((UpdatedUserPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			UpdatedUserPacket newPacket = (UpdatedUserPacket)reader.ReadPacket(UpdatedUserType.Created);
+			Assert.AreEqual(packet.user.Name, newPacket.user.Name);
+		}
+
+		[Test]
+		public void serializes_update_user_deleted_packet()
+		{
+			// Arrange
+			PacketWritter writter = new PacketWritter();
+			CommonClientRepresentation user = new CommonClientRepresentation { ID = 7, Name = "user" };
+			IPacket packet = new UpdatedUserPacket(UpdatedUserType.Deleted, user.ID);
+
+			// Act
+			writter.Write((UpdatedUserPacket)packet);
+			PacketReader reader = new PacketReader(writter.GetBytes());
+
+			// Assert
+			UpdatedUserPacket newPacket = (UpdatedUserPacket)reader.ReadPacket(UpdatedUserType.Deleted);
+			Assert.AreEqual(packet.UserId, newPacket.UserId);
+		}
 	}
 }

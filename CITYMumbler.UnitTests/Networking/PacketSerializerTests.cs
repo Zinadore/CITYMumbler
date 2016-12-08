@@ -223,7 +223,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.Name, newPacket.Name);
+			Assert.AreEqual(packet.Group.Name, newPacket.Group.Name);
 		}
 
 		[Test]
@@ -239,7 +239,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.ID, newPacket.ID);
+			Assert.AreEqual(packet.GroupID, newPacket.GroupID);
 		}
 
 		[Test]
@@ -291,7 +291,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedUserPacket newPacket = (UpdatedUserPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.Name, newPacket.Name);
+			Assert.AreEqual(packet.user.Name, newPacket.user.Name);
 		}
 
 		[Test]
@@ -307,7 +307,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedUserPacket newPacket = (UpdatedUserPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.ID, newPacket.ID);
+			Assert.AreEqual(packet.UserID, newPacket.UserID);
 		}
 	}
 }
