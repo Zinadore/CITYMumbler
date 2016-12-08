@@ -73,12 +73,12 @@ namespace CITYMumbler.Client.Views
 
 	    private FontWeight getFontWeightForSender(ushort senderId)
 	    {
-	        return senderId == this.ViewModel.ID ? FontWeights.Bold : FontWeights.Normal;
+	        return senderId == this.ViewModel.LocalID ? FontWeights.Bold : FontWeights.Normal;
 	    }
 
 	    private Brush getColorForSender(ushort senderId)
 	    {
-	        return senderId == this.ViewModel.ID ? new SolidColorBrush(AccentColorSet.ActiveSet["SystemAccent"]) : Brushes.Black;
+	        return senderId == this.ViewModel.LocalID ? new SolidColorBrush(AccentColorSet.ActiveSet["SystemAccent"]) : Brushes.Black;
 	    }
 
 	    object IViewFor.ViewModel

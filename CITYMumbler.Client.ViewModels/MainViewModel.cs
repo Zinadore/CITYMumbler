@@ -47,6 +47,13 @@ namespace CITYMumbler.Client.ViewModels
 	            this.SelectedTab = vm;
 	        });
 
+	        this._client.JoinedGroups.ItemsRemoved.ObserveOn(RxApp.MainThreadScheduler).Subscribe(group =>
+	        {
+	            var vm = this.ChatList.FirstOrDefault(c => c.RemoteID == group.ID);
+	            this.ChatList.Remove(vm);
+	            this.SelectedTab = this.ChatList.FirstOrDefault();
+	        });
+
 	        this._client.PrivateChats.ItemsAdded.ObserveOn(RxApp.MainThreadScheduler).Subscribe(chat =>
 	        {
                 var vm = new ChatViewModel(this.HostScreen, ChatViewModelType.PrivateChat, chat);

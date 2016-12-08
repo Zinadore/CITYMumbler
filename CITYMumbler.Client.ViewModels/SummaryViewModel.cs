@@ -108,7 +108,7 @@ namespace CITYMumbler.Client.ViewModels
 
         private void orderGroups()
         {
-            var list  = this.Groups.OrderByDescending(g => g.IsJoined).ToList();
+            var list  = this.Groups.OrderByDescending(g => g.IsJoined).ThenBy(g => g.GroupID).ToList();
             this.Groups = new ReactiveList<GroupsSummaryListItemViewModel>(list);
         }
 

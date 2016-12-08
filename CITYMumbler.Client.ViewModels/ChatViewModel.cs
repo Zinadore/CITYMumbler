@@ -48,7 +48,9 @@ namespace CITYMumbler.Client.ViewModels
         public string UrlPathSegment => "chatView";
 		public IScreen HostScreen { get; }
 
-        public ushort ID { get; private set; }
+        public ushort LocalID { get; private set; }
+
+	    public ushort RemoteID => this._filterId;
 
 	    public IObservable<ChatEntry> Entries { get; private set; }
 
@@ -70,7 +72,7 @@ namespace CITYMumbler.Client.ViewModels
 		    this._type = type;
 		    this._filterId = filterId;
             this._mumblerClient = Locator.Current.GetService<MumblerClient>();
-		    this.ID = _mumblerClient.ID;
+		    this.LocalID = _mumblerClient.ID;
             if (this._type == ChatViewModelType.GroupChat)
             {
 		        this.Entries = this._mumblerClient.GroupMessages.Where(entry => entry.GroupId == this._filterId);

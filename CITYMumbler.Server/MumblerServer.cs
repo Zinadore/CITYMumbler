@@ -138,11 +138,49 @@ namespace CITYMumbler.Server
                 case PacketType.RequestSendUsers:
                     handleRequestSendUsersPacket(clientSocket, packet);
                     break;
+                case PacketType.LeaveGroup:
+                    handleLeaveGroupPacket(clientSocket, packet);
+                    break;
             }
         }
 
         #region Packet Handling
 
+        private void handleLeaveGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
+        {
+            var leaveGroupPacket = receivedPacket as LeaveGroupPacket;
+            Group group;
+            lock (this._groupList)
+            {
+                group = this._groupList.FirstOrDefault(g => g.ID == leaveGroupPacket.GroupId);
+            }
+
+            if (group == null)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} tried to leave group {1}, but the group doesn't exist.", leaveGroupPacket.ClientId, leaveGroupPacket.GroupId);
+                return;
+            }
+
+            Client client;
+            lock (group)
+            {
+                client = group.Clients.FirstOrDefault(c => c.ID == leaveGroupPacket.ClientId);
+            }
+
+            if (client == null)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} tried to leave group {1}, but they are not a member of the group.", leaveGroupPacket.ClientId, leaveGroupPacket.GroupId);
+                return;
+            }
+            lock (group)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} left group {1}.", leaveGroupPacket.ClientId, leaveGroupPacket.GroupId);
+                group.Clients.Remove(client);
+            }
+
+            // TODO: Notify the rest of the clients
+
+        }
         private void handlePrivateMessagePacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var pm = receivedPacket as PrivateMessagePacket;
