@@ -42,6 +42,7 @@ namespace CITYMumbler.Client.Views
 			Locator.CurrentMutable.Register(() => new ChatView(), typeof(IViewFor<ChatViewModel>));
             Locator.CurrentMutable.Register(() => new GroupsSummaryListItemView(), typeof(IViewFor<GroupsSummaryListItemViewModel>));
             Locator.CurrentMutable.Register(() => new UsersSummaryListItemView(), typeof(IViewFor<UsersSummaryListItemViewModel>));
+            Locator.CurrentMutable.Register(() => new CurrentChatUserListItemView(), typeof(IViewFor<CurrentChatUserListItemViewModel>));
 		}
 
     }

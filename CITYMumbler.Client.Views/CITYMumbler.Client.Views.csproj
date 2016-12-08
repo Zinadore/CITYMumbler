@@ -99,6 +99,9 @@
     <Compile Include="ChatView.xaml.cs">
       <DependentUpon>ChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CurrentChatUserListItemView.xaml.cs">
+      <DependentUpon>CurrentChatUserListItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GroupsSummaryListItemView.xaml.cs">
       <DependentUpon>GroupsSummaryListItemView.xaml</DependentUpon>
     </Compile>
@@ -121,6 +124,10 @@
       <DependentUpon>UsersSummaryListItemView.xaml</DependentUpon>
     </Compile>
     <Page Include="ChatView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CurrentChatUserListItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -200,6 +207,9 @@
       <Project>{369986AC-2D9D-4677-BE7F-5D032150B041}</Project>
       <Name>CITYMumbler.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\crown.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
