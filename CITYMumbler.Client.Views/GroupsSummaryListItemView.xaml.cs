@@ -30,6 +30,7 @@ namespace CITYMumbler.Client.Views
             {
                 d(this.OneWayBind(ViewModel, vm => vm.GroupName, @this => @this.GroupName.Text));
                 d(this.BindCommand(ViewModel, vm => vm.JoinGroupCommand, @this => @this.ContextMenuJoin));
+                d(this.BindCommand(ViewModel, vm => vm.LeaveGroupCommand, @this => @this.ContextMenuLeave));
                 d(this.OneWayBind(ViewModel, vm => vm.IsJoined, @this => @this.ContextMenuJoin.Visibility, value => value ? Visibility.Collapsed : Visibility.Visible));
                 d(this.OneWayBind(ViewModel, vm => vm.IsJoined, @this => @this.ContextMenuLeave.Visibility, value => value ? Visibility.Visible : Visibility.Collapsed));
             });

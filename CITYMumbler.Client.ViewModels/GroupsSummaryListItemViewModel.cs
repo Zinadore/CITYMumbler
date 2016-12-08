@@ -20,6 +20,7 @@ namespace CITYMumbler.Client.ViewModels
         public string UrlPathSegment => string.Format("groupListViewItem#{0}", this._group.ID);
         public IScreen HostScreen { get; }
         public ReactiveCommand<Unit, Unit> JoinGroupCommand;
+        public ReactiveCommand<Unit, Unit> LeaveGroupCommand;
 
         private bool _isJoined;
         public bool IsJoined
@@ -38,6 +39,11 @@ namespace CITYMumbler.Client.ViewModels
             this.IsJoined = isJoined;
 
             this.JoinGroupCommand = ReactiveCommand.Create(() => this._client.JoinGroup(this.GroupID));
+            this.LeaveGroupCommand = ReactiveCommand.Create(() =>
+            {
+                this._client.LeaveGroup(this.GroupID);
+                this.IsJoined = false;
+            });
         }
 
 

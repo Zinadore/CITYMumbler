@@ -17,8 +17,9 @@ namespace CITYMumbler.Client.ViewModels
 	{
         #region Private Members
         private MumblerClient _mumblerClient;
-	    private ChatViewModelType _type;
-	    private ushort _filterId;
+        private ushort _filterId;
+	    private Client _localClient;
+	    private Client _remoteClient;
         #endregion
 
         #region Reactive Properties
@@ -48,30 +49,38 @@ namespace CITYMumbler.Client.ViewModels
         public string UrlPathSegment => "chatView";
 		public IScreen HostScreen { get; }
 
-        public ushort ID { get; private set; }
+        public ushort LocalID { get; private set; }
+        public ChatViewModelType ChatType { get; private set; }
 
-	    public IObservable<ChatEntry> Entries { get; private set; }
+        public ushort RemoteID => this._filterId;
+
+        public Group Group { get; private set; }
+
+        public IObservable<ChatEntry> Entries { get; private set; }
 
 		public ReactiveCommand<Unit, Unit> SendCommand;
 
-	    public ChatViewModel(IScreen hostScreen, ChatViewModelType type, PrivateChat chat):this(hostScreen, type, chat.RemoteUser.ID)
+	    public ChatViewModel(IScreen hostScreen, ChatViewModelType chatType, PrivateChat chat):this(hostScreen, chatType, chat.RemoteUser.ID)
 	    {
+	        this._localClient = chat.LocalUser;
+	        this._remoteClient = chat.RemoteUser;
 	        this.Header = chat.RemoteUser.Name;
 	    }
 
-        public ChatViewModel(IScreen hostScreen, ChatViewModelType type, Group group):this(hostScreen, type, group.ID)
-	    {
+        public ChatViewModel(IScreen hostScreen, ChatViewModelType chatType, Group group):this(hostScreen, chatType, group.ID)
+        {
+            this.Group = group;
 	        this.Header = group.Name;
 	    }
 
-        private ChatViewModel(IScreen hostScreen, ChatViewModelType type, ushort filterId)
+        private ChatViewModel(IScreen hostScreen, ChatViewModelType chatType, ushort filterId)
 		{
 			this.HostScreen = hostScreen;
-		    this._type = type;
+		    this.ChatType = chatType;
 		    this._filterId = filterId;
             this._mumblerClient = Locator.Current.GetService<MumblerClient>();
-		    this.ID = _mumblerClient.ID;
-            if (this._type == ChatViewModelType.GroupChat)
+		    this.LocalID = _mumblerClient.ID;
+            if (this.ChatType == ChatViewModelType.GroupChat)
             {
 		        this.Entries = this._mumblerClient.GroupMessages.Where(entry => entry.GroupId == this._filterId);
             }
@@ -85,7 +94,7 @@ namespace CITYMumbler.Client.ViewModels
 
 		private void SendMessage()
 		{
-		    if (this._type == ChatViewModelType.GroupChat)
+		    if (this.ChatType == ChatViewModelType.GroupChat)
 		    {
 		        this._mumblerClient.SendGroupMessage(this._filterId, ChatInput);
 		    }
@@ -95,6 +104,16 @@ namespace CITYMumbler.Client.ViewModels
 		    }
 		    this.ChatInput = "";
 		}
+
+	    public ReactiveList<Client> GetUsers()
+	    {
+	        if (this.ChatType == ChatViewModelType.GroupChat)
+	            return this.Group.GroupUsers;
+            var returnList = new ReactiveList<Client>();
+            returnList.Add(this._localClient);
+            returnList.Add(this._remoteClient);
+            return returnList;
+	    }
 	}
 
     public enum ChatViewModelType

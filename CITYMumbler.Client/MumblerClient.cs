@@ -190,51 +190,19 @@ namespace CITYMumbler.Client
             switch (receivedPacket.PacketType)
             {
                 case PacketType.Connected:
-                    var p = receivedPacket as ConnectedPacket;
-                    this._me.ID = p.ClientId;
-                    var requestGroupsPacket = new RequestSendGroupsPacket();
-                    this._socket.Send(this._serializer.ToBytes(requestGroupsPacket));
-                    var requestUsersPacket = new RequestSendUsersPacket();
-                    this._socket.Send(this._serializer.ToBytes(requestUsersPacket));
-                    this.OnConnected?.Invoke(this, EventArgs.Empty);
+                    handleConnectedPacket(receivedPacket);
                     break;
                 case PacketType.JoinedGroup:
-                    var p1 = receivedPacket as JoinedGroupPacket;
-                    var joinedGroup = this.Groups.FirstOrDefault(group => group.ID == p1.GroupId);
-                    this.JoinedGroups.Add(joinedGroup);
+                    handleJoinedGroupPacket(receivedPacket);
                     break;
                 case PacketType.SendGroups:
-                    var p2 = receivedPacket as SendGroupsPacket;
-                    this.Groups.Clear();
-                    foreach (var group in p2.GroupList)
-                    {
-                        var newGroup = new Group()
-                        {
-                            ID = group.Id,
-                            OwnerID = group.OwnerId,
-                            Name = group.Name,
-                            PermissionType = group.PermissionType,
-                            TimeoutThreshold = group.TimeThreshold,
-                            GroupUsers = new ReactiveList<Client>()
-                        };
-                        Groups.Add(newGroup);
-                    }
-                    this.OnGroupsReceived?.Invoke(this, EventArgs.Empty);
+                    handleSendGroupsPacket(receivedPacket);
                     break;
                 case PacketType.GroupMessage:
-                    var groupMessage = receivedPacket as GroupMessagePacket;
-                    var groupChatEntry = new ChatEntry(groupMessage.SenderId, groupMessage.SenderName, groupMessage.Message, groupMessage.GroupID);
-                    this.GroupMessages.OnNext(groupChatEntry);
+                    handleGroupMessagePacket(receivedPacket);
                     break;
-
                 case PacketType.SendUsers:
-                    var sendUsersPacket = receivedPacket as SendUsersPacket;
-                    this.ConnectedUsers.Clear();
-
-                    foreach (var sentClient in sendUsersPacket.UserList)
-                    {
-                        this.ConnectedUsers.Add(new Client() { ID = sentClient.ID, Name = sentClient.Name });
-                    }
+                    handleSendUsersPacket(receivedPacket);
                     break;
                 case PacketType.PrivateMessage:
                     handlePrivateMessagePacket(receivedPacket);
@@ -243,6 +211,71 @@ namespace CITYMumbler.Client
         }
         #region Packet Handlers
 
+        private void handleSendUsersPacket(IPacket packet)
+        {
+            var sendUsersPacket = packet as SendUsersPacket;
+            lock (this.ConnectedUsers)
+            {
+                this.ConnectedUsers.Clear();
+            }
+            foreach (var sentClient in sendUsersPacket.UserList)
+            {
+                lock (this.ConnectedUsers)
+                {
+                    this.ConnectedUsers.Add(new Client() {ID = sentClient.ID, Name = sentClient.Name});
+                }
+            }
+        }
+        private void handleGroupMessagePacket(IPacket packet)
+        {
+            var groupMessage = packet as GroupMessagePacket;
+            var groupChatEntry = new ChatEntry(groupMessage.SenderId, groupMessage.SenderName, groupMessage.Message, groupMessage.GroupID);
+            this.GroupMessages.OnNext(groupChatEntry);
+        }
+        private void handleSendGroupsPacket(IPacket packet)
+        {
+            var sendGroupsPacket = packet as SendGroupsPacket;
+            lock(this.Groups)
+                this.Groups.Clear();
+            foreach (var group in sendGroupsPacket.GroupList)
+            {
+                var newGroup = new Group()
+                {
+                    ID = group.Id,
+                    OwnerID = group.OwnerId,
+                    Name = group.Name,
+                    PermissionType = group.PermissionType,
+                    TimeoutThreshold = group.TimeThreshold,
+                    GroupUsers = new ReactiveList<Client>()
+                };
+                lock(this.Groups)
+                    Groups.Add(newGroup);
+            }
+            this.OnGroupsReceived?.Invoke(this, EventArgs.Empty);
+        }
+        private void handleConnectedPacket(IPacket packet)
+        {
+            var p = packet as ConnectedPacket;
+            this._me.ID = p.ClientId;
+            var requestGroupsPacket = new RequestSendGroupsPacket();
+            this._socket.Send(this._serializer.ToBytes(requestGroupsPacket));
+            var requestUsersPacket = new RequestSendUsersPacket();
+            this._socket.Send(this._serializer.ToBytes(requestUsersPacket));
+            this.OnConnected?.Invoke(this, EventArgs.Empty);
+        }
+        private void handleJoinedGroupPacket(IPacket packet)
+        {
+            var p1 = packet as JoinedGroupPacket;
+            Group joinedGroup;
+            lock (this.Groups)
+            {
+                joinedGroup = this.Groups.FirstOrDefault(group => group.ID == p1.GroupId);
+            }
+            lock (this.JoinedGroups)
+            {
+                this.JoinedGroups.Add(joinedGroup);
+            }
+        }
         private void handlePrivateMessagePacket(IPacket packet)
         {
             var pm = packet as PrivateMessagePacket;

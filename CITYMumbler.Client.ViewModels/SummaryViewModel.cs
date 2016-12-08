@@ -55,7 +55,13 @@ namespace CITYMumbler.Client.ViewModels
 
                 d(this._client.Groups.ItemsAdded.Subscribe(addNewGroup));
 
-                d(this._client.Groups.ItemsRemoved.Subscribe(addNewGroup));
+                d(this._client.Groups.ItemsRemoved.Subscribe(group =>
+                {
+                    var v = this.Groups.FirstOrDefault(vm => vm.GroupID == group.ID);
+                    if (v == null)
+                        return;
+                    this.Groups.Remove(v);
+                }));
 
                 d(this._client.JoinedGroups.ItemsAdded.ObserveOn(RxApp.MainThreadScheduler).Subscribe(group =>
                 {
@@ -108,7 +114,7 @@ namespace CITYMumbler.Client.ViewModels
 
         private void orderGroups()
         {
-            var list  = this.Groups.OrderByDescending(g => g.IsJoined).ToList();
+            var list  = this.Groups.OrderByDescending(g => g.IsJoined).ThenBy(g => g.GroupID).ToList();
             this.Groups = new ReactiveList<GroupsSummaryListItemViewModel>(list);
         }
 
