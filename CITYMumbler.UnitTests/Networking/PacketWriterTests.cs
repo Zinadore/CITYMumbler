@@ -437,7 +437,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.Created);
-			Assert.AreEqual(newPacket.Group.Name, ((UpdatedGroupPacket)packet).Group.Name);
+			Assert.AreEqual(newPacket.GroupPacket.Name, ((UpdatedGroupPacket)packet).GroupPacket.Name);
 		}
 
 		[Test]
@@ -472,8 +472,8 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.UserJoined);
-			Assert.AreEqual(packet.UserId, newPacket.UserId);
-			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+			Assert.AreEqual(((UpdatedGroupPacket)packet).UserId, newPacket.UserId);
+			Assert.AreEqual(((UpdatedGroupPacket)packet).GroupId, newPacket.GroupId);
 		}
 
 		[Test]
@@ -491,8 +491,8 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)reader.ReadPacket(UpdatedGroupType.UserLeft);
-			Assert.AreEqual(packet.UserId, newPacket.UserId);
-			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+			Assert.AreEqual(((UpdatedGroupPacket)packet).UserId, newPacket.UserId);
+			Assert.AreEqual(((UpdatedGroupPacket)packet).GroupId, newPacket.GroupId);
 		}
 
 		[Test]
@@ -509,7 +509,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedUserPacket newPacket = (UpdatedUserPacket)reader.ReadPacket(UpdatedUserType.Created);
-			Assert.AreEqual(packet.user.Name, newPacket.user.Name);
+			Assert.AreEqual(((UpdatedUserPacket)packet).Client.Name, newPacket.Client.Name);
 		}
 
 		[Test]
@@ -526,7 +526,7 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedUserPacket newPacket = (UpdatedUserPacket)reader.ReadPacket(UpdatedUserType.Deleted);
-			Assert.AreEqual(packet.UserId, newPacket.UserId);
+			Assert.AreEqual(((UpdatedUserPacket)packet).UserId, newPacket.UserId);
 		}
 	}
 }

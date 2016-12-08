@@ -223,7 +223,8 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.Group.Name, newPacket.Group.Name);
+			Assert.AreEqual(packet.UpdateAction, UpdatedGroupType.Created);
+			Assert.AreEqual(packet.GroupPacket.Name, newPacket.GroupPacket.Name);
 		}
 
 		[Test]
@@ -239,7 +240,8 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.GroupID, newPacket.GroupID);
+			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+			Assert.AreEqual(packet.UpdateAction, UpdatedGroupType.Deleted);
 		}
 
 		[Test]
@@ -258,6 +260,7 @@ namespace CITYMumbler.UnitTests.Networking
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
 			Assert.AreEqual(packet.UserId, newPacket.UserId);
 			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+			Assert.AreEqual(packet.UpdateAction, UpdatedGroupType.UserJoined);
 		}
 
 		[Test]
@@ -276,6 +279,7 @@ namespace CITYMumbler.UnitTests.Networking
 			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
 			Assert.AreEqual(packet.UserId, newPacket.UserId);
 			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+			Assert.AreEqual(packet.UpdateAction, UpdatedGroupType.UserLeft);
 		}
 
 		[Test]
@@ -291,7 +295,8 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedUserPacket newPacket = (UpdatedUserPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.user.Name, newPacket.user.Name);
+			Assert.AreEqual(packet.UpdateAction, UpdatedUserType.Created);
+			Assert.AreEqual(packet.Client.Name, newPacket.Client.Name);
 		}
 
 		[Test]
@@ -307,7 +312,8 @@ namespace CITYMumbler.UnitTests.Networking
 
 			// Assert
 			UpdatedUserPacket newPacket = (UpdatedUserPacket)serializer.FromBytes(bytes);
-			Assert.AreEqual(packet.UserID, newPacket.UserID);
+			Assert.AreEqual(packet.UpdateAction, UpdatedUserType.Deleted);
+			Assert.AreEqual(packet.UserId, newPacket.UserId);
 		}
 	}
 }
