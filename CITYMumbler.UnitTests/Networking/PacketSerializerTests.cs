@@ -209,5 +209,105 @@ namespace CITYMumbler.UnitTests.Networking
 			RequestGroupPacket newPacket = (RequestGroupPacket)serializer.FromBytes(bytes);
 			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
 		}
+
+		[Test]
+		public void deserialize_update_group_created_packet()
+		{
+			// Arrange
+			CommonGroupRepresentation group = new CommonGroupRepresentation() {ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6};
+			UpdatedGroupPacket packet = new UpdatedGroupPacket(UpdatedGroupType.Created, group);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.Name, newPacket.Name);
+		}
+
+		[Test]
+		public void deserialize_update_group_deleted_packet()
+		{
+			// Arrange
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			UpdatedGroupPacket packet = new UpdatedGroupPacket(UpdatedGroupType.Deleted, group.ID);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.ID, newPacket.ID);
+		}
+
+		[Test]
+		public void deserialize_update_group_user_joined_packet()
+		{
+			// Arrange
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			CommonClientRepresentation user = new CommonClientRepresentation { ID = 7, Name = "user" };
+			UpdatedGroupPacket packet = new UpdatedGroupPacket(UpdatedGroupType.UserJoined, user.ID, group.ID);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.UserId, newPacket.UserId);
+			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+		}
+
+		[Test]
+		public void deserialize_update_group_user_left_packet()
+		{
+			// Arrange
+			CommonGroupRepresentation group = new CommonGroupRepresentation() { ID = 4, Name = "group", OwnerID = 6, PermissionType = JoinGroupPermissionTypes.Free, TimeoutThreshold = 6 };
+			CommonClientRepresentation user = new CommonClientRepresentation { ID = 7, Name = "user" };
+			UpdatedGroupPacket packet = new UpdatedGroupPacket(UpdatedGroupType.UserLeft, user.ID, group.ID);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			UpdatedGroupPacket newPacket = (UpdatedGroupPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.UserId, newPacket.UserId);
+			Assert.AreEqual(packet.GroupId, newPacket.GroupId);
+		}
+
+		[Test]
+		public void deserialize_update_user_created_packet()
+		{
+			// Arrange
+			CommonClientRepresentation client = new CommonClientRepresentation { ID = 7, Name = "user" };
+			UpdatedUserPacket packet = new UpdatedUserPacket(UpdatedUserType.Created, client);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			UpdatedUserPacket newPacket = (UpdatedUserPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.Name, newPacket.Name);
+		}
+
+		[Test]
+		public void deserialize_update_user_deleted_packet()
+		{
+			// Arrange
+			CommonClientRepresentation client = new CommonClientRepresentation { ID = 7, Name = "user" };
+			UpdatedUserPacket packet = new UpdatedUserPacket(UpdatedUserType.Deleted, client.ID);
+			PacketSerializer serializer = new PacketSerializer();
+
+			// Act
+			byte[] bytes = serializer.ToBytes(packet);
+
+			// Assert
+			UpdatedUserPacket newPacket = (UpdatedUserPacket)serializer.FromBytes(bytes);
+			Assert.AreEqual(packet.ID, newPacket.ID);
+		}
 	}
 }

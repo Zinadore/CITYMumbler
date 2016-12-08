@@ -44,4 +44,18 @@ namespace CITYMumbler.Networking.Contracts
         Password,
         Permission
     }
+
+	public enum UpdatedGroupType : byte
+	{
+		Created,
+		Deleted,
+		UserJoined,
+		UserLeft
+	}
+
+	public enum UpdatedUserType : byte
+	{
+		Created,
+		Deleted
+	}
 }
