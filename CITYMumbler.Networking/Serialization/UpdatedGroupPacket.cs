@@ -51,12 +51,16 @@ namespace CITYMumbler.Networking.Serialization
 		public UpdatedGroupPacket(UpdatedGroupType updateAction, ushort userId, ushort groupId)
 		{
 			PacketType = PacketType.UpdatedGroup;
-			if (updateAction != UpdatedGroupType.UserJoined || updateAction != UpdatedGroupType.UserLeft)
+			if (updateAction == UpdatedGroupType.UserJoined || updateAction == UpdatedGroupType.UserLeft)
+			{
+				UpdateAction = updateAction;
+				GroupId = groupId;
+				UserId = userId;
+			}
+			else
+			{
 				throw new ArgumentException("UpdateAction should be USERJOINED or USERLEFT, the other parameters are a user id and a group id");
-
-			UpdateAction = updateAction;
-			GroupId = groupId;
-			UserId = userId;
+			}
 		}
 	}
 }

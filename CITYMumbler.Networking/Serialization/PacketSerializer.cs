@@ -111,6 +111,12 @@ namespace CITYMumbler.Networking.Serialization
 				case PacketType.RequestGroup:
 					writter.Write((RequestGroupPacket) packet);
 					break;
+				case PacketType.UpdatedGroup:
+					writter.Write((UpdatedGroupPacket)packet);
+					break;
+				case PacketType.UpdatedUser:
+					writter.Write((UpdatedUserPacket) packet);
+					break;
 				default:
 					throw new ArgumentException("Packet is of an unsupported packetType");
 			}
