@@ -168,5 +168,44 @@ namespace CITYMumbler.Networking.Utilities
 	    {
 		    Write(packet.GroupId);
 	    }
+
+	    public void Write(UpdatedGroupPacket packet)
+	    {
+			Write((byte)packet.UpdateAction);
+
+			switch (packet.UpdateAction)
+			{
+				case UpdatedGroupType.Created:
+					Write(packet.GroupPacket);
+					break;
+				case UpdatedGroupType.Deleted:
+					Write(packet.GroupId);
+					break;
+				case UpdatedGroupType.UserJoined:
+					Write(packet.UserId);
+					Write(packet.GroupId);
+					break;
+				case UpdatedGroupType.UserLeft:
+					Write(packet.UserId);
+					Write(packet.GroupId);
+					break;
+			}
+		}
+
+	    public void Write(UpdatedUserPacket packet)
+	    {
+			Write((byte)packet.UpdateAction);
+
+			switch (packet.UpdateAction)
+			{
+				case UpdatedUserType.Created:
+					Write(packet.Client.ID);
+					Write(packet.Client.Name);
+					break;
+				case UpdatedUserType.Deleted:
+					Write(packet.UserId);
+					break;
+			}
+		}
 	}
 }

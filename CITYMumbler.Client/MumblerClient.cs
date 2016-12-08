@@ -207,10 +207,128 @@ namespace CITYMumbler.Client
                 case PacketType.PrivateMessage:
                     handlePrivateMessagePacket(receivedPacket);
                     break;
+                case PacketType.UpdatedGroup:
+                    handleUpdatedGroupPacket(receivedPacket);
+                    break;
+                case PacketType.UpdatedUser:
+                    handleUpdatedUserPacket(receivedPacket);
+                    break;
             }
         }
         #region Packet Handlers
 
+        private void handleUpdatedUserPacket(IPacket packet)
+        {
+            var p = packet as UpdatedUserPacket;
+            Client client;
+
+            if (p.UpdateAction == UpdatedUserType.Created)
+            {
+                client = new Client() { ID = p.Client.ID, Name = p.Client.Name};
+                lock (this.ConnectedUsers)
+                {
+                    if (!this.ConnectedUsers.Contains(client))
+                        this.ConnectedUsers.Add(client);
+                }
+                return;
+            }
+
+            lock (this.ConnectedUsers)
+                client = this.ConnectedUsers.FirstOrDefault(c => c.ID == p.UserId);
+            if (client == null)
+                return;
+            lock (this.ConnectedUsers)
+                this.ConnectedUsers.Remove(client);
+
+        }
+        private void handleUpdatedGroupPacket(IPacket packet)
+        {
+            var p = packet as UpdatedGroupPacket;
+            if (p.UpdateAction == UpdatedGroupType.Created)
+            {
+                lock (this.Groups)
+                this.Groups.Add(new Group() {
+                    ID = p.GroupPacket.Id,
+                    Name = p.GroupPacket .Name,
+                    OwnerID = p.GroupPacket.OwnerId,
+                    PermissionType = p.GroupPacket.PermissionType,
+                    TimeoutThreshold = p.GroupPacket.TimeThreshold,
+                    GroupUsers = new ReactiveList<Client>()
+                });
+                return;
+            }
+            else if (p.UpdateAction == UpdatedGroupType.Deleted)
+            {
+                Group g;
+                lock (this.Groups)
+                {
+                    g = this.Groups.FirstOrDefault(gr => gr.ID == p.GroupId);
+                    this.Groups.Remove(g);
+                }
+
+                lock (this.JoinedGroups)
+                {
+                    this.JoinedGroups.Remove(g);
+                }
+
+                return;
+            }
+            else if (p.UpdateAction == UpdatedGroupType.UserJoined)
+            {
+                Client user;
+                Group group;
+
+                lock (this.ConnectedUsers)
+                {
+                    user = this.ConnectedUsers.FirstOrDefault(u => u.ID == p.UserId);
+                }
+                if (user == null)
+                {
+                    this._logger.Log(LogLevel.Debug, "Tried to add user {0} to group {1}, but user did not exist", p.UserId, p.GroupId);
+                    return;
+                }
+
+                lock (this.Groups)
+                {
+                    group = this.Groups.FirstOrDefault(g => g.ID == p.GroupId);
+                }
+
+                if (group == null)
+                {
+                    this._logger.Log(LogLevel.Debug, "Tried to add user {0} to group {1}, but group did not exist", p.UserId, p.GroupId);
+                    return;
+                }
+
+                lock (group)
+                {
+                    if (!group.GroupUsers.Contains(user))
+                        group.GroupUsers.Add(user);
+                }
+                return;
+            }
+            else if (p.UpdateAction == UpdatedGroupType.UserLeft)
+            {
+                Client client;
+                Group group;
+                lock (this.ConnectedUsers)
+                    client = this.ConnectedUsers.FirstOrDefault(c => c.ID == p.UserId);
+                if (client == null)
+                {
+                    this._logger.Log(LogLevel.Debug, "Tried to remove client {0} from group {1}, but client does not exist.", p.UserId, p.GroupId);
+                    return;
+                }
+                lock (this.Groups)
+                    group = this.Groups.FirstOrDefault(g => g.ID == p.GroupId);
+                if (group == null)
+                {
+                    this._logger.Log(LogLevel.Debug, "Tried to remove client {0} from group {1}, but group doesn't exist", p.UserId, p.GroupId);
+                    return;
+                }
+
+                lock (group)
+                    group.GroupUsers.Remove(client);
+            }
+        }
         private void handleSendUsersPacket(IPacket packet)
         {
             var sendUsersPacket = packet as SendUsersPacket;

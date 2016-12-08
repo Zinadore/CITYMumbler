@@ -60,7 +60,11 @@ namespace CITYMumbler.Networking.Utilities
 
 				case PacketType.RequestGroup: return RequestGroupMessage();
 
-                default: throw new ArgumentException("The provided PacketType is not valid.");
+				case PacketType.UpdatedGroup: return UpdatedGroupMessage();
+
+				case PacketType.UpdatedUser: return UpdatedUserMessage();
+					
+				default: throw new ArgumentException("The provided PacketType is not valid.");
             }
         }
 
@@ -261,5 +265,48 @@ namespace CITYMumbler.Networking.Utilities
 		    return (IPacket) new RequestGroupPacket(groupId);
 	    }
 
+	    private IPacket UpdatedGroupMessage()
+	    {
+		    UpdatedGroupType updateAction = (UpdatedGroupType) ReadByte();
+
+			switch (updateAction)
+			{
+				case UpdatedGroupType.Created:
+					GroupPacket groupPacket = (GroupPacket) GroupPacketMessage();
+					return (IPacket) new UpdatedGroupPacket(updateAction, groupPacket);
+				case UpdatedGroupType.Deleted:
+					ushort groupId = ReadUInt16();
+					return (IPacket) new UpdatedGroupPacket(updateAction, groupId);
+				case UpdatedGroupType.UserJoined:
+					ushort joinUserId = ReadUInt16();
+					ushort joinGroupId = ReadUInt16();
+					return (IPacket) new UpdatedGroupPacket(updateAction, joinUserId, joinGroupId);
+				case UpdatedGroupType.UserLeft:
+					ushort leftUserId = ReadUInt16();
+					ushort leftGroupId = ReadUInt16();
+					return (IPacket)new UpdatedGroupPacket(updateAction, leftUserId, leftGroupId);
+				default:
+					throw new InvalidDataException("Invalid UpdatedGroupType");
+			}
+		}
+
+		private IPacket UpdatedUserMessage()
+		{
+			UpdatedUserType updateAction = (UpdatedUserType)ReadByte();
+
+			switch (updateAction)
+			{
+				case UpdatedUserType.Created:
+					ushort clientId = ReadUInt16();
+					string clientName = ReadString();
+					CommonClientRepresentation client = new CommonClientRepresentation { ID = clientId, Name = clientName };
+					return (IPacket) new UpdatedUserPacket(updateAction, client);
+				case UpdatedUserType.Deleted:
+					ushort userId = ReadUInt16();
+					return (IPacket) new UpdatedUserPacket(updateAction, userId);
+				default:
+					throw new InvalidDataException("Invalid UpdatedUserType");
+			}
+		}
 	}
 }

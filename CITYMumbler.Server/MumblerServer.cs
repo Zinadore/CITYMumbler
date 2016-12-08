@@ -113,6 +113,10 @@ namespace CITYMumbler.Server
             var disconnected = _connectedClients.FirstOrDefault(client => client.ID == e.ClientID);
             _connectedClients.Remove(disconnected);
             this.logger.Log(LogLevel.Warn, "Connection lost with {0}", disconnected?.RemoteEndpoint);
+            var updatePacket = new UpdatedUserPacket(UpdatedUserType.Deleted, disconnected.ID);
+            var updateBytes = this._serializer.ToBytes(updatePacket);
+            foreach(var c in this._connectedClients)
+                c.ClientSocket.Send(updateBytes);
         }
 
         private void handlePacket(IPacket packet, TcpSocket clientSocket)
@@ -177,10 +181,16 @@ namespace CITYMumbler.Server
                 this.logger.Log(LogLevel.Debug, "Client {0} left group {1}.", leaveGroupPacket.ClientId, leaveGroupPacket.GroupId);
                 group.Clients.Remove(client);
             }
-
-            // TODO: Notify the rest of the clients
+            var updatePacket = new UpdatedGroupPacket(UpdatedGroupType.UserLeft, client.ID, group.ID);
+            byte[] updateBytes = this._serializer.ToBytes(updatePacket);
+            lock (group)
+            {
+                foreach (var c in group.Clients)
+                    c.ClientSocket.Send(updateBytes);
+            }
 
         }
+
         private void handlePrivateMessagePacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var pm = receivedPacket as PrivateMessagePacket;
@@ -205,6 +215,13 @@ namespace CITYMumbler.Server
             var responseBytes = this._serializer.ToBytes(response);
             client.ClientSocket.Send(responseBytes);
             this.logger.Log(LogLevel.Info, "New client with name: {0}", client.Name);
+            var updatePacket = new UpdatedUserPacket(UpdatedUserType.Created, new CommonClientRepresentation() { ID = client.ID, Name = client.Name});
+            byte[] updateBytes = this._serializer.ToBytes(updatePacket);
+
+            foreach (var c in this._connectedClients)
+            {
+                c.ClientSocket.Send(updateBytes);
+            }
         }
 
         private void handleJoinGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
@@ -233,6 +250,12 @@ namespace CITYMumbler.Server
             var responsePacket = new JoinedGroupPacket(requestingClient.ID, groupToJoin.ID);
             this.logger.Log(LogLevel.Info, "Added user {0} to group {1}", requestingClient.Name, groupToJoin.Name);
             clientSocket.Send(this._serializer.ToBytes(responsePacket));
+            var updatePacket = new UpdatedGroupPacket(UpdatedGroupType.UserJoined, requestingClient.ID, groupToJoin.ID);
+            byte[] updateBytes = this._serializer.ToBytes(updatePacket);
+            foreach (var c in groupToJoin.Clients)
+            {
+                c.ClientSocket.Send(updateBytes);
+            }
         }
 
         private void handleGroupMessagePacket(TcpSocket clientSocket, IPacket receivedPacket)

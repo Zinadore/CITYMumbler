@@ -22,13 +22,11 @@ namespace CITYMumbler.Client.ViewModels
 	        set { this.RaiseAndSetIfChanged(ref _selectedTab, value); }
 	    }
 
-	    private ReactiveList<Client> _currentUsers;
+	    private readonly ObservableAsPropertyHelper<ReactiveList<Client>> _currentUsers;
 	    public ReactiveList<Client> CurrentUsers
 	    {
-	        get { return _currentUsers; }
-	        set { this.RaiseAndSetIfChanged(ref _currentUsers, value); }
+	        get { return _currentUsers.Value; }
 	    }
-
 
 
 		public ReactiveList<ChatViewModel> ChatList { get; private set; }
@@ -72,11 +70,14 @@ namespace CITYMumbler.Client.ViewModels
 	        });
 
 	        this.WhenAnyValue(x => x.SelectedTab)
+                .Where(tab => tab != null)
 	            .Where(tab => tab.ChatType == ChatViewModelType.GroupChat)
 	            .Select(cvm => cvm.Group.GroupUsers)
-	            .ToProperty(this, x => x.CurrentUsers);
+	            .ToProperty(this, x => x.CurrentUsers, out this._currentUsers);
 
 	        this.WhenAnyValue(x => x.CurrentUsers)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Where(list => list != null)
 	            .Subscribe(list =>
 	            {
                     this.CurrentUsersVMs.Clear();
