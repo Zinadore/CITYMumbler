@@ -72,11 +72,13 @@ namespace CITYMumbler.Client.ViewModels
 	        });
 
 	        this.WhenAnyValue(x => x.SelectedTab)
+                .Where(tab => tab != null)
 	            .Where(tab => tab.ChatType == ChatViewModelType.GroupChat)
 	            .Select(cvm => cvm.Group.GroupUsers)
 	            .ToProperty(this, x => x.CurrentUsers);
 
 	        this.WhenAnyValue(x => x.CurrentUsers)
+                .Where(list => list != null)
 	            .Subscribe(list =>
 	            {
                     this.CurrentUsersVMs.Clear();
