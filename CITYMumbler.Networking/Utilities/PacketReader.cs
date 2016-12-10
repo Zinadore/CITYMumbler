@@ -8,19 +8,27 @@ using CITYMumbler.Networking.Serialization;
 
 namespace CITYMumbler.Networking.Utilities
 {
+	/// <summary>
+	/// Used by the PaketSerialzer in order to deserialize a packet. Reads bytes and reaturns packets.
+	/// </summary>
     public class PacketReader: BinaryReader
     {
-        public PacketReader(byte[] data)
-            :base(new MemoryStream(data))
-        {
-            
-        }
+		/// <summary>
+		/// The constructor of the class.
+		/// </summary>
+		/// <param name="data">The array of bytes that is to be serialized.</param>
+        public PacketReader(byte[] data) : base(new MemoryStream(data)) {}
 
+		/// <summary>
+		/// Used to read a packet. The PackeType parameter indicates the way that the packet should be deserialized.
+		/// </summary>
+		/// <param name="type">The PacketType of the packet.</param>
+		/// <returns>The deserialized packet.</returns>
         public IPacket ReadPacket(PacketType type)
         {
             switch (type)
             {
-                case PacketType.Connection: return ReadRegisterClientMessage();
+                case PacketType.Connection: return ReadConnectionMessage();
 
                 case PacketType.Disconnection: return ReadDisconnectionMessage();
 
@@ -68,13 +76,21 @@ namespace CITYMumbler.Networking.Utilities
             }
         }
 
-        private IPacket ReadRegisterClientMessage()
+		/// <summary>
+		/// Used to read a ConnectionPacket.
+		/// </summary>
+		/// <returns>ConnectionPacket</returns>
+        private IPacket ReadConnectionMessage()
         {
             string name = ReadString();
             IPacket packet = new ConnectionPacket(name);
             return packet;
         }
 
+		/// <summary>
+		/// Used to read a DisconnectionPacket.
+		/// </summary>
+		/// <returns>DisconnectionPacket</returns>
         private IPacket ReadDisconnectionMessage()
         {
             ushort clientId = ReadUInt16();
@@ -82,7 +98,10 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-
+		/// <summary>
+		/// Used to read a ConnectedPacket.
+		/// </summary>
+		/// <returns>ConnectedPacket</returns>
         private IPacket ReadConnectedMessage()
         {
             ushort clientId = ReadUInt16();
@@ -90,6 +109,10 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
+		/// <summary>
+		/// Used to read a PrivateMessagePacket
+		/// </summary>
+		/// <returns>PrivateMessagePacket</returns>
         private IPacket ReadPrivateMessageMessage()
         {
             ushort senderId = ReadUInt16();
@@ -100,7 +123,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadKeyStrokeMessage()
+		/// <summary>
+		/// Used to read a SendKeystrokePacket
+		/// </summary>
+		/// <returns>SendKeystrokePacket</returns>
+		private IPacket ReadKeyStrokeMessage()
         {
             ushort senderId = ReadUInt16();
             ushort receiverId = ReadUInt16();
@@ -110,7 +137,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadGroupMessageMessage()
+		/// <summary>
+		/// Used to read a GroupMessagePacket
+		/// </summary>
+		/// <returns>GroupMessagePacket</returns>
+		private IPacket ReadGroupMessageMessage()
         {
             ushort senderId = ReadUInt16();
             ushort receiverId = ReadUInt16();
@@ -120,7 +151,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadJoinGroupMessage()
+		/// <summary>
+		/// used to read a JoinGroupPacket
+		/// </summary>
+		/// <returns>JoinGroupPacket</returns>
+		private IPacket ReadJoinGroupMessage()
         {
             ushort cliendId = ReadUInt16();
             ushort groupId = ReadUInt16();
@@ -139,7 +174,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadJoinedGroupMessage()
+		/// <summary>
+		/// Used to read a JoinedGroupPacket
+		/// </summary>
+		/// <returns>JoinedGroupPacket</returns>
+		private IPacket ReadJoinedGroupMessage()
         {
             ushort clientId = ReadUInt16();
             ushort groupId = ReadUInt16();
@@ -147,7 +186,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadDeleteGroupMessage()
+		/// <summary>
+		/// Used to read a DeleteGroupPacket
+		/// </summary>
+		/// <returns>DeleteGroupPacket</returns>
+		private IPacket ReadDeleteGroupMessage()
         {
             ushort clientId = ReadUInt16();
             ushort groupId = ReadUInt16();
@@ -155,7 +198,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadChangeGroupOwnerMessage()
+		/// <summary>
+		/// Used to read a ChangeGroupOwnerPacket
+		/// </summary>
+		/// <returns>ChangeGroupOwnerPacket</returns>
+		private IPacket ReadChangeGroupOwnerMessage()
         {
             ushort clientId = ReadUInt16();
             ushort groupId = ReadUInt16();
@@ -164,7 +211,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadLeaveGroupMessage()
+		/// <summary>
+		/// Used to read a LeaveGroupPacket
+		/// </summary>
+		/// <returns>LeaveGroupPacket</returns>
+		private IPacket ReadLeaveGroupMessage()
         {
             ushort clientId = ReadUInt16();
             ushort groupId = ReadUInt16();
@@ -172,7 +223,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadLeftGroupMessage()
+		/// <summary>
+		/// Used to read a LeftGroupPacket
+		/// </summary>
+		/// <returns>LeftGroupPacket</returns>
+		private IPacket ReadLeftGroupMessage()
         {
             ushort clientId = ReadUInt16();
             ushort groupId = ReadUInt16();
@@ -181,6 +236,10 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
+		/// <summary>
+		/// Used to read a KickPacket
+		/// </summary>
+		/// <returns>KickPacket</returns>
         private IPacket ReadKickMessage()
         {
             ushort clientId = ReadUInt16();
@@ -190,7 +249,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-        private IPacket ReadCreateGroupMessage()
+		/// <summary>
+		/// Used to read a CreateGroupPacket
+		/// </summary>
+		/// <returns>CreateGroupPacket</returns>
+		private IPacket ReadCreateGroupMessage()
         {
             ushort clientId = ReadUInt16();
             string groupName = ReadString();
@@ -211,7 +274,11 @@ namespace CITYMumbler.Networking.Utilities
             return packet;
         }
 
-	    private IPacket SendGroupsMessage()
+		/// <summary>
+		/// Used to read a SendGroupsPacket
+		/// </summary>
+		/// <returns>SendGroupsPacket</returns>
+		private IPacket SendGroupsMessage()
 	    {
 		    byte NoOfGroups = ReadByte();
 		    GroupPacket[] GroupList = new GroupPacket[NoOfGroups];
@@ -228,7 +295,11 @@ namespace CITYMumbler.Networking.Utilities
 			return (IPacket) new SendGroupsPacket(GroupList);
 	    }
 
-	    private IPacket SendUsersMessage()
+		/// <summary>
+		/// Used to read a SendUsersPacket
+		/// </summary>
+		/// <returns>SendUsersPacket</returns>
+		private IPacket SendUsersMessage()
 	    {
 		    byte NoOfUsers = ReadByte();
 		    CommonClientRepresentation[] UserList = new CommonClientRepresentation[NoOfUsers];
@@ -242,6 +313,10 @@ namespace CITYMumbler.Networking.Utilities
 		    return (IPacket) new SendUsersPacket(UserList);
 	    }
 
+		/// <summary>
+		/// Used to read a GroupPacket
+		/// </summary>
+		/// <returns>GroupPacket</returns>
 	    private IPacket GroupPacketMessage()
 	    {
 		    ushort id = ReadUInt16();
@@ -259,13 +334,21 @@ namespace CITYMumbler.Networking.Utilities
 		    return (IPacket) new GroupPacket(name, id, ownerId, permissionType, timeThreshold, IdList);
 	    }
 
-	    private IPacket RequestGroupMessage()
+		/// <summary>
+		/// Used to read a RequestGroupPacket
+		/// </summary>
+		/// <returns>RequestGroupPacket</returns>
+		private IPacket RequestGroupMessage()
 	    {
 		    ushort groupId = ReadUInt16();
 		    return (IPacket) new RequestGroupPacket(groupId);
 	    }
 
-	    private IPacket UpdatedGroupMessage()
+		/// <summary>
+		/// Used to read a UpdatedGroupPacket
+		/// </summary>
+		/// <returns>UpdatedGroupPacket</returns>
+		private IPacket UpdatedGroupMessage()
 	    {
 		    UpdatedGroupType updateAction = (UpdatedGroupType) ReadByte();
 
@@ -290,6 +373,10 @@ namespace CITYMumbler.Networking.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Used to read a UpdatedUserPacket
+		/// </summary>
+		/// <returns>UpdatedUserPacket</returns>
 		private IPacket UpdatedUserMessage()
 		{
 			UpdatedUserType updateAction = (UpdatedUserType)ReadByte();
