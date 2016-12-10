@@ -71,6 +71,15 @@ namespace CITYMumbler.Networking.Utilities
         {
             Write(packet.ClientId);
             Write(packet.GroupId);
+			Write(packet.GetNoOfUsers());
+
+	        if (packet.GetNoOfUsers() > 0)
+	        {
+		        foreach (var userId in packet.Users)
+		        {
+			        Write(userId);
+		        }
+	        }
         }
 
         public void Write(DeleteGroupPacket packet)
