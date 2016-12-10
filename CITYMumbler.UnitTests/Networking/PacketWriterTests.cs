@@ -268,7 +268,10 @@ namespace CITYMumbler.UnitTests.Networking
         {
             // Arrange
             PacketWritter writter = new PacketWritter();
-            IPacket packet = new JoinedGroupPacket((ushort)3, (ushort)2);
+	        ushort[] ids = new ushort[2];
+	        ids[0] = 6;
+	        ids[1] = 5;
+            IPacket packet = new JoinedGroupPacket((ushort)3, (ushort)2, ids);
 
             // Act
             writter.Write((JoinedGroupPacket)packet);
@@ -278,7 +281,9 @@ namespace CITYMumbler.UnitTests.Networking
             JoinedGroupPacket newPacket = (JoinedGroupPacket)reader.ReadPacket(PacketType.JoinedGroup);
             Assert.AreEqual(newPacket.ClientId, ((JoinedGroupPacket)packet).ClientId);
             Assert.AreEqual(newPacket.GroupId, ((JoinedGroupPacket)packet).GroupId);
-        }
+			Assert.AreEqual(newPacket.Users[0], ids[0]);
+			Assert.AreEqual(newPacket.Users[1], ids[1]);
+		}
 
         // Kick Packet
 
