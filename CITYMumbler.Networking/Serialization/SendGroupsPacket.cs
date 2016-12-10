@@ -8,8 +8,17 @@ using CITYMumbler.Networking.Contracts;
 
 namespace CITYMumbler.Networking.Serialization
 {
+	/// <summary>
+	/// sent by the server in response to a RequestSendGroupsPacket. 
+	/// Contains all the groups in the system in a list of GroupPackets.
+	/// </summary>
 	public class SendGroupsPacket : Packet
 	{
+		/// <summary>
+		/// Constructor of the class. Takes a list of CommonGroupRepresentations.
+		/// Automatically constructs a GroupPacket for each CommonGroupRepresentation and puts it in the GroupList
+		/// </summary>
+		/// <param name="groups">A list of groups.</param>
 		public SendGroupsPacket(CommonGroupRepresentation[] groups)
 		{
 			PacketType = PacketType.SendGroups;
@@ -22,6 +31,10 @@ namespace CITYMumbler.Networking.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Constructor of the class. Takes a list of GroupPackets.
+		/// </summary>
+		/// <param name="groups">A list of GroupPackets.</param>
 		public SendGroupsPacket(GroupPacket[] groups)
 		{
 			PacketType = PacketType.SendGroups;
@@ -30,6 +43,10 @@ namespace CITYMumbler.Networking.Serialization
 
 		public GroupPacket[] GroupList { get; private set; }
 
+		/// <summary>
+		/// Returns the number of groups in the system.
+		/// </summary>
+		/// <returns>The size of the GroupList</returns>
 		public byte GetNoOfGroups() { return (byte) GroupList.Length; }
 	}
 }
