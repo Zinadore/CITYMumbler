@@ -205,7 +205,7 @@ namespace CITYMumbler.Server
                 foreach(var c in this._connectedClients)
                     c.ClientSocket.Send(updateGroupBytes);
             }
-            var joinGroupPacket = new JoinedGroupPacket(client.ID, newGroup.ID);
+            var joinGroupPacket = new JoinedGroupPacket(client.ID, newGroup.ID, new []{client.ID});
             client.ClientSocket.Send(this._serializer.ToBytes(joinGroupPacket));
         }
         private void handleLeaveGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
@@ -305,7 +305,12 @@ namespace CITYMumbler.Server
 
             //Everything went well. We should add the client to the group
             groupToJoin.Clients.Add(requestingClient);
-            var responsePacket = new JoinedGroupPacket(requestingClient.ID, groupToJoin.ID);
+            List<ushort> ids = new List<ushort>();
+            foreach (Client c in groupToJoin.Clients)
+            {
+                ids.Add(c.ID);
+            }
+            var responsePacket = new JoinedGroupPacket(requestingClient.ID, groupToJoin.ID, ids.ToArray());
             this.logger.Log(LogLevel.Info, "Added user {0} to group {1}", requestingClient.Name, groupToJoin.Name);
             clientSocket.Send(this._serializer.ToBytes(responsePacket));
             var updatePacket = new UpdatedGroupPacket(UpdatedGroupType.UserJoined, requestingClient.ID, groupToJoin.ID);

@@ -438,6 +438,17 @@ namespace CITYMumbler.Client
             {
                 this.JoinedGroups.Add(joinedGroup);
             }
+
+            foreach (ushort cid in p1.Users)
+            {
+                Client user;
+                lock (this.ConnectedUsers)
+                {
+                    user = this.ConnectedUsers.FirstOrDefault(c => c.ID == cid);
+                }
+                if (user != null)
+                    joinedGroup.GroupUsers.Add(user);
+            }
         }
         private void handlePrivateMessagePacket(IPacket packet)
         {
