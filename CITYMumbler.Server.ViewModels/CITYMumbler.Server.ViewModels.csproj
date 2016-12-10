@@ -77,9 +77,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CITYMumbler.Common.Contracts\CITYMumbler.Common.Contracts.csproj">
       <Project>{228C2960-FBDB-4FC9-B04E-BB3E7638CE68}</Project>
       <Name>CITYMumbler.Common.Contracts</Name>
@@ -88,6 +85,9 @@
       <Project>{0D1F24BE-658E-450D-A2B4-517ED2810AAE}</Project>
       <Name>CITYMumbler.Server</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

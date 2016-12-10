@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
 using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
 using CITYMumbler.Common.Contracts.Services.Logger;
 using CITYMumbler.Networking.Contracts;
 using CITYMumbler.Networking.Contracts.Serialization;
@@ -95,6 +98,12 @@ namespace CITYMumbler.Client
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
+        public void JoinGroup(ushort groupId, string password)
+        {
+            JoinGroupPacket packet = new JoinGroupPacket(this._me.ID, groupId, password);
+            this._socket.Send((this._serializer.ToBytes(packet)));
+        }
+
         public void LeaveGroup(ushort groupId)
         {
             lock (this.JoinedGroups)
@@ -102,6 +111,23 @@ namespace CITYMumbler.Client
                 this.JoinedGroups.Remove(this.JoinedGroups.FirstOrDefault(g => g.ID == groupId));
             }
             LeaveGroupPacket packet = new LeaveGroupPacket(this._me.ID, groupId);
+            this._socket.Send(this._serializer.ToBytes(packet));
+        }
+
+        public void CreateGroup(string groupName, JoinGroupPermissionTypes authenticationType, byte threshold,
+                                string password = null)
+        {
+            CreateGroupPacket packet;
+            if (authenticationType == JoinGroupPermissionTypes.Password)
+            {
+                if (password == null)
+                    throw new ArgumentNullException(nameof(password));
+                packet = new CreateGroupPacket(this._me.ID, groupName, threshold, authenticationType, password);
+            }
+            else
+            {
+                packet = new CreateGroupPacket(this._me.ID, groupName, threshold, authenticationType);
+            }
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
@@ -246,7 +272,14 @@ namespace CITYMumbler.Client
             var p = packet as UpdatedGroupPacket;
             if (p.UpdateAction == UpdatedGroupType.Created)
             {
+                Group existingGroup;
                 lock (this.Groups)
+                {
+                    existingGroup = this.Groups.FirstOrDefault(g => g.ID == p.GroupId);
+                }
+                if (existingGroup != null)
+                    return;
+                lock(this.Groups)
                 this.Groups.Add(new Group() {
                     ID = p.GroupPacket.Id,
                     Name = p.GroupPacket .Name,
@@ -385,10 +418,22 @@ namespace CITYMumbler.Client
         {
             var p1 = packet as JoinedGroupPacket;
             Group joinedGroup;
-            lock (this.Groups)
+            int attempts = 1;
+            do
             {
-                joinedGroup = this.Groups.FirstOrDefault(group => group.ID == p1.GroupId);
-            }
+                lock (this.Groups)
+                {
+                    joinedGroup = this.Groups.FirstOrDefault(group => group.ID == p1.GroupId);
+                }
+
+                if (joinedGroup == null)
+                {
+                    Thread.Sleep(100);
+                    attempts++;
+                }
+            } while (joinedGroup == null || attempts > 10);
+            if (joinedGroup == null)
+                return;
             lock (this.JoinedGroups)
             {
                 this.JoinedGroups.Add(joinedGroup);

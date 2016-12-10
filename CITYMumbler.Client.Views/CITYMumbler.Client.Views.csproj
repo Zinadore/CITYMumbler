@@ -73,6 +73,7 @@
       <HintPath>..\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -102,6 +103,9 @@
     <Compile Include="CurrentChatUserListItemView.xaml.cs">
       <DependentUpon>CurrentChatUserListItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GroupPasswordWindow.xaml.cs">
+      <DependentUpon>GroupPasswordWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GroupsSummaryListItemView.xaml.cs">
       <DependentUpon>GroupsSummaryListItemView.xaml</DependentUpon>
     </Compile>
@@ -110,6 +114,9 @@
     </Compile>
     <Compile Include="LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewGroupWindow.xaml.cs">
+      <DependentUpon>NewGroupWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
@@ -131,6 +138,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="GroupPasswordWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GroupsSummaryListItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,6 +151,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="LogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewGroupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

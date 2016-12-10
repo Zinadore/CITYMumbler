@@ -33,6 +33,12 @@ namespace CITYMumbler.Client.Views
                 d(this.BindCommand(ViewModel, vm => vm.LeaveGroupCommand, @this => @this.ContextMenuLeave));
                 d(this.OneWayBind(ViewModel, vm => vm.IsJoined, @this => @this.ContextMenuJoin.Visibility, value => value ? Visibility.Collapsed : Visibility.Visible));
                 d(this.OneWayBind(ViewModel, vm => vm.IsJoined, @this => @this.ContextMenuLeave.Visibility, value => value ? Visibility.Visible : Visibility.Collapsed));
+                d(this.ViewModel.GroupPasswordInteraction.RegisterHandler(interaction =>
+                {
+                    var dialog = new GroupPasswordWindow {ViewModel = interaction.Input, Owner = Window.GetWindow(this)};
+                    var result = dialog.ShowDialog();
+                    interaction.SetOutput(result.Value);
+                }));
             });
         }
 

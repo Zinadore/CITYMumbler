@@ -12,5 +12,7 @@
             <MenuItem x:Name="ContextMenuLeave" Header="Leave"></MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <TextBlock x:Name="GroupName" FontSize="13" FontWeight="Normal" HorizontalAlignment="Stretch"></TextBlock>
+    <Grid HorizontalAlignment="Stretch">
+        <TextBlock x:Name="GroupName" FontSize="13" FontWeight="Normal" HorizontalAlignment="Stretch"></TextBlock>
+    </Grid>
 </UserControl>
