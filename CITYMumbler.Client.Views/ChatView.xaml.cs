@@ -51,7 +51,7 @@ namespace CITYMumbler.Client.Views
 		              {
 		                  this.ViewModel.SendCommand.Execute();
 		              }));
-
+		        d(this.BindCommand(ViewModel, vm => vm.CloseCommand, @this => @this.CloseButton));
 		    });
 
 

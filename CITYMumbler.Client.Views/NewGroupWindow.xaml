@@ -1,0 +1,42 @@
+﻿<Window x:Class="CITYMumbler.Client.Views.NewGroupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CITYMumbler.Client.Views"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d"
+        Title="Create New Group" Height="300" Width="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0">Group Name:</Label>
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="3" x:Name="Name"></TextBox>
+        <Label Grid.Row="1" Grid.Column="0">Authentication:</Label>
+        <ComboBox Grid.Row="1" Grid.Column="1" Margin="3" x:Name="Authentication" DisplayMemberPath="FriendlyName" IsSynchronizedWithCurrentItem="True">
+        </ComboBox>
+        <Label Grid.Row="2" Grid.Column="0">Password:</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="Password"></TextBox>
+        <Label Grid.Row="3" Grid.Column="0">Timeout (sec):</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="Threshold"></TextBox>
+        <Grid Grid.Row="4" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Width="50" Margin="0 0 5 0" IsDefault="True" x:Name="CreateButton" Click="CreateButton_Click">Create</Button>
+                <Button Width="50" IsCancel="True">Cancel</Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

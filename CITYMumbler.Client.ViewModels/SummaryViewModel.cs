@@ -53,9 +53,9 @@ namespace CITYMumbler.Client.ViewModels
                     addNewUser(user);
                 }
 
-                d(this._client.Groups.ItemsAdded.Subscribe(addNewGroup));
+                d(this._client.Groups.ItemsAdded.ObserveOn(RxApp.MainThreadScheduler).Subscribe(addNewGroup));
 
-                d(this._client.Groups.ItemsRemoved.Subscribe(group =>
+                d(this._client.Groups.ItemsRemoved.ObserveOn(RxApp.MainThreadScheduler).Subscribe(group =>
                 {
                     var v = this.Groups.FirstOrDefault(vm => vm.GroupID == group.ID);
                     if (v == null)

@@ -53,7 +53,7 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-        <local:LogWindow Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" x:Name="LogWindow" />
+        <local:LogWindow Grid.Row="1" Grid.Column="2" x:Name="LogWindow"/>
         <local:SummaryView HorizontalAlignment="Stretch" 
                            HorizontalContentAlignment="Stretch"
                           Grid.Row="0" 
@@ -73,5 +73,12 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
+        <StackPanel Grid.Row="1"
+                    Grid.Column="3">
+            <Button FontSize="15" x:Name="NewGroupButton">New Group</Button>
+            <Button FontSize="15" x:Name="SignOutButton">Sign Out</Button>
+            
+        </StackPanel>
+        
 	</Grid>
 </UserControl>

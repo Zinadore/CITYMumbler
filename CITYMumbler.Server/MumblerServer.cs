@@ -28,6 +28,8 @@ namespace CITYMumbler.Server
         private ReactiveList<Group> _groupList;
         // The idiot's way of doing IDs
         private ushort idSeed = 1;
+        private ushort groupSeed = 1;
+        private object seedLock;
         // Log all the things
         private ILogger logger;
         private IPacketSerializer _serializer;
@@ -40,6 +42,7 @@ namespace CITYMumbler.Server
 
         public MumblerServer(ILoggerService loggerService)
         {
+            this.seedLock = new object();
             this._connectedClients = new List<Client>();
             this._groupList= new ReactiveList<Group>();
             this.logger = loggerService.GetLogger(this.GetType());
@@ -47,22 +50,23 @@ namespace CITYMumbler.Server
             this._serializer = new PacketSerializer();
             this.IsRunning = new BehaviorSubject<bool>(false);
 
-            this._groupList.Add(new Group()
-            {
-                Name = "MyGroup",
-                ID = 1,
-                PermissionType = JoinGroupPermissionTypes.Free,
-                OwnerID = 2,
-                Clients = new ReactiveList<Client>()
-            });
-            this._groupList.Add(new Group()
-            {
-                Name = "MyOtherGroup",
-                ID = 2,
-                PermissionType = JoinGroupPermissionTypes.Free,
-                OwnerID = 2,
-                Clients = new ReactiveList<Client>()
-            });
+            //this._groupList.Add(new Group()
+            //{
+            //    Name = "MyGroup",
+            //    ID = 1,
+            //    PermissionType = JoinGroupPermissionTypes.Free,
+            //    OwnerID = 2,
+            //    Clients = new ReactiveList<Client>()
+            //});
+            //this._groupList.Add(new Group()
+            //{
+            //    Name = "MyOtherGroup",
+            //    ID = 2,
+            //    PermissionType = JoinGroupPermissionTypes.Password,
+            //    Password = "tyrakia",
+            //    OwnerID = 2,
+            //    Clients = new ReactiveList<Client>()
+            //});
         }
 
         public void Start(int port = 21992)
@@ -145,11 +149,65 @@ namespace CITYMumbler.Server
                 case PacketType.LeaveGroup:
                     handleLeaveGroupPacket(clientSocket, packet);
                     break;
+                case PacketType.CreateGroup:
+                    handleCreateGroupPacket(clientSocket, packet);
+                    break;
             }
         }
 
         #region Packet Handling
 
+        private void handleCreateGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
+        {
+            var packet = receivedPacket as CreateGroupPacket;
+            Client client;
+            lock (this._connectedClients)
+            {
+                client = this._connectedClients.FirstOrDefault(c => c.ID == packet.ClientId);
+            }
+            if (client == null)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} tried to create a group, but client doesn't exist", packet.ClientId);
+                return;
+            }
+            Group newGroup = new Group()
+            {
+                Name = packet.GroupName,
+                PermissionType = packet.PermissionType,
+                OwnerID = client.ID,
+                Clients = new ReactiveList<Client>()
+            };
+
+            lock (seedLock)
+            {
+                newGroup.ID = groupSeed++;
+            }
+
+            if (newGroup.PermissionType == JoinGroupPermissionTypes.Password)
+                newGroup.Password = packet.Password;
+            newGroup.Clients.Add(client);
+            Group existingGroup;
+            lock (this._groupList)
+            {
+                existingGroup = this._groupList.FirstOrDefault(g => g.Name.Equals(newGroup.Name));
+            }
+
+            if (existingGroup != null)
+                newGroup.Name = $"{newGroup.Name}#{newGroup.ID}";
+            lock (this._groupList)
+            {
+                this._groupList.Add(newGroup);
+            }
+            var updateGroupPacket = new UpdatedGroupPacket(UpdatedGroupType.Created, new CommonGroupRepresentation() { ID = newGroup.ID, Name = newGroup.Name, OwnerID = newGroup.OwnerID, PermissionType = newGroup.PermissionType, TimeoutThreshold = newGroup.Threshold});
+            var updateGroupBytes = this._serializer.ToBytes(updateGroupPacket);
+            lock (this._connectedClients)
+            {
+                foreach(var c in this._connectedClients)
+                    c.ClientSocket.Send(updateGroupBytes);
+            }
+            var joinGroupPacket = new JoinedGroupPacket(client.ID, newGroup.ID, new []{client.ID});
+            client.ClientSocket.Send(this._serializer.ToBytes(joinGroupPacket));
+        }
         private void handleLeaveGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var leaveGroupPacket = receivedPacket as LeaveGroupPacket;
@@ -199,7 +257,7 @@ namespace CITYMumbler.Server
             {
                 receiver = this._connectedClients.FirstOrDefault(c => c.ID == pm.ReceiverId);
             }
-            receiver.ClientSocket.Send(this._serializer.ToBytes(pm));
+            receiver?.ClientSocket.Send(this._serializer.ToBytes(pm));
         }
 
         private void handleConnectionPacket(TcpSocket clientSocket, IPacket receivedPacket)
@@ -247,7 +305,12 @@ namespace CITYMumbler.Server
 
             //Everything went well. We should add the client to the group
             groupToJoin.Clients.Add(requestingClient);
-            var responsePacket = new JoinedGroupPacket(requestingClient.ID, groupToJoin.ID);
+            List<ushort> ids = new List<ushort>();
+            foreach (Client c in groupToJoin.Clients)
+            {
+                ids.Add(c.ID);
+            }
+            var responsePacket = new JoinedGroupPacket(requestingClient.ID, groupToJoin.ID, ids.ToArray());
             this.logger.Log(LogLevel.Info, "Added user {0} to group {1}", requestingClient.Name, groupToJoin.Name);
             clientSocket.Send(this._serializer.ToBytes(responsePacket));
             var updatePacket = new UpdatedGroupPacket(UpdatedGroupType.UserJoined, requestingClient.ID, groupToJoin.ID);

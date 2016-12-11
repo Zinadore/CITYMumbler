@@ -182,7 +182,18 @@ namespace CITYMumbler.Networking.Utilities
         {
             ushort clientId = ReadUInt16();
             ushort groupId = ReadUInt16();
-            IPacket packet = new JoinedGroupPacket(clientId, groupId);
+	        byte noOfUsers = ReadByte();
+	        ushort[] users = new ushort[noOfUsers];
+
+	        if (noOfUsers > 0)
+	        {
+		        for (int i = 0; i < noOfUsers; i++)
+		        {
+			        users[i] = ReadUInt16();
+		        }
+	        }
+
+            IPacket packet = new JoinedGroupPacket(clientId, groupId, users);
             return packet;
         }
 

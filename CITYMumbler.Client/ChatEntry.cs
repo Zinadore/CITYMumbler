@@ -9,16 +9,18 @@ namespace CITYMumbler.Client
     public struct ChatEntry
     {
         public ushort SenderId { get; private set; }
+        public ushort ReceiverId { get; private set; }
         public string SenderName { get; set; }
         public string Message { get; private set; }
         public ushort? GroupId { get; private set; }
 
-        public ChatEntry(ushort senderId, string senderName, string message, ushort? groupId = 0)
+        public ChatEntry(ushort senderId, string senderName, string message, ushort groupId = 0, ushort receiverId = 0)
         {
             this.SenderId = senderId;
             this.SenderName = senderName;
             this.Message = message;
             this.GroupId = groupId;
+            this.ReceiverId = receiverId;
         }
     }
 }

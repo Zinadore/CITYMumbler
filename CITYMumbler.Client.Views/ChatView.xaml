@@ -9,6 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300" Loaded="View_Loaded">
 	<Grid>
 		<Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
@@ -16,19 +17,30 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
-		<RichTextBox Grid.Row="0" 
+        <Grid>
+            <Button Background="Red" 
+                    BorderBrush="Red" 
+                    Foreground="AliceBlue" 
+                    FontSize="10"
+                    FontWeight="Bold"
+                    Content="✘" 
+                    x:Name="CloseButton"
+                    HorizontalAlignment="Right"></Button>
+        </Grid>
+		<RichTextBox Grid.Row="1" 
+                     Grid.Column="0"
                     Grid.ColumnSpan="2" 
                      x:Name="ChatDisplay"
                      IsReadOnly="True"
                      AcceptsReturn="False"
                      VerticalScrollBarVisibility="Visible"/>
-        <TextBox Grid.Row="1" 
+        <TextBox Grid.Row="2" 
                  Grid.Column="0" 
                  x:Name="ChatInput"  
                  HorizontalAlignment="Stretch" 
                  TextWrapping="Wrap" 
                  VerticalAlignment="Stretch"/>
-		<Button Grid.Row="1" 
+		<Button Grid.Row="2" 
                 Grid.Column="1"  
                 x:Name="SendButton" 
                 Content="☼" 

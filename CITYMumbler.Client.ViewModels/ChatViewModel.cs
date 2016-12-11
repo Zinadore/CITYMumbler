@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CITYMumbler.Networking.Contracts;
@@ -59,6 +60,7 @@ namespace CITYMumbler.Client.ViewModels
         public IObservable<ChatEntry> Entries { get; private set; }
 
 		public ReactiveCommand<Unit, Unit> SendCommand;
+	    public ReactiveCommand<Unit, Unit> CloseCommand;
 
 	    public ChatViewModel(IScreen hostScreen, ChatViewModelType chatType, PrivateChat chat):this(hostScreen, chatType, chat.RemoteUser.ID)
 	    {
@@ -86,13 +88,22 @@ namespace CITYMumbler.Client.ViewModels
             }
             else
 		    {
-                this.Entries = this._mumblerClient.PrivateMessages.Where(entry => entry.SenderId == this._filterId);
+                this.Entries = this._mumblerClient.PrivateMessages.Where(entry => entry.SenderId == this._filterId ||  (entry.SenderId == this._localClient.ID && entry.ReceiverId == this._filterId));
 		    }
 			this.SendCommand = ReactiveCommand.Create(SendMessage);
-            
-        }
+            this.CloseCommand = ReactiveCommand.Create(LeaveConversation);
 
-		private void SendMessage()
+		}
+
+	    private void LeaveConversation()
+	    {
+	        if (this.ChatType == ChatViewModelType.GroupChat)
+	            this._mumblerClient.LeaveGroup(_filterId);
+	        else
+                this._mumblerClient.CloseWhisper(_filterId);
+	    }
+
+	    private void SendMessage()
 		{
 		    if (this.ChatType == ChatViewModelType.GroupChat)
 		    {

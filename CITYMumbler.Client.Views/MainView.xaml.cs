@@ -29,6 +29,16 @@ namespace CITYMumbler.Client.Views
 		    this.OneWayBind(ViewModel, vm => vm.ChatList, @this => @this.ChatTabControl.ItemsSource);
 		    this.Bind(ViewModel, vm => vm.SelectedTab, @this => @this.ChatTabControl.SelectedItem);
 		    this.OneWayBind(ViewModel, vm => vm.CurrentUsersVMs, @this => @this.CurrentUsers.ItemsSource);
+		    this.BindCommand(ViewModel, vm => vm.CreateGroupCommand, @this => @this.NewGroupButton);
+		    this.WhenActivated(d =>
+		    {
+		        d(this.ViewModel.CreateGroupInteraction.RegisterHandler(interaction =>
+		        {
+		            var dialog = new NewGroupWindow(interaction.Input) { Owner = Window.GetWindow(this)};
+		            var result = dialog.ShowDialog();
+                    interaction.SetOutput(result.Value);
+		        }));
+		    });
 		}
 
 		object IViewFor.ViewModel
@@ -37,6 +47,5 @@ namespace CITYMumbler.Client.Views
 			set { ViewModel = (MainViewModel) value; }
 		}
 		public MainViewModel ViewModel { get; set; }
-
     }
 }
