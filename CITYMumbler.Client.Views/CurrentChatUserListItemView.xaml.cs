@@ -30,6 +30,8 @@ namespace CITYMumbler.Client.Views
             this.OneWayBind(ViewModel, vm => vm.Username, @this => @this.Username.Text);
             this.OneWayBind(ViewModel, vm => vm.IsOwner, @this => @this.KickMenuItem.Visibility,
                 value => value ? Visibility.Visible : Visibility.Collapsed);
+            this.OneWayBind(ViewModel, vm => vm.IsOwner, @this => @this.PromoteMenuItem.Visibility,
+                value => value ? Visibility.Visible : Visibility.Collapsed);
             this.BindCommand(ViewModel, vm => vm.KickCommand, @this => @this.KickMenuItem);
             this.BindCommand(ViewModel, vm => vm.PromoteCommand, @this => @this.PromoteMenuItem);
             this.BindCommand(ViewModel, vm => vm.WhisperCommand, @this => @this.WhisperMenuItem);

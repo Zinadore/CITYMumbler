@@ -144,8 +144,5 @@ namespace CITYMumbler.Client.ViewModels
 	    {
 			_mumblerClient.Connect(_addressIp, _portNumeric, Username);
 		}
-
-        ~LoginViewModel() { this._mumblerClient.OnConnected -= MumblerClient_OnConnected; }
-
     }
 }

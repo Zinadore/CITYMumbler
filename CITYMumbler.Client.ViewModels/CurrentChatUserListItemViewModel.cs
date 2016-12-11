@@ -40,9 +40,10 @@ namespace CITYMumbler.Client.ViewModels
             this._localClient = localClient;
             this._group = group;
 
-            this.WhenAnyValue(x => x._localClient, x => x._group.OwnerID, (c, g) => c)
-                .Select(x => x.ID == this._group.OwnerID)
-                .ToProperty(this, @this => @this.IsOwner, out this._isOwner);
+            this.WhenAnyValue(x => x._group.OwnerID)
+                .Select(x => x == this._localClient.ID)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, @this => @this.IsOwner, out _isOwner);
 
 
             this.KickCommand = ReactiveCommand.Create(() =>
