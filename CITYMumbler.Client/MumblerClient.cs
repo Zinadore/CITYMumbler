@@ -34,7 +34,11 @@ namespace CITYMumbler.Client
         /// Fires once the connection has been successful, and the server has provided the client with an ID
         /// </summary>
         public EventHandler OnConnected;
-        //public EventHandler OnDisconnected;
+
+        /// <summary>
+        /// Fires when the client has been disconnected from the server.
+        /// </summary>
+        public EventHandler OnDisconnected;
         /// <summary>
         /// Fires when the server has returned a list of all the currently available groups
         /// </summary>
