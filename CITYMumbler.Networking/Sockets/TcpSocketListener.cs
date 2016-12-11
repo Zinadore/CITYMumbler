@@ -4,25 +4,47 @@ using System.Net.Sockets;
 
 namespace CITYMumbler.Networking.Sockets
 {
+    /// <summary>
+    /// A wrapper around a tcp socket. Used to listen for incoming connections.
+    /// </summary>
     public sealed class TcpSocketListener
     {
         // This socket represents THIS class on the communication
         private Socket listener;
 
-        // Tells if the listener is running or not
+        /// <summary>
+        /// A boolean value denoting whether the listener is running.
+        /// </summary>
         public bool Running { get; private set; } = false;
 
-        //The port the listener is currently running on (if running)
+        /// <summary>
+        /// The port the listener is listening on.
+        /// </summary>
         public int Port { get; private set; }
 
+        /// <summary>
+        /// Fires once a new socket communication has been accepted.
+        /// </summary>
         public event EventHandler<OnAcceptedTcpSocketEventArgs> OnAccepted;
 
+        /// <summary>
+        /// The default constructor. Sets port to 0.
+        /// </summary>
         public TcpSocketListener() { this.Port = default(int); }
+
+        /// <summary>
+        /// Initializes the listener, and sets the specified port
+        /// </summary>
+        /// <param name="port"></param>
         public TcpSocketListener(int port)
         {
             this.Port = port;
         }
 
+        /// <summary>
+        /// Starts the listener. Will throw if the listener is already running
+        /// </summary>
+        /// <param name="port">The port to listener on.</param>
         public void Start(int port)
         {
             if (!this.Running)
@@ -40,6 +62,9 @@ namespace CITYMumbler.Networking.Sockets
             }
         }
 
+        /// <summary>
+        /// Stops the listener. Will throw if the listener is not running.
+        /// </summary>
         public void Stop()
         {
             if (this.Running)
