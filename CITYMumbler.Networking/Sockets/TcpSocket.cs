@@ -7,11 +7,19 @@ using System.Threading;
 
 namespace CITYMumbler.Networking.Sockets
 {
+    /// <summary>
+    /// A wrapper around a tcp socket.
+    /// </summary>
     public class TcpSocket: IDisposable
     {
-        // The maximum size of the buffer, could be used for multiple cycles
+        /// <summary>
+        /// The max size of the buffer used to receive the incoming stream
+        /// </summary>
         private const int BUFFER_SIZE = 8192;
-        // How many bytes from the beggining of the buffer, are used to denote the actuall buffer size
+
+        /// <summary>
+        /// How many bytes are used at the begining of the incoming stream, to denote the length of the whole stream.
+        /// </summary>
         private const int BUFFER_HEADER_SIZE = 4;
 
         private byte[] buffer;
@@ -23,14 +31,36 @@ namespace CITYMumbler.Networking.Sockets
         // This is us
         private Socket socket;
 
+        /// <summary>
+        /// Fires when a connection attempt has finished. The args contain information of whether the connection succeeded
+        /// and the exception if it didn't
+        /// </summary>
         public event EventHandler<TcpSocketConnectionStateEventArgs> OnConnectEnd;
         //public event EventHandler<TcpSocketConnectionStateEventArgs> OnConnectionError;
+
+        /// <summary>
+        /// Fires when an incoming stream has been read completely.
+        /// </summary>
         public event EventHandler<TcpSocketDataReceivedEventArgs> OnDataReceived;
+
+        /// <summary>
+        /// Fires when the other end of the connection has been disconnected
+        /// </summary>
         public event EventHandler<TcpSocketDisconnectedEventArgs> OnDisconnected;
 
+        /// <summary>
+        /// A boolean value denoting whether the socket is connected or not
+        /// </summary>
         public bool Connected { get; private set; } = false;
+
+        /// <summary>
+        /// A boolean value denoting whether the socket has been disposed
+        /// </summary>
         public bool IsDisposed { get; private set; } = false;
 
+        /// <summary>
+        /// The id of the client assigned to this socket
+        /// </summary>
         public int ClientID { get; set; } = default(int);
 
         /// <summary>
@@ -62,36 +92,64 @@ namespace CITYMumbler.Networking.Sockets
         }
 
         #region Connection Methods
+        /// <summary>
+        /// Connects using the provided information. The connection is synchronous and blocking
+        /// </summary>
+        /// <param name="host">The IP address it should connect to.</param>
+        /// <param name="port">The port it should connect to.</param>
         public void Connect(string host, int port)
         {
             this.socket.Connect(host, port);
             this.Connected = true;
         }
 
+        /// <summary>
+        /// Connects using the provided information. The connection is synchronous and blocking
+        /// </summary>
+        /// <param name="endPoint">The IPEndPoint it should connect to.</param>
         public void Connect(IPEndPoint endPoint)
         {
             this.socket.Connect(endPoint);
             this.Connected = true;
         }
 
+        /// <summary>
+        /// Connects using the provided information. The connection is synchronous and blocking
+        /// </summary>
+        /// <param name="address">The address it should connect to.</param>
+        /// <param name="port">The port it should connect to.</param>
         public void Connect(IPAddress address, int port)
         {
             this.socket.Connect(address, port);
             this.Connected = true;
         }
 
+        /// <summary>
+        /// Connects using the provided information. The connection is asynchronous and non-blocking
+        /// </summary>
+        /// <param name="host">The IP address it should connect to.</param>
+        /// <param name="port">The port it should connect to.</param>
         public void ConnectAsync(string host, int port)
         {
             this.checkDisposed();
             this.socket.BeginConnect(host, port, BeginConnect_Callback, null);
         }
 
+        /// <summary>
+        /// Connects using the provided information. The connection is asynchronous and non-blocking
+        /// </summary>
+        /// <param name="endPoint">The IPEndPoint it should connect to.</param>
         public void ConnectAsync(IPEndPoint endPoint)
         {
             this.checkDisposed();
             this.socket.BeginConnect(endPoint, BeginConnect_Callback, null);
         }
 
+        /// <summary>
+        /// Connects using the provided information. The connection is asynchronous and non-blocking
+        /// </summary>
+        /// <param name="address">The IPAddress it should connect to.</param>
+        /// <param name="port">The port it should connect to.</param>
         public void ConnectAsync(IPAddress address, int port)
         {
             this.checkDisposed();
@@ -100,6 +158,11 @@ namespace CITYMumbler.Networking.Sockets
         #endregion
 
         #region Send Methods
+        /// <summary>
+        /// Will send the payload using the existing connection after prepending the length of the payload. Will fail if there is no connection established. The method is asynchronous
+        /// NOTE: If there is need to for multiple Sends back to back, please use SendRapid to avoid potential memory leaks.
+        /// </summary>
+        /// <param name="payload">The bytes that should be sent.</param>
         public void Send(byte[] payload)
         {
             this.checkDisposed();
@@ -113,6 +176,10 @@ namespace CITYMumbler.Networking.Sockets
             this.socket.BeginSend(actualBuffer, 0, actualBuffer.Length, SocketFlags.None, BeginSend_Callback, null);
         }
 
+        /// <summary>
+        /// Used to for multiple Sends back to back. Sends the length of the payload before the actuall payload. NOTE: The execution IS blocking.
+        /// </summary>
+        /// <param name="payload">The bytes that should be sent.</param>
         public void RapidSend(byte[] payload)
         {
             this.checkDisposed();
@@ -256,6 +323,9 @@ namespace CITYMumbler.Networking.Sockets
         #endregion
 
         #region Disconnection
+        /// <summary>
+        /// Disconnects the socket.
+        /// </summary>
         public void Disconnect()
         {
             this.checkDisposed();
@@ -279,6 +349,9 @@ namespace CITYMumbler.Networking.Sockets
             if (this.IsDisposed)
                 throw new ObjectDisposedException("this");
         }
+        /// <summary>
+        /// Disposes the socket
+        /// </summary>
         public void Dispose()
         {
             if (!this.IsDisposed)
