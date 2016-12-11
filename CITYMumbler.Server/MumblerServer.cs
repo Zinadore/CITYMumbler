@@ -41,13 +41,25 @@ namespace CITYMumbler.Server
         private CancellationTokenSource _cleanupSource;
         #endregion
 
-
+        /// <summary>
+        /// The port the server is running on. Default value is 21992
+        /// </summary>
         public int Port { get; private set; } = 21992;
 
+        /// <summary>
+        /// The time after which a group is considered inactive. Default value
+        /// </summary>
         public int Threshold { get; private set; } = 60;
 
+        /// <summary>
+        /// A behavior subject that emits true while the server is running and false otherwise
+        /// </summary>
         public BehaviorSubject<bool> IsRunning { get; private set; }
 
+        /// <summary>
+        /// The constructor. It just initializes everything. Nothing begins happening here.
+        /// </summary>
+        /// <param name="loggerService">A logger service, used to generate logs.</param>
         public MumblerServer(ILoggerService loggerService)
         {
             this.seedLock = new object();
@@ -60,6 +72,11 @@ namespace CITYMumbler.Server
             this._cleanupSource = new CancellationTokenSource();
         }
 
+        /// <summary>
+        /// Starts the server and puts it in listenning mode on the specified port. It also starts the group cleanup task.
+        /// </summary>
+        /// <param name="port">The port the server will listen on</param>
+        /// <param name="threshold">The time after which a group will be considered inactive</param>
         public void Start(int port, int threshold)
         {
             this.Port = port;
@@ -71,6 +88,9 @@ namespace CITYMumbler.Server
             this.logger.Log(LogLevel.Info, "Server listening on port: {0}...", this.Port);
         }
 
+        /// <summary>
+        /// Stops the server.
+        /// </summary>
         public void Stop()
         {
             foreach (var client in _connectedClients)
@@ -205,6 +225,7 @@ namespace CITYMumbler.Server
                 }
             }
         }
+
         public void handleKickPacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var packet = receivedPacket as KickPacket;
@@ -259,6 +280,7 @@ namespace CITYMumbler.Server
             foreach (Client c in group.Clients)
                 c.ClientSocket.Send(updatedBytes);
         }
+
         private void handleCreateGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var packet = receivedPacket as CreateGroupPacket;
@@ -310,6 +332,7 @@ namespace CITYMumbler.Server
             var joinGroupPacket = new JoinedGroupPacket(client.ID, newGroup.ID, new []{client.ID});
             client.ClientSocket.Send(this._serializer.ToBytes(joinGroupPacket));
         }
+
         private void handleLeaveGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var leaveGroupPacket = receivedPacket as LeaveGroupPacket;
@@ -467,7 +490,7 @@ namespace CITYMumbler.Server
                 this.logger.Log(LogLevel.Warn, "Client {0} tried to message a group they dont belong to ({1}).", groupMessagePacket.SenderId, groupMessagePacket.GroupID);
                 return;
             }
-
+            groupToMessage.LastUpdate = DateTime.Now;
             foreach (var c in groupToMessage.Clients)
             {
                 c.ClientSocket.Send(this._serializer.ToBytes(groupMessagePacket));

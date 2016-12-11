@@ -17,6 +17,9 @@ using LogLevel = CITYMumbler.Common.Contracts.Services.Logger.LogLevel;
 
 namespace CITYMumbler.Client
 {
+    /// <summary>
+    /// The class that holds all of the business logic related to the client.
+    /// </summary>
     public class MumblerClient
     {
         #region Private Members
@@ -27,24 +30,73 @@ namespace CITYMumbler.Client
         #endregion
 
         #region Events
+        /// <summary>
+        /// Fires once the connection has been successful, and the server has provided the client with an ID
+        /// </summary>
         public EventHandler OnConnected;
-        public EventHandler OnDisconnected;
+        //public EventHandler OnDisconnected;
+        /// <summary>
+        /// Fires when the server has returned a list of all the currently available groups
+        /// </summary>
         public EventHandler OnGroupsReceived;
+
+        /// <summary>
+        /// Fires once the server has returned a list of all the currently connected users
+        /// </summary>
         public EventHandler OnUsersReceived;
         #endregion
 
         #region Properties
+        /// <summary>
+        /// The name associated with the current client
+        /// </summary>
         public string Name => this._me.Name;
+
+        /// <summary>
+        /// The id associated with the current client
+        /// </summary>
         public ushort ID => this._me.ID;
+
+        /// <summary>
+        /// A behavior subject that emits true while the client is connected to the server. False otherwise
+        /// </summary>
         public BehaviorSubject<bool> Connected { get; set; }
+
+        /// <summary>
+        /// A replay subject that contains all the group messages received
+        /// </summary>
         public ReplaySubject<ChatEntry> GroupMessages{ get; private set; }
+
+        /// <summary>
+        /// A replay subject that contains all the private messages received
+        /// </summary>
         public ReplaySubject<ChatEntry> PrivateMessages { get; private set; }
+
+        /// <summary>
+        /// A reactive list, containing all the groups known to the client
+        /// </summary>
         public ReactiveList<Group> Groups { get; private set; }
+
+        /// <summary>
+        /// A reactive list containing all the known groups that this client has joined
+        /// </summary>
         public ReactiveList<Group> JoinedGroups { get; private set; }
+
+        /// <summary>
+        /// A reactivelist containing all the known connected users
+        /// </summary>
         public ReactiveList<Client> ConnectedUsers { get; private set; }
+
+        /// <summary>
+        /// A reactive list that containes all the private conversations for this client. NOTE: It does not keep the messages
+        /// of the communication
+        /// </summary>
         public ReactiveList<PrivateChat> PrivateChats { get; private set; }
         #endregion
 
+        /// <summary>
+        /// The default constructor. Sets up everything.
+        /// </summary>
         public MumblerClient()
         {
             this._socket = new TcpSocket();
@@ -62,30 +114,57 @@ namespace CITYMumbler.Client
             this.PrivateChats = new ReactiveList<PrivateChat>();
         }
 
+        /// <summary>
+        /// Connects to the server using the provided parameters. The connection is asynchronous, not blocking.
+        /// </summary>
+        /// <param name="host">The IP address of the server</param>
+        /// <param name="port">Port the server is listening on</param>
+        /// <param name="username">The username that should be associated with this client</param>
         public void Connect(string host, int port, string username)
         {
             this._me.Name = username;
             this._socket.ConnectAsync(host, port);
         }
 
+        /// <summary>
+        /// Connects to the server using the provided parameters. The connection is asynchronous, not blocking.
+        /// </summary>
+        /// <param name="address">The IP address of the server</param>
+        /// <param name="port">The port the server is listening on</param>
+        /// <param name="username">The username that should be associated with this client</param>
         public void Connect(IPAddress address, int port, string username)
         {
             this._me.Name = username;
             this._socket.ConnectAsync(address, port);
         }
 
+        /// <summary>
+        /// Connects to the server using the provided parameters. The connection is asynchronous, not blocking.
+        /// </summary>
+        /// <param name="endpoint">The IPEndPoint of the server</param>
+        /// <param name="username">The username that should be associated with this client</param>
         public void Connect(IPEndPoint endpoint, string username)
         {
             this._me.Name = username;
             this._socket.ConnectAsync(endpoint);
         }
 
+        /// <summary>
+        /// Sends a message to the server, addressed to the specified group
+        /// </summary>
+        /// <param name="groupId">The id of the group the message is addressed to</param>
+        /// <param name="message">The message</param>
 	    public void SendGroupMessage(ushort groupId, string message)
 	    {
 			GroupMessagePacket packet = new GroupMessagePacket(this._me.ID, groupId, this._me.Name, message);
 			this._socket.Send(this._serializer.ToBytes(packet));
 		}
 
+        /// <summary>
+        /// Sends a private message to the server, addressed to the specified user
+        /// </summary>
+        /// <param name="recipientId">The id of the recipient of the message</param>
+        /// <param name="message">The message</param>
         public void SendPrivateMessage(ushort recipientId, string message)
         {
             PrivateMessagePacket packet = new PrivateMessagePacket(this._me.ID, recipientId, this._me.Name, message);
@@ -94,18 +173,31 @@ namespace CITYMumbler.Client
             this.PrivateMessages.OnNext(entry);
         }
 
+        /// <summary>
+        /// Notifies the server that the client wants to join the specified group
+        /// </summary>
+        /// <param name="groupId">The id of the group to join</param>
         public void JoinGroup(ushort groupId)
         {
             JoinGroupPacket packet = new JoinGroupPacket(this._me.ID, groupId);
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
+        /// <summary>
+        /// Notifies the server that the client wants to join the specified group
+        /// </summary>
+        /// <param name="groupId">The id of the group to join</param>
+        /// <param name="password">The password for the group</param>
         public void JoinGroup(ushort groupId, string password)
         {
             JoinGroupPacket packet = new JoinGroupPacket(this._me.ID, groupId, password);
             this._socket.Send((this._serializer.ToBytes(packet)));
         }
 
+        /// <summary>
+        /// Leaves the group, and notifies the server
+        /// </summary>
+        /// <param name="groupId">The id of the group to leave</param>
         public void LeaveGroup(ushort groupId)
         {
             lock (this.JoinedGroups)
@@ -116,6 +208,13 @@ namespace CITYMumbler.Client
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
+        /// <summary>
+        /// Notifies the server that a new group should be created, with the provided info
+        /// </summary>
+        /// <param name="groupName">The name of the new group</param>
+        /// <param name="authenticationType">The type of authentication: None, Password, Permission</param>
+        /// <param name="threshold">The time after which a user is consideredinactiveinside the group</param>
+        /// <param name="password">The password of the group</param>
         public void CreateGroup(string groupName, JoinGroupPermissionTypes authenticationType, byte threshold,
                                 string password = null)
         {
@@ -133,12 +232,23 @@ namespace CITYMumbler.Client
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
+
+        /// <summary>
+        /// Notifies the server that a group's owner should be changed
+        /// </summary>
+        /// <param name="groupId">The id of the group to be modified</param>
+        /// <param name="newOwnerId">The id of the new owner</param>
         public void ChangeGroupOwner(ushort groupId, ushort newOwnerId)
         {
             var packet = new ChangeGroupOwnerPacket(this._me.ID, groupId, newOwnerId);
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
+
+        /// <summary>
+        /// Creates a private conversation with the specified user. This is only client-side
+        /// </summary>
+        /// <param name="whisperId">The id of the user to whisper</param>
         public void Whisper(ushort whisperId)
         {
             PrivateChat chat;
@@ -164,6 +274,11 @@ namespace CITYMumbler.Client
             }
         }
 
+
+        /// <summary>
+        /// Closes the private conversation with the specified user. This is only client-side.
+        /// </summary>
+        /// <param name="whisperId"></param>
         public void CloseWhisper(ushort whisperId)
         {
             lock (this.PrivateChats)
@@ -172,6 +287,11 @@ namespace CITYMumbler.Client
             }
         }
 
+        /// <summary>
+        /// Notifies the server that a user should be kicked from the group. The validity of the request is verified server-side
+        /// </summary>
+        /// <param name="groupId">The id of the group the user should be removed from</param>
+        /// <param name="remoteId">The id of the user that should be removed</param>
         public void Kick(ushort groupId, ushort remoteId)
         {
             if (remoteId == this._me.ID)
@@ -192,9 +312,6 @@ namespace CITYMumbler.Client
             this._socket.OnDataReceived += Socket_OnDataReceived;
         }
         #endregion
-
-
-
 
         #region Socket Events
         private void Socket_OnDataReceived(object sender, TcpSocketDataReceivedEventArgs e)
@@ -229,7 +346,6 @@ namespace CITYMumbler.Client
             this.OnDisconnected?.Invoke(this, EventArgs.Empty);
         }
         #endregion
-
 
         private void handlePacket(IPacket receivedPacket)
         {
@@ -267,8 +383,8 @@ namespace CITYMumbler.Client
                     break;
             }
         }
-        #region Packet Handlers
 
+        #region Packet Handlers
         private void handleChangeGroupOwnerPacket(IPacket packet)
         {
             var p = packet as ChangeGroupOwnerPacket;
