@@ -15,6 +15,9 @@ using HelperTrinity;
 
 namespace CITYMumbler.Common.Services.Logger
 {
+    /// <summary>
+    /// An Implementation of the ILoggerService using a ConfigMonitor to reconfigure itself at runtime
+    /// </summary>
     public class LoggerService: ILoggerService
     {
         private LogLevel _threshold;
