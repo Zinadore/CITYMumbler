@@ -42,8 +42,10 @@ namespace CITYMumbler.Client.ViewModels
         public ReactiveList<CurrentChatUserListItemViewModel> CurrentUsersVMs { get; private set; }
 	    public Interaction<CreateGroupWindowModel, bool> CreateGroupInteraction => this._createGroupInteraction;
         public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; private set; }
+        
+	    public string MyUsername => this._client.Name;
 
-	    public string Username => this._client.Name;
+
 	    public MainViewModel(IScreen hostScreen)
 	    {
 	        this.HostScreen = hostScreen; 
@@ -53,7 +55,7 @@ namespace CITYMumbler.Client.ViewModels
             this._dummyList = new ReactiveList<Client>();
             this.CurrentUsersVMs = new ReactiveList<CurrentChatUserListItemViewModel>();
             this._createGroupInteraction = new Interaction<CreateGroupWindowModel, bool>();
-
+            
 	        this.CreateGroupCommand = ReactiveCommand.CreateFromTask(CreateGroup);
 
 	        foreach (Group g in this._client.JoinedGroups)
@@ -118,12 +120,12 @@ namespace CITYMumbler.Client.ViewModels
                     this.CurrentUsersVMs.Clear();
 	                foreach (var client in list)
 	                {
-	                    this.CurrentUsersVMs.Add(new CurrentChatUserListItemViewModel(client, this.SelectedTab.Group.OwnerID));
+	                    this.CurrentUsersVMs.Add(new CurrentChatUserListItemViewModel(client, this._client, this.SelectedTab.Group));
 	                }
 
 	                list.ItemsAdded.ObserveOn(RxApp.MainThreadScheduler).Subscribe(c =>
 	                {
-                        this.CurrentUsersVMs.Add(new CurrentChatUserListItemViewModel(c, this.SelectedTab.Group.OwnerID));
+                        this.CurrentUsersVMs.Add(new CurrentChatUserListItemViewModel(c, this._client, this.SelectedTab.Group));
                     });
 
 	                list.ItemsRemoved.ObserveOn(RxApp.MainThreadScheduler).Subscribe(c =>
@@ -152,6 +154,5 @@ namespace CITYMumbler.Client.ViewModels
                 }
 	        }
 	    }
-
     }
 }

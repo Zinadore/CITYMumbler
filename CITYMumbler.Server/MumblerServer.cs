@@ -4,7 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Net.Mime;
 using System.Reactive.Subjects;
+using System.Threading;
+using System.Windows;
 using CITYMumbler.Common.Contracts.Services.Logger;
 using CITYMumbler.Common.Data;
 using CITYMumbler.Networking.Contracts;
@@ -33,10 +37,14 @@ namespace CITYMumbler.Server
         // Log all the things
         private ILogger logger;
         private IPacketSerializer _serializer;
+        private Task _groupCleanupTask;
+        private CancellationTokenSource _cleanupSource;
         #endregion
 
 
         public int Port { get; private set; } = 21992;
+
+        public int Threshold { get; private set; } = 60;
 
         public BehaviorSubject<bool> IsRunning { get; private set; }
 
@@ -49,32 +57,17 @@ namespace CITYMumbler.Server
             this.listener = new TcpSocketListener();
             this._serializer = new PacketSerializer();
             this.IsRunning = new BehaviorSubject<bool>(false);
-
-            //this._groupList.Add(new Group()
-            //{
-            //    Name = "MyGroup",
-            //    ID = 1,
-            //    PermissionType = JoinGroupPermissionTypes.Free,
-            //    OwnerID = 2,
-            //    Clients = new ReactiveList<Client>()
-            //});
-            //this._groupList.Add(new Group()
-            //{
-            //    Name = "MyOtherGroup",
-            //    ID = 2,
-            //    PermissionType = JoinGroupPermissionTypes.Password,
-            //    Password = "tyrakia",
-            //    OwnerID = 2,
-            //    Clients = new ReactiveList<Client>()
-            //});
+            this._cleanupSource = new CancellationTokenSource();
         }
 
-        public void Start(int port = 21992)
+        public void Start(int port, int threshold)
         {
             this.Port = port;
+            this.Threshold = threshold;
             this.listener.OnAccepted += OnAccepted_Callback;
             this.listener.Start(port);
             this.IsRunning.OnNext(true);
+            this._groupCleanupTask = Task.Factory.StartNew(GroupCleanup, TaskCreationOptions.LongRunning, this._cleanupSource.Token);
             this.logger.Log(LogLevel.Info, "Server listening on port: {0}...", this.Port);
         }
 
@@ -84,6 +77,7 @@ namespace CITYMumbler.Server
             {
                 client.ClientSocket.Disconnect();
             }
+            this._cleanupSource.Cancel();
             this.listener.OnAccepted -= OnAccepted_Callback;
             this.IsRunning.OnNext(false);
             this.listener.Stop();
@@ -123,6 +117,33 @@ namespace CITYMumbler.Server
                 c.ClientSocket.Send(updateBytes);
         }
 
+        private void GroupCleanup(object token)
+        {
+            while (!_cleanupSource.Token.IsCancellationRequested)
+            {
+                foreach (Group g in this._groupList.ToList())
+                {
+                    var now = DateTime.Now;
+                    if ((now - g.LastUpdate) > TimeSpan.FromSeconds(Threshold))
+                    {
+                        lock (this._groupList)
+                        {
+                            this._groupList.Remove(g);
+                        }
+                        this.logger.Log(LogLevel.Debug, "Removed a group");
+                        var updatePacket = new UpdatedGroupPacket(UpdatedGroupType.Deleted, g.ID);
+                        var updateBytes = this._serializer.ToBytes(updatePacket);
+                        foreach (Client c in this._connectedClients)
+                        {
+                            c.ClientSocket.Send(updateBytes);
+                        }
+                    }
+                }
+                Thread.Sleep(5000);
+            }
+            this.logger.Log(LogLevel.Debug, "Broke out of the while loop");
+        }
+
         private void handlePacket(IPacket packet, TcpSocket clientSocket)
         {
             
@@ -152,11 +173,92 @@ namespace CITYMumbler.Server
                 case PacketType.CreateGroup:
                     handleCreateGroupPacket(clientSocket, packet);
                     break;
+                case PacketType.Kick:
+                    handleKickPacket(clientSocket, packet);
+                    break;
+                case PacketType.ChangeGroupOwner:
+                    handleChangeGroupOwnerPacket(clientSocket, packet);
+                    break;
             }
         }
 
         #region Packet Handling
 
+        private void handleChangeGroupOwnerPacket(TcpSocket clientSocket, IPacket receivedPacket)
+        {
+            var packet = receivedPacket as ChangeGroupOwnerPacket;
+            Group group;
+            lock (this._groupList)
+            {
+                group = this._groupList.FirstOrDefault(g => g.ID == packet.GroupId);
+            }
+            if (group == null || group.OwnerID != packet.ClientId)
+                return;
+            group.OwnerID = packet.NewOwnerId;
+            this.logger.Log(LogLevel.Debug, "Changed group {0} owner from {1} to {2}", group.ID, packet.ClientId, group.OwnerID);
+            var updateBytes = this._serializer.ToBytes(packet);
+            lock (this._connectedClients)
+            {
+                foreach (var connectedClient in this._connectedClients)
+                {
+                    connectedClient.ClientSocket.Send(updateBytes);
+                }
+            }
+        }
+        public void handleKickPacket(TcpSocket clientSocket, IPacket receivedPacket)
+        {
+            var packet = receivedPacket as KickPacket;
+            this.logger.Log(LogLevel.Debug, "User {0} wants to kick user {1} from group {2}", packet.ClientId, packet.TargetId, packet.GroupId);
+            Client kicker;
+            Client kicked;
+            Group group;
+            // Make sure the kicker exists
+            lock (this._connectedClients)
+            {
+                kicker = this._connectedClients.FirstOrDefault(c => c.ID == packet.ClientId);
+            }
+            if (kicker == null)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} tried to kick, but client doesn't exist", packet.ClientId);
+                return;
+            }
+
+            // Make sure the target exists
+            lock (this._connectedClients)
+            {
+                kicked = this._connectedClients.FirstOrDefault(c => c.ID == packet.TargetId);
+            }
+            if (kicked == null)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} should be kicked, but client doesn't exist", packet.TargetId);
+                return;
+            }
+
+            // Make sure the group exists
+            lock (this._groupList)
+            {
+                group = this._groupList.FirstOrDefault(g => g.ID == packet.GroupId);
+            }
+            if (group == null)
+            {
+                this.logger.Log(LogLevel.Debug, "Tried to kick client from group {0}, but group doesn't exist", packet.GroupId);
+                return;
+            }
+            if (group.OwnerID != kicker.ID)
+            {
+                this.logger.Log(LogLevel.Debug, "Client {0} tried to kick someone from group {1} while not being the owner.", packet.ClientId, packet.GroupId);
+                return;
+            }
+            if (group.Clients.Contains(kicked))
+                group.Clients.Remove(kicked);
+            var kickedPacket = new LeftGroupPacket(kicked.ID, group.ID, LeftGroupTypes.Kicked);
+            kicked.ClientSocket.Send(this._serializer.ToBytes(kickedPacket));
+            
+            var updatedPacket = new UpdatedGroupPacket(UpdatedGroupType.UserLeft, kicked.ID, group.ID);
+            var updatedBytes = this._serializer.ToBytes(updatedPacket);
+            foreach (Client c in group.Clients)
+                c.ClientSocket.Send(updatedBytes);
+        }
         private void handleCreateGroupPacket(TcpSocket clientSocket, IPacket receivedPacket)
         {
             var packet = receivedPacket as CreateGroupPacket;
@@ -239,6 +341,29 @@ namespace CITYMumbler.Server
                 this.logger.Log(LogLevel.Debug, "Client {0} left group {1}.", leaveGroupPacket.ClientId, leaveGroupPacket.GroupId);
                 group.Clients.Remove(client);
             }
+            bool shouldDeleteGroup = false;
+
+            lock (group)
+            {
+                if (group.Clients.Count == 0)
+                    shouldDeleteGroup = true;
+            }
+
+            if (shouldDeleteGroup)
+            {
+                lock (this._groupList)
+                {
+                    this._groupList.Remove(group);
+                }
+                var deletedPacket = new UpdatedGroupPacket(UpdatedGroupType.Deleted, group.ID);
+                byte[] deletedBytes = this._serializer.ToBytes(deletedPacket);
+                foreach (var c2 in this._connectedClients)
+                {
+                    c2.ClientSocket.Send(deletedBytes);
+                }
+                return;
+            }
+
             var updatePacket = new UpdatedGroupPacket(UpdatedGroupType.UserLeft, client.ID, group.ID);
             byte[] updateBytes = this._serializer.ToBytes(updatePacket);
             lock (group)

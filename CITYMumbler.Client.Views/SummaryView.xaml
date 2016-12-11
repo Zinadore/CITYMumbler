@@ -13,7 +13,7 @@
         <TabControl HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch">
             <TabItem Header="Groups">
-                <ListBox x:Name="GroupsList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <ListBox x:Name="GroupsList" HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <rui:ViewModelViewHost ViewModel="{Binding}"></rui:ViewModelViewHost>
@@ -22,7 +22,7 @@
                 </ListBox>
             </TabItem>
             <TabItem Header="Users">
-                <ListBox x:Name="UsersList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <ListBox x:Name="UsersList" HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <rui:ViewModelViewHost ViewModel="{Binding}"></rui:ViewModelViewHost>

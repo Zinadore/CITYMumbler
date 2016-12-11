@@ -44,8 +44,9 @@ namespace CITYMumbler.Server.Views
                 });
 
             this.Bind(ViewModel, vm => vm.Port, @this => @this.Port.Text);
-            this.OneWayBind(ViewModel, vm => vm.IsStartEnabled, @this => @this.StartButton.Visibility, isEnabled => isEnabled ? Visibility.Visible : Visibility.Collapsed);
-            this.OneWayBind(ViewModel, vm => vm.IsStartEnabled, @this => @this.StopButton.Visibility, isEnabled => isEnabled ? Visibility.Collapsed : Visibility.Visible);
+            this.Bind(ViewModel, vm => vm.Threshold, @this => @this.Threshold.Text);
+            this.OneWayBind(ViewModel, vm => vm.IsStartEnabled, @this => @this.StartButton.IsEnabled);
+            this.OneWayBind(ViewModel, vm => vm.IsStopEnabled, @this => @this.StopButton.IsEnabled);
 
 
             this.BindCommand(ViewModel, vm => vm.StartCommand, @this => @this.StartButton);

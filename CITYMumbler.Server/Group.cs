@@ -1,4 +1,5 @@
-﻿using CITYMumbler.Networking.Contracts;
+﻿using System;
+using CITYMumbler.Networking.Contracts;
 using ReactiveUI;
 
 namespace CITYMumbler.Server
@@ -12,6 +13,7 @@ namespace CITYMumbler.Server
         public byte Threshold { get; set; }
         public string Password { get; set; }
         public ReactiveList<Client> Clients { get; set; }
+        public DateTime LastUpdate { get; set; } = DateTime.Now;
 
     }
 }

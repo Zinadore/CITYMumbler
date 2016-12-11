@@ -17,6 +17,7 @@ namespace CITYMumbler.Server.ViewModels
     public class MainViewModel: ReactiveObject, IRoutableViewModel
     {
         private int portNumeric;
+        private int timeoutThreshold;
 
         private ILogger logger;
 
@@ -45,9 +46,31 @@ namespace CITYMumbler.Server.ViewModels
             set { this.RaiseAndSetIfChanged(ref _port, value); }
         }
 
+        private string _threshold;
+        public string Threshold
+        {
+            get { return _threshold; }
+            set { this.RaiseAndSetIfChanged(ref _threshold, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _isPortValid;
+        public bool IsPortValid
+        {
+            get { return _isPortValid.Value; }
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _isThresholdValid;
+        public bool IsThresholdValid
+        {
+            get { return _isThresholdValid.Value; }
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _isStopEnabled;
+        public bool IsStopEnabled
+        {
+            get { return _isStopEnabled.Value; }
+        }
         public IObservable<LogEntry> Logs { get; private set; }
-
-
 
         public MainViewModel(IScreen host)
         {
@@ -56,19 +79,45 @@ namespace CITYMumbler.Server.ViewModels
             this.logger = Locator.Current.GetService<ILoggerService>().GetLogger(this.GetType());
             MumblerServer = new MumblerServer(Locator.Current.GetService<ILoggerService>());
             this.Port = MumblerServer.Port.ToString();
+            this.Threshold = 60.ToString();
             this._subscriptions = new CompositeDisposable();
             
             var sub = MumblerServer.IsRunning.Subscribe(running => this.Started = running);
 
             this._subscriptions.Add(sub);
-            
-            this.StartCommand = ReactiveCommand<Unit, Unit>.Create(StartServer);
-            this.StopCommand = ReactiveCommand<Unit, Unit>.Create(StopServer);
 
-            this.WhenAnyValue(x => x.Port, x => x.Started, (port, isStarted) => int.TryParse(Port, out portNumeric) && !isStarted)
+            this.WhenAnyValue(x => x.Port)
+                .Select(x => x?.Trim())
+                .DistinctUntilChanged()
+                .Select(x => int.TryParse(x, out portNumeric))
+                .ToProperty(this, @this => @this.IsPortValid, out _isPortValid);
+
+            this.WhenAnyValue(x => x.Threshold)
+                .Select(x => x?.Trim())
+                .DistinctUntilChanged()
+                .Select(x => int.TryParse(x, out timeoutThreshold))
+                .ToProperty(this, @this => @this.IsThresholdValid, out _isThresholdValid);
+
+            this.WhenAnyValue(x => x.IsPortValid, x => x.IsThresholdValid, x => x.Started,
+                (port, threshold, started) => port && threshold && !started)
+                .ToProperty(this, @this => @this.IsStartEnabled, out _isStartEnabled);
+
+            this.WhenAnyValue(x => x.Started)
+                .ToProperty(this, @this => @this.IsStopEnabled, out _isStopEnabled);
+            
+            this.StartCommand = ReactiveCommand.Create(StartServer);
+            this.StopCommand = ReactiveCommand.Create(StopServer);
+
+            this.WhenAnyValue(x => x.Port, x => x.Threshold, x => x.Started, (port, threshold, isStarted) => int.TryParse(Port, out portNumeric) && int.TryParse(Threshold, out timeoutThreshold) && !isStarted)
                 .ToProperty(this, vm => vm.IsStartEnabled, out _isStartEnabled);
 
+
             this.StartCommand.ThrownExceptions.Subscribe(ex =>
+            {
+                this.logger.Log(LogLevel.Error, ex.Message);
+            });
+
+            this.StopCommand.ThrownExceptions.Subscribe(ex =>
             {
                 this.logger.Log(LogLevel.Error, ex.Message);
             });
@@ -81,7 +130,7 @@ namespace CITYMumbler.Server.ViewModels
 
         private void StartServer()
         {
-            MumblerServer.Start(this.portNumeric);
+            MumblerServer.Start(this.portNumeric, this.timeoutThreshold);
         }
 
         ~MainViewModel()

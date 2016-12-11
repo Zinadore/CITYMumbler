@@ -10,18 +10,19 @@
 
 	<UserControl.Resources>
 		<Style TargetType="TextBlock">
-			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontSize" Value="13"/>
 		</Style>
 		<Style TargetType="TextBox">
-			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontSize" Value="13"/>
 		</Style>
 		<Style TargetType="Button">
-			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontSize" Value="15"/>
 		</Style>
 	</UserControl.Resources>
 	
 	<Grid>
 		<Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="130" />
         </Grid.RowDefinitions>
@@ -31,6 +32,12 @@
             <ColumnDefinition Width="*" MinWidth="300"/>
 			<ColumnDefinition Width="100" />
 		</Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="0"
+                    Grid.Column="2">
+            <TextBlock>Currently logged in as: </TextBlock>
+            <TextBlock x:Name="MyUsername" Margin="5 0 0 0"></TextBlock>
+        </StackPanel>
         <GridSplitter   Grid.Column="1"
                         Grid.RowSpan="2"
                         HorizontalAlignment="Center"
@@ -38,7 +45,7 @@
                         Width="5" />
         <TabControl x:Name="ChatTabControl"
                     MinWidth="300"
-                    Grid.Row="0"
+                    Grid.Row="1"
                     IsSynchronizedWithCurrentItem="True"
                     VerticalContentAlignment="Stretch"
                     Grid.Column="2">
@@ -53,31 +60,30 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-        <local:LogWindow Grid.Row="1" Grid.Column="2" x:Name="LogWindow"/>
-        <local:SummaryView HorizontalAlignment="Stretch" 
-                           HorizontalContentAlignment="Stretch"
-                          Grid.Row="0" 
-                          Grid.Column="0" 
-                          Grid.RowSpan="2"></local:SummaryView>
-        <Grid Grid.Row="0" Grid.Column="3">
+        <local:LogWindow Grid.Row="2" Grid.Column="2" x:Name="LogWindow"/>
+        <local:SummaryView HorizontalContentAlignment="Stretch"
+                           Grid.Row="0" 
+                           Grid.Column="0" 
+                           Grid.RowSpan="3"></local:SummaryView>
+        <Grid Grid.Row="0" Grid.Column="3"
+              Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Current Users" FontSize="13"></TextBlock>
-            <ListBox Grid.Row="1" x:Name="CurrentUsers">
+            <TextBlock Text="Current Users"></TextBlock>
+            <ListBox Grid.Row="1" x:Name="CurrentUsers" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <reactiveUi:ViewModelViewHost ViewModel="{Binding}"></reactiveUi:ViewModelViewHost>
+                        <reactiveUi:ViewModelViewHost ViewModel="{Binding}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"></reactiveUi:ViewModelViewHost>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <StackPanel Grid.Row="1"
+        <StackPanel Grid.Row="2"
                     Grid.Column="3">
-            <Button FontSize="15" x:Name="NewGroupButton">New Group</Button>
-            <Button FontSize="15" x:Name="SignOutButton">Sign Out</Button>
-            
+            <Button x:Name="NewGroupButton">New Group</Button>
+            <Button x:Name="SignOutButton">Sign Out</Button>
         </StackPanel>
         
 	</Grid>

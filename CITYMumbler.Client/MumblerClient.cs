@@ -133,6 +133,12 @@ namespace CITYMumbler.Client
             this._socket.Send(this._serializer.ToBytes(packet));
         }
 
+        public void ChangeGroupOwner(ushort groupId, ushort newOwnerId)
+        {
+            var packet = new ChangeGroupOwnerPacket(this._me.ID, groupId, newOwnerId);
+            this._socket.Send(this._serializer.ToBytes(packet));
+        }
+
         public void Whisper(ushort whisperId)
         {
             PrivateChat chat;
@@ -164,6 +170,18 @@ namespace CITYMumbler.Client
             {
                 this.PrivateChats.Remove(this.PrivateChats.First(pc => pc.RemoteUser.ID == whisperId));
             }
+        }
+
+        public void Kick(ushort groupId, ushort remoteId)
+        {
+            if (remoteId == this._me.ID)
+            {
+                this._logger.Log(LogLevel.Debug, "I just tried to kick myself out of a group!");
+                return;
+            }
+            
+            var kickPacket = new KickPacket(this._me.ID, remoteId, groupId);
+            this._socket.Send(this._serializer.ToBytes(kickPacket));
         }
 
         #region Helpers
@@ -241,10 +259,54 @@ namespace CITYMumbler.Client
                 case PacketType.UpdatedUser:
                     handleUpdatedUserPacket(receivedPacket);
                     break;
+                case PacketType.LeftGroup:
+                    handleLeftGroupPacket(receivedPacket);
+                    break;
+                case PacketType.ChangeGroupOwner:
+                    handleChangeGroupOwnerPacket(receivedPacket);
+                    break;
             }
         }
         #region Packet Handlers
 
+        private void handleChangeGroupOwnerPacket(IPacket packet)
+        {
+            var p = packet as ChangeGroupOwnerPacket;
+            Group group;
+            lock (this.Groups)
+            {
+                group = this.Groups.FirstOrDefault(g => g.ID == p.GroupId);
+            }
+            if (group == null)
+                return;
+            group.OwnerID = p.NewOwnerId;
+        }
+        private void handleLeftGroupPacket(IPacket packet)
+        {
+            var leftPacket = packet as LeftGroupPacket;
+            if (leftPacket.ClientId != this._me.ID)
+                return;
+            Group group;
+            lock (this.JoinedGroups)
+            {
+                group = this.JoinedGroups.FirstOrDefault(g => g.ID == leftPacket.GroupId);
+            }
+
+            if (group == null)
+            {
+                this._logger.Log(LogLevel.Debug, "I was kicked from a group ({0}) that doesn't exist.", leftPacket.GroupId);
+                return;
+            }
+
+            lock (this.JoinedGroups)
+            {
+                JoinedGroups.Remove(group);
+            }
+
+            group.GroupUsers = new ReactiveList<Client>();
+            this._logger.Log(LogLevel.Warn, "I have been kicked from group {0} :(", group.Name);
+            
+        }
         private void handleUpdatedUserPacket(IPacket packet)
         {
             var p = packet as UpdatedUserPacket;
@@ -253,9 +315,11 @@ namespace CITYMumbler.Client
             if (p.UpdateAction == UpdatedUserType.Created)
             {
                 client = new Client() { ID = p.Client.ID, Name = p.Client.Name};
+                Client existing;
                 lock (this.ConnectedUsers)
                 {
-                    if (!this.ConnectedUsers.Contains(client))
+                    existing = this.ConnectedUsers.FirstOrDefault(c => c.ID == client.ID);
+                    if (existing == null)
                         this.ConnectedUsers.Add(client);
                 }
                 return;
@@ -449,7 +513,10 @@ namespace CITYMumbler.Client
                     user = this.ConnectedUsers.FirstOrDefault(c => c.ID == cid);
                 }
                 if (user != null)
-                    joinedGroup.GroupUsers.Add(user);
+                {
+                    if (!joinedGroup.GroupUsers.Contains(user))
+                        joinedGroup.GroupUsers.Add(user);
+                }
             }
         }
         private void handlePrivateMessagePacket(IPacket packet)

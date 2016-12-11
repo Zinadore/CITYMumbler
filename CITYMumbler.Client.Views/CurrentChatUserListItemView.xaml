@@ -6,6 +6,13 @@
              xmlns:local="clr-namespace:CITYMumbler.Client.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Whisper" x:Name="WhisperMenuItem"></MenuItem>
+            <MenuItem Header="Pass group ownership" x:Name="PromoteMenuItem"></MenuItem>
+            <MenuItem Header="Kick" x:Name="KickMenuItem"></MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

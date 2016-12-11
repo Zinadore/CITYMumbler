@@ -35,7 +35,6 @@ namespace CITYMumbler.Client.Views
                 d(this.OneWayBind(ViewModel, vm => vm.IsPasswordEnabled, @this => @this.Password.IsEnabled));
                 d(this.Bind(ViewModel, vm => vm.Password, @this => @this.Password.Text));
                 d(this.Bind(ViewModel, vm => vm.IsCreateEnabled, @this => @this.CreateButton.IsEnabled));
-                Debug.WriteLine("Activated view");
             });
         }
 

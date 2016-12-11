@@ -109,7 +109,6 @@ namespace CITYMumbler.Client.ViewModels
                 // Should the password field be activated
                 d(this.WhenAnyValue(x => x.SelectedAuthentication)
                     .Select(x => x?.Type == JoinGroupPermissionTypes.Password)
-                    .Do(x => Debug.WriteLine("Updating IsPasswordEnabled with {0}", x))
                     .Subscribe(value => this.IsPasswordEnabled = value));
                 // Is the group name a valid string?
                 d(this.WhenAnyValue(x => x.Name)
