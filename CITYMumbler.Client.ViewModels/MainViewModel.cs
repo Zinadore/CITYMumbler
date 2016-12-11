@@ -42,6 +42,8 @@ namespace CITYMumbler.Client.ViewModels
         public ReactiveList<CurrentChatUserListItemViewModel> CurrentUsersVMs { get; private set; }
 	    public Interaction<CreateGroupWindowModel, bool> CreateGroupInteraction => this._createGroupInteraction;
         public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; private set; }
+
+	    public string Username => this._client.Name;
 	    public MainViewModel(IScreen hostScreen)
 	    {
 	        this.HostScreen = hostScreen; 

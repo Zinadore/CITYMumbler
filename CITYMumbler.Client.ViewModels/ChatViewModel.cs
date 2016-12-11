@@ -88,7 +88,7 @@ namespace CITYMumbler.Client.ViewModels
             }
             else
 		    {
-                this.Entries = this._mumblerClient.PrivateMessages.Where(entry => entry.SenderId == this._filterId);
+                this.Entries = this._mumblerClient.PrivateMessages.Where(entry => entry.SenderId == this._filterId ||  (entry.SenderId == this._localClient.ID && entry.ReceiverId == this._filterId));
 		    }
 			this.SendCommand = ReactiveCommand.Create(SendMessage);
             this.CloseCommand = ReactiveCommand.Create(LeaveConversation);

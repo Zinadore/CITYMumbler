@@ -257,7 +257,7 @@ namespace CITYMumbler.Server
             {
                 receiver = this._connectedClients.FirstOrDefault(c => c.ID == pm.ReceiverId);
             }
-            receiver.ClientSocket.Send(this._serializer.ToBytes(pm));
+            receiver?.ClientSocket.Send(this._serializer.ToBytes(pm));
         }
 
         private void handleConnectionPacket(TcpSocket clientSocket, IPacket receivedPacket)

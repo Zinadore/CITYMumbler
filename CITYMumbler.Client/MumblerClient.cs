@@ -90,6 +90,8 @@ namespace CITYMumbler.Client
         {
             PrivateMessagePacket packet = new PrivateMessagePacket(this._me.ID, recipientId, this._me.Name, message);
             this._socket.Send(this._serializer.ToBytes(packet));
+            var entry = new ChatEntry(this._me.ID, this._me.Name, message, 0, recipientId);
+            this.PrivateMessages.OnNext(entry);
         }
 
         public void JoinGroup(ushort groupId)
