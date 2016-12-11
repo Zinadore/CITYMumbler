@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CITYMumbler.Networking.Contracts.Serialization
 {
+	/// <summary>
+	/// The interface that a PacketSerializer should implement
+	/// </summary>
 	public interface IPacketSerializer
 	{
 		byte[] ToBytes(IPacket packet);
