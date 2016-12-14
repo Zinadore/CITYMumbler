@@ -14,5 +14,17 @@ namespace CITYMumbler.Client
     {
         public ushort ID { get; set; }
         public string Name { get; set; }
+        public override bool Equals(object obj)
+        {
+            Client other = obj as Client;
+            if (other == null)
+                return false;
+            return this.ID == other.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
     }
 }

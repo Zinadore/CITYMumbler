@@ -518,7 +518,7 @@ namespace CITYMumbler.Client
                     return;
                 }
 
-                lock (group)
+                lock (group.GroupUsers)
                 {
                     if (!group.GroupUsers.Contains(user))
                         group.GroupUsers.Add(user);
@@ -634,8 +634,11 @@ namespace CITYMumbler.Client
                 }
                 if (user != null)
                 {
-                    if (!joinedGroup.GroupUsers.Contains(user))
-                        joinedGroup.GroupUsers.Add(user);
+                    lock (joinedGroup)
+                    {
+                        if (!joinedGroup.GroupUsers.Contains(user))
+                            joinedGroup.GroupUsers.Add(user);
+                    }
                 }
             }
         }

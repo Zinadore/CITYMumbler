@@ -44,5 +44,18 @@ namespace CITYMumbler.Client
             set { this.RaiseAndSetIfChanged(ref _timeoutThreshold, value); }
         }
         public ReactiveList<Client> GroupUsers { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            Group other = obj as Group;
+            if (other == null)
+                return false;
+            return this.ID == other.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
     }
 }

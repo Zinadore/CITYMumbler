@@ -38,5 +38,18 @@ namespace CITYMumbler.Server
             this.ClientSocket.ClientID = id;
             this.RemoteEndpoint = endpoint;
         }
+
+        public override bool Equals(object obj)
+        {
+            Client other = obj as Client;
+            if (other == null)
+                return false;
+            return this.ID == other.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
     }
 }

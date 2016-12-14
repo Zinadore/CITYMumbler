@@ -42,5 +42,17 @@ namespace CITYMumbler.Server
 		/// </summary>
         public DateTime LastUpdate { get; set; } = DateTime.Now;
 
+        public override bool Equals(object obj)
+        {
+            Group other = obj as Group;
+            if (other == null)
+                return false;
+            return this.ID == other.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
     }
 }
