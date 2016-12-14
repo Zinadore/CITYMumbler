@@ -83,7 +83,6 @@
         <StackPanel Grid.Row="2"
                     Grid.Column="3">
             <Button x:Name="NewGroupButton">New Group</Button>
-            <Button x:Name="SignOutButton">Sign Out</Button>
         </StackPanel>
         
 	</Grid>
